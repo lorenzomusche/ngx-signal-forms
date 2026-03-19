@@ -37,4 +37,17 @@ export { DateRendererDirective } from './lib/renderers/date-renderer.directive';
 export { TextareaRendererDirective } from './lib/renderers/textarea-renderer.directive';
 
 // ---- Adapter (exported for DI overrides only) -------------------------------
+
+// ---- Validators (pure functions + compose) ---------------------------------
+export {
+  required,
+  minLength,
+  maxLength,
+  email,
+  pattern,
+  min,
+  max,
+  compose,
+  composeFirst,
+} from './lib/core/validators';
 export { SignalFormAdapter } from './lib/adapter/signal-form-adapter';
