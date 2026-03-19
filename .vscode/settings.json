@@ -1,23 +1,9 @@
 {
   // ─── GitHub Copilot ───────────────────────────────────────────────────────────
 
-  // Abilita la lettura automatica di .github/copilot-instructions.md
+  // Le istruzioni custom sono nei file dedicati in .github/copilot/
+  // (nuovo sistema - vedi .github/copilot/*.md)
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-
-  // Collega copilot-instructions.md anche alle review manuali (Cmd+I → Review)
-  "github.copilot.chat.reviewSelection.instructions": [
-    { "file": ".github/copilot-instructions.md" }
-  ],
-
-  // Collega copilot-instructions.md alla generazione di test
-  "github.copilot.chat.testGeneration.instructions": [
-    { "file": ".github/copilot-instructions.md" }
-  ],
-
-  // Collega copilot-instructions.md alle commit message suggestions
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    { "file": ".github/copilot-instructions.md" }
-  ],
 
   // ─── TypeScript ───────────────────────────────────────────────────────────────
 
@@ -31,7 +17,7 @@
   "typescript.suggest.autoImports": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
 
-  // Inlay hints — fondamentali per vedere i tipi inferiti in tempo reale
+  // Inlay hints — tipi inferiti visibili inline senza hover
   "typescript.inlayHints.parameterNames.enabled": "all",
   "typescript.inlayHints.parameterTypes.enabled": true,
   "typescript.inlayHints.variableTypes.enabled": true,
@@ -57,11 +43,7 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-
-  // Evidenzia i riferimenti al simbolo sotto cursore
   "editor.occurrencesHighlight": "multiFile",
-
-  // Bracket pair colorization
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": "active",
 
@@ -71,8 +53,6 @@
     "*.ts": "typescript",
     "*.html": "html"
   },
-
-  // Escludi dalla ricerca e dall'explorer le cartelle di build/cache
   "files.exclude": {
     "**/node_modules": true,
     "**/dist": true,
