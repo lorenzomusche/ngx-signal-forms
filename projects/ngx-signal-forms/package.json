@@ -1,0 +1,53 @@
+{
+  "name": "ngx-signal-forms",
+  "version": "0.1.0",
+  "description": "Angular declarative Signal Forms library — type-safe, reactive, renderer-pluggable via DI tokens",
+  "keywords": [
+    "angular",
+    "forms",
+    "signals",
+    "signal-forms",
+    "reactive-forms",
+    "declarative"
+  ],
+  "author": "lorenzomusche",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lorenzomusche/ngx-signal-forms.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lorenzomusche/ngx-signal-forms/issues"
+  },
+  "homepage": "https://github.com/lorenzomusche/ngx-signal-forms#readme",
+  "peerDependencies": {
+    "@angular/core": ">=21.0.0",
+    "@angular/common": ">=21.0.0",
+    "@angular/forms": ">=21.0.0",
+    "rxjs": ">=7.0.0",
+    "tslib": ">=2.3.0"
+  },
+  "peerDependenciesMeta": {
+    "rxjs": {
+      "optional": false
+    }
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "esm2022": "./esm2022/ngx-signal-forms.mjs",
+      "esm": "./esm2022/ngx-signal-forms.mjs",
+      "default": "./fesm2022/ngx-signal-forms.mjs"
+    }
+  },
+  "main": "fesm2022/ngx-signal-forms.mjs",
+  "module": "fesm2022/ngx-signal-forms.mjs",
+  "typings": "index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}
