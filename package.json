@@ -1,0 +1,33 @@
+{
+  "name": "ngx-signal-forms-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve demo",
+    "build:lib": "ng build ngx-signal-forms",
+    "build:demo": "ng build demo",
+    "watch:lib": "ng build ngx-signal-forms --watch",
+    "lint": "ng lint"
+  },
+  "dependencies": {
+    "@angular/animations": "^21.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/compiler": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
+    "@angular/platform-browser-dynamic": "^21.0.0",
+    "@angular/router": "^21.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^21.0.0",
+    "@angular/cli": "^21.0.0",
+    "@angular/compiler-cli": "^21.0.0",
+    "ng-packagr": "^21.0.0",
+    "typescript": "~5.6.0"
+  }
+}
