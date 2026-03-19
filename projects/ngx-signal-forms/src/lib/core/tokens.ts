@@ -1,5 +1,32 @@
 import { InjectionToken } from '@angular/core';
-import { NgxFormAdapter, NgxFieldRef, NgxControlRendererConfig } from './types';
+import {
+  NgxFormAdapter,
+  NgxFieldRef,
+  NgxControlRendererConfig,
+  NgxFormContext,
+  NgxFieldRegistration,
+} from './types';
+
+/**
+ * Scoped to NgxFormComponent via providers[].
+ * Injected by ControlDirective to register field state with the form.
+ */
+export const NGX_FORM_REGISTRY = new InjectionToken<NgxFormRegistry>(
+  'NGX_FORM_REGISTRY'
+);
+
+/** Interface implemented by SignalFormAdapter (the registry). */
+export interface NgxFormRegistry {
+  register<TValue>(field: NgxFieldRegistration<TValue>): void;
+}
+
+/**
+ * Scoped to NgxFormComponent via providers[].
+ * Provides form-level state (valid, submitting, etc.) to descendant controls.
+ */
+export const NGX_FORM_CONTEXT = new InjectionToken<NgxFormContext>(
+  'NGX_FORM_CONTEXT'
+);
 
 /**
  * Scoped to NgxFormComponent via providers[].
