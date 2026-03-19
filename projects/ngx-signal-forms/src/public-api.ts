@@ -53,6 +53,7 @@ export { NgxFormComponent } from "./lib/form/ngx-form.component";
 export { ControlComponent } from "./lib/control/control.component";
 export { NgxBaseControl } from "./lib/control/control.directive";
 export { NgxInlineErrorsDirective } from "./lib/control/inline-errors.directive";
+export { NgxOptionDirective } from "./lib/control/option.directive";
 
 // ─── Built-in renderer components ────────────────────────────────────────────
 export { NgxCheckboxComponent } from "./lib/renderers/checkbox-renderer.directive";
@@ -62,6 +63,7 @@ export { NgxNumberComponent } from "./lib/renderers/number-renderer.directive";
 export { NgxSelectComponent } from "./lib/renderers/select-renderer.directive";
 export { NgxTextComponent } from "./lib/renderers/text-renderer.directive";
 export { NgxTextareaComponent } from "./lib/renderers/textarea-renderer.directive";
+export { NgxToggleComponent } from "./lib/renderers/toggle-renderer.directive";
 
 // ─── Built-in validators (pure functions) ────────────────────────────────────
 export {

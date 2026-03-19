@@ -31,14 +31,55 @@
     --ngx-error-focus-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
 
     /* Checkbox */
-    --ngx-checkbox-size: 1.1rem;
+    --ngx-checkbox-size: 1.125rem;
     --ngx-checkbox-accent: var(--ngx-input-focus-color);
+    --ngx-checkbox-border: 2px solid #999;
+    --ngx-checkbox-border-radius: 3px;
     --ngx-checkbox-gap: 0.5rem;
+    --ngx-checkbox-transition: 0.15s ease;
 
-    /* Multiselect */
-    --ngx-multiselect-border: 1.5px solid var(--ngx-input-border-color);
-    --ngx-multiselect-border-radius: var(--ngx-input-border-radius);
-    --ngx-multiselect-padding: 0.75rem 1rem;
+    /* Toggle */
+    --ngx-toggle-width: 2.75rem;
+    --ngx-toggle-height: 1.5rem;
+    --ngx-toggle-thumb-size: 1.125rem;
+    --ngx-toggle-thumb-size-checked: var(--ngx-toggle-thumb-size);
+    --ngx-toggle-thumb-offset: 0.1875rem;
+    --ngx-toggle-thumb-color: #fff;
+    --ngx-toggle-thumb-color-checked: #fff;
+    --ngx-toggle-bg: #ccc;
+    --ngx-toggle-bg-checked: var(--ngx-input-focus-color);
+    --ngx-toggle-border: none;
+    --ngx-toggle-border-checked: none;
+    --ngx-toggle-gap: 0.5rem;
+    --ngx-toggle-transition: 0.2s ease;
+
+    /* Multiselect (chips) */
+    --ngx-multiselect-padding: 0.25rem 0;
+    --ngx-multiselect-max-height: none;
+    --ngx-chip-height: 1.75rem;
+    --ngx-chip-padding: 0 0.625rem;
+    --ngx-chip-gap: 0.375rem;
+    --ngx-chip-font-size: 0.8125rem;
+    --ngx-chip-border-radius: 0.5rem;
+    --ngx-chip-border: 1px solid #ccc;
+    --ngx-chip-bg: transparent;
+    --ngx-chip-color: inherit;
+    --ngx-chip-selected-bg: var(--ngx-input-focus-color);
+    --ngx-chip-selected-color: #fff;
+    --ngx-chip-selected-border: 1px solid var(--ngx-input-focus-color);
+    --ngx-chip-max-width: 10rem;
+    --ngx-chip-transition: 0.15s ease;
+
+    /* Custom Select (dropdown) */
+    --ngx-select-dropdown-bg: #fff;
+    --ngx-select-dropdown-border: var(--ngx-input-border);
+    --ngx-select-dropdown-border-radius: var(--ngx-input-border-radius);
+    --ngx-select-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --ngx-select-dropdown-max-height: 15rem;
+    --ngx-select-option-padding: 0.5rem 0.75rem;
+    --ngx-select-option-hover-bg: #f0f4ff;
+    --ngx-select-option-selected-bg: #e6ecff;
+    --ngx-select-option-selected-weight: 600;
 
     /* Layout */
     --ngx-renderer-gap: 0.25rem;
@@ -110,41 +151,239 @@
     box-shadow: var(--ngx-error-focus-shadow);
 }
 
-/* ─── Checkbox ────────────────────────────────────────────────────────────── */
+/* ─── Custom Checkbox (standalone) ─────────────────────────────────────────── */
+/* Visually hidden native input + ::before (box) + ::after (checkmark).        */
 
 .ngx-checkbox {
-    display: flex;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ngx-checkbox>span {
+    display: inline-flex;
     align-items: center;
     gap: var(--ngx-checkbox-gap);
-    cursor: pointer;
+    position: relative;
 }
 
 .ngx-checkbox input[type="checkbox"] {
-    width: var(--ngx-checkbox-size);
-    height: var(--ngx-checkbox-size);
-    accent-color: var(--ngx-checkbox-accent);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
-/* ─── Multiselect ─────────────────────────────────────────────────────────── */
+/* Box */
+.ngx-checkbox input[type="checkbox"]+span::before {
+    content: '';
+    display: inline-flex;
+    flex-shrink: 0;
+    width: var(--ngx-checkbox-size);
+    height: var(--ngx-checkbox-size);
+    border: var(--ngx-checkbox-border);
+    border-radius: var(--ngx-checkbox-border-radius);
+    background: transparent;
+    transition: background var(--ngx-checkbox-transition),
+        border-color var(--ngx-checkbox-transition);
+    vertical-align: middle;
+}
 
-.ngx-renderer--multiselect fieldset {
-    border: var(--ngx-multiselect-border);
-    border-radius: var(--ngx-multiselect-border-radius);
+/* Checkmark */
+.ngx-checkbox input[type="checkbox"]+span::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--ngx-checkbox-size) * 0.32);
+    top: 50%;
+    width: calc(var(--ngx-checkbox-size) * 0.3);
+    height: calc(var(--ngx-checkbox-size) * 0.55);
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: translateY(-60%) rotate(45deg) scale(0);
+    transition: transform var(--ngx-checkbox-transition);
+}
+
+/* Checked state */
+.ngx-checkbox input[type="checkbox"]:checked+span::before {
+    background: var(--ngx-checkbox-accent);
+    border-color: var(--ngx-checkbox-accent);
+}
+
+.ngx-checkbox input[type="checkbox"]:checked+span::after {
+    transform: translateY(-60%) rotate(45deg) scale(1);
+}
+
+/* Focus ring */
+.ngx-checkbox input[type="checkbox"]:focus-visible+span::before {
+    outline: 2px solid var(--ngx-checkbox-accent);
+    outline-offset: 2px;
+}
+
+/* Disabled */
+.ngx-checkbox input[type="checkbox"]:disabled+span::before {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ─── Toggle (switch) ─────────────────────────────────────────────────────── */
+
+.ngx-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--ngx-toggle-gap);
+    cursor: pointer;
+}
+
+.ngx-toggle input[type="checkbox"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.ngx-toggle__track {
+    position: relative;
+    display: inline-block;
+    width: var(--ngx-toggle-width);
+    height: var(--ngx-toggle-height);
+    background: var(--ngx-toggle-bg);
+    border: var(--ngx-toggle-border);
+    border-radius: calc(var(--ngx-toggle-height) / 2);
+    transition: background var(--ngx-toggle-transition), border-color var(--ngx-toggle-transition);
+    flex-shrink: 0;
+}
+
+.ngx-toggle__thumb {
+    position: absolute;
+    top: 50%;
+    left: var(--ngx-toggle-thumb-offset);
+    width: var(--ngx-toggle-thumb-size);
+    height: var(--ngx-toggle-thumb-size);
+    transform: translateY(-50%);
+    background: var(--ngx-toggle-thumb-color);
+    border-radius: 50%;
+    transition: transform var(--ngx-toggle-transition), width var(--ngx-toggle-transition), height var(--ngx-toggle-transition), left var(--ngx-toggle-transition), background var(--ngx-toggle-transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.ngx-toggle input:checked+.ngx-toggle__track {
+    background: var(--ngx-toggle-bg-checked);
+    border: var(--ngx-toggle-border-checked);
+}
+
+.ngx-toggle input:checked+.ngx-toggle__track .ngx-toggle__thumb {
+    width: var(--ngx-toggle-thumb-size-checked);
+    height: var(--ngx-toggle-thumb-size-checked);
+    background: var(--ngx-toggle-thumb-color-checked);
+    left: calc(var(--ngx-toggle-width) - var(--ngx-toggle-thumb-size-checked) - var(--ngx-toggle-thumb-offset));
+}
+
+.ngx-toggle input:focus-visible+.ngx-toggle__track {
+    box-shadow: var(--ngx-input-focus-shadow);
+}
+
+.ngx-toggle input:disabled+.ngx-toggle__track {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ─── Multiselect (Chips) ─────────────────────────────────────────────────── */
+
+.ngx-multiselect__label {
+    font-weight: var(--ngx-label-font-weight);
+    font-size: var(--ngx-label-font-size);
+}
+
+.ngx-multiselect__search {
+    padding: 0.375rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: var(--ngx-chip-border-radius);
+    font-size: var(--ngx-chip-font-size);
+    font-family: inherit;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ngx-multiselect__search:focus {
+    border-color: var(--ngx-input-focus-color);
+    box-shadow: var(--ngx-input-focus-shadow);
+}
+
+.ngx-multiselect__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ngx-chip-gap);
+    max-height: var(--ngx-multiselect-max-height);
+    overflow-y: auto;
     padding: var(--ngx-multiselect-padding);
 }
 
-.ngx-renderer--multiselect legend {
-    font-weight: var(--ngx-label-font-weight);
-    font-size: var(--ngx-label-font-size);
-    padding: 0 0.25rem;
+.ngx-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    height: var(--ngx-chip-height);
+    max-width: var(--ngx-chip-max-width);
+    padding: var(--ngx-chip-padding);
+    font-size: var(--ngx-chip-font-size);
+    font-family: inherit;
+    line-height: 1;
+    border: var(--ngx-chip-border);
+    border-radius: var(--ngx-chip-border-radius);
+    background: var(--ngx-chip-bg);
+    color: var(--ngx-chip-color);
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--ngx-chip-transition),
+        color var(--ngx-chip-transition),
+        border-color var(--ngx-chip-transition),
+        box-shadow var(--ngx-chip-transition);
 }
 
-.ngx-multiselect__option {
-    display: flex;
-    align-items: center;
-    gap: var(--ngx-checkbox-gap);
-    padding: 0.25rem 0;
-    cursor: pointer;
+.ngx-chip__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ngx-chip__check {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ngx-chip--selected {
+    background: var(--ngx-chip-selected-bg);
+    color: var(--ngx-chip-selected-color);
+    border: var(--ngx-chip-selected-border);
+}
+
+.ngx-chip:focus-visible {
+    outline: 2px solid var(--ngx-chip-selected-bg);
+    outline-offset: 2px;
+}
+
+.ngx-chip:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 /* ─── Block Errors (below input) ──────────────────────────────────────────── */
@@ -159,6 +398,121 @@
     color: var(--ngx-error-color);
     font-size: var(--ngx-error-font-size);
     line-height: var(--ngx-error-line-height);
+}
+
+/* ─── Custom Select Dropdown ──────────────────────────────────────────────── */
+
+.ngx-select {
+    position: relative;
+}
+
+.ngx-select__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--ngx-input-padding);
+    border: var(--ngx-input-border);
+    border-radius: var(--ngx-input-border-radius);
+    font-size: var(--ngx-input-font-size);
+    background: var(--ngx-select-dropdown-bg);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+}
+
+.ngx-select__trigger:focus {
+    border-color: var(--ngx-input-focus-color);
+    box-shadow: var(--ngx-input-focus-shadow);
+}
+
+.ngx-select__trigger[aria-invalid="true"] {
+    border-color: var(--ngx-error-color);
+}
+
+.ngx-select__trigger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ngx-select__value {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ngx-select__placeholder {
+    flex: 1;
+    color: #999;
+}
+
+.ngx-select__arrow {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.ngx-select__dropdown {
+    position: absolute;
+    z-index: 100;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0.25rem 0 0;
+    background: var(--ngx-select-dropdown-bg);
+    border: var(--ngx-select-dropdown-border);
+    border-radius: var(--ngx-select-dropdown-border-radius);
+    box-shadow: var(--ngx-select-dropdown-shadow);
+    overflow: hidden;
+}
+
+.ngx-select__search {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-bottom: 1px solid #eee;
+    font-size: var(--ngx-input-font-size);
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.ngx-select__list {
+    list-style: none;
+    padding: 0.25rem 0;
+    margin: 0;
+    max-height: var(--ngx-select-dropdown-max-height);
+    overflow-y: auto;
+}
+
+.ngx-select__no-results {
+    padding: var(--ngx-select-option-padding);
+    color: #999;
+    font-style: italic;
+}
+
+.ngx-select__option {
+    display: flex;
+    align-items: center;
+    padding: var(--ngx-select-option-padding);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.ngx-select__option--active {
+    background: var(--ngx-select-option-hover-bg);
+}
+
+.ngx-select__option--selected {
+    background: var(--ngx-select-option-selected-bg);
+    font-weight: var(--ngx-select-option-selected-weight);
 }
 
 /* ─── Inline Errors (next to label) ───────────────────────────────────────── */

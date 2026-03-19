@@ -5,11 +5,11 @@ import { NgxBaseControl } from "../control/control.directive";
  * Date input renderer component.
  *
  * ```html
- * <ngx-date name="birthDate" label="Date of Birth" />
+ * <ngx-control-date name="birthDate" label="Date of Birth" />
  * ```
  */
 @Component({
-  selector: "ngx-date",
+  selector: "ngx-control-date",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-renderer ngx-renderer--date" },
@@ -39,6 +39,8 @@ import { NgxBaseControl } from "../control/control.directive";
       (blur)="markAsTouched()"
       [attr.aria-invalid]="hasErrors()"
       [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+      [attr.aria-required]="ariaRequired()"
+      [attr.aria-disabled]="effectiveAriaDisabled()"
       [attr.aria-label]="label() || null"
     />
     @if (!inlineErrors && touched() && hasErrors()) {
@@ -60,7 +62,7 @@ export class NgxDateComponent extends NgxBaseControl<string | null> {
   readonly minDate = input<string | null>(null);
   readonly maxDate = input<string | null>(null);
 
-  protected readonly fieldId = `ngx-date-${NgxBaseControl.nextId()}`;
+  protected readonly fieldId = `ngx-control-date-${NgxBaseControl.nextId()}`;
 
   protected onChange(event: Event): void {
     const raw = (event.target as HTMLInputElement).value;

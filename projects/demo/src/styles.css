@@ -1,8 +1,12 @@
-/* ─── Library theme (provides all renderer styles via CSS custom properties) ─ */
-@import 'ngx-signal-forms/styles/ngx-signal-forms.css';
+/* ─── Library theme — Modern Neutral ───────────────────────────────────────── */
+@import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
 
 /*
- * To customise the theme, override any --ngx-* variable:
+ * Available themes:
+ *   @import 'ngx-signal-forms/styles/ngx-signal-forms.css';           – Default
+ *   @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';  – Material 3
+ *
+ * To customise, override any --ngx-* variable:
  *
  * :root {
  *   --ngx-input-focus-color: hotpink;
@@ -19,69 +23,90 @@
 }
 
 body {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.6;
-    color: #1a1a2e;
-    background: #f4f4f8;
+    font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    line-height: 1.5;
+    color: #09090b;
+    background: #ffffff;
     margin: 0;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 /* ─── Demo Layout ─────────────────────────────────────────────────────────── */
 
 .demo-card {
-    max-width: 640px;
+    max-width: 560px;
     margin: 0 auto;
-    background: #fff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
 .demo-card h1 {
-    margin: 0 0 0.25rem;
-    font-size: 1.5rem;
+    margin: 0 0 0.125rem;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #09090b;
 }
 
 .demo-card p.subtitle {
-    margin: 0 0 1.5rem;
-    color: #666;
-    font-size: 0.9rem;
+    margin: 0 0 1rem;
+    color: #3f3f46;
+    font-size: 0.8125rem;
+    letter-spacing: 0.016em;
 }
 
-/* ─── Buttons ──────────────────────────────────────────────────────────── */
+/* ─── Buttons — M3 filled button: 40dp height, 100dp corner, label-large ─── */
+
+/* ─── Form Row — side-by-side controls ─────────────────────────────────────── */
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────────────────── */
 
 button[type="submit"] {
-    margin-top: 0.5rem;
-    padding: 0.6rem 1.5rem;
-    background: #4361ee;
+    margin-top: 0.25rem;
+    padding: 0.5rem 1.25rem;
+    min-height: 2.25rem;
+    background: #18181b;
     color: #fff;
     border: none;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 600;
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.006em;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.2s cubic-bezier(0.2, 0, 0, 1),
+        box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
 }
 
 button[type="submit"]:hover {
-    background: #3a56d4;
+    background: rgba(24, 24, 27, 0.88);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3),
+        0 1px 3px 1px rgba(0, 0, 0, 0.15);
 }
 
 button[type="submit"]:disabled {
-    background: #adb5bd;
+    background: rgba(24, 24, 27, 0.12);
+    color: rgba(24, 24, 27, 0.38);
+    box-shadow: none;
     cursor: not-allowed;
 }
 
 /* ─── Submit result ────────────────────────────────────────────────────── */
 
 .submit-result {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: #d4edda;
-    border: 1px solid #c3e6cb;
-    border-radius: 6px;
-    font-size: 0.85rem;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: #d0f0c0;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8125rem;
 }
 
 .submit-result pre {

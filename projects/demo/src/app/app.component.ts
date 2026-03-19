@@ -1,3 +1,4 @@
+import { UpperCasePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import {
   createSignalFormAdapter,
@@ -10,10 +11,12 @@ import {
   NgxInlineErrorsDirective,
   NgxMultiselectComponent,
   NgxNumberComponent,
+  NgxOptionDirective,
   NgxSelectComponent,
   NgxSelectOption,
   NgxTextareaComponent,
   NgxTextComponent,
+  NgxToggleComponent,
   schemaEmail,
   schemaMax,
   schemaMaxLength,
@@ -31,6 +34,7 @@ interface ContactForm extends Record<string, unknown> {
   country: string | null;
   bio: string;
   interests: ReadonlyArray<string>;
+  newsletter: boolean;
   acceptTerms: boolean;
 }
 
@@ -48,6 +52,9 @@ interface ContactForm extends Record<string, unknown> {
     NgxDateComponent,
     NgxMultiselectComponent,
     NgxInlineErrorsDirective,
+    NgxToggleComponent,
+    NgxOptionDirective,
+    UpperCasePipe,
   ],
   template: `
     <div class="demo-card">
@@ -61,63 +68,87 @@ interface ContactForm extends Record<string, unknown> {
         [action]="submitAction"
         (submitted)="onSubmitted($event)"
       >
-        <ngx-text
-          name="firstName"
-          label="First Name"
-          placeholder="John"
-          [ariaRequired]="true"
-          ngxInlineErrors
-        />
+        <div class="form-row">
+          <ngx-control-text
+            name="firstName"
+            label="First Name"
+            placeholder="John"
+            [ariaRequired]="true"
+            ngxInlineErrors
+          />
 
-        <ngx-text
-          name="lastName"
-          label="Last Name"
-          placeholder="Doe"
-          [ariaRequired]="true"
-          ngxInlineErrors
-        />
+          <ngx-control-text
+            name="lastName"
+            label="Last Name"
+            placeholder="Doe"
+            [ariaRequired]="true"
+            ngxInlineErrors
+          />
+        </div>
 
-        <ngx-text
+        <ngx-control-text
           name="email"
           label="Email"
           placeholder="john.doe&#64;example.com"
+          [ariaRequired]="true"
           ngxInlineErrors
         />
 
-        <ngx-number
-          name="age"
-          label="Age"
-          placeholder="25"
-          [minValue]="0"
-          [maxValue]="120"
-        />
+        <div class="form-row">
+          <ngx-control-number
+            name="age"
+            label="Age"
+            placeholder="25"
+            [minValue]="0"
+            [maxValue]="120"
+          />
 
-        <ngx-date name="birthDate" label="Date of Birth" />
+          <ngx-control-date name="birthDate" label="Date of Birth" />
+        </div>
 
-        <ngx-select
+        <ngx-control-select
           name="country"
           label="Country"
           placeholder="Select a country…"
           [options]="countries"
-        />
+          [searchable]="true"
+        >
+          <ng-template ngxOption let-opt>
+            <span style="margin-right: 0.5rem">{{
+              countryFlags[opt.value]
+            }}</span>
+            <strong>{{ opt.label }}</strong>
+            <small style="margin-left: auto; color: #888">{{
+              opt.value | uppercase
+            }}</small>
+          </ng-template>
+        </ngx-control-select>
 
-        <ngx-textarea
+        <ngx-control-textarea
           name="bio"
           label="Bio"
           placeholder="Tell us about yourself…"
-          [rows]="4"
+          [rows]="3"
         />
 
-        <ngx-multiselect
+        <ngx-control-multiselect
           name="interests"
           label="Interests"
           [options]="interestOptions"
+          [searchable]="true"
         />
 
-        <ngx-checkbox
-          name="acceptTerms"
-          label="I accept the terms and conditions"
-        />
+        <div class="form-row">
+          <ngx-control-checkbox
+            name="acceptTerms"
+            label="I accept the terms and conditions"
+          />
+
+          <ngx-control-toggle
+            name="newsletter"
+            label="Subscribe to newsletter"
+          />
+        </div>
 
         <button type="submit" [disabled]="!adapter.state.canSubmit()">
           @if (adapter.state.submitting()) {
@@ -141,14 +172,15 @@ export class AppComponent {
   // ── Form model (writable signal) ────────────────────────────────────────────
 
   private readonly model = signal<ContactForm>({
-    firstName: "",
-    lastName: "",
-    email: "",
+    firstName: "lorenzo",
+    lastName: "muscherà",
+    email: "lorenzo.muschera@sonounamailinesistente.it",
     age: null,
     birthDate: null,
     country: null,
     bio: "",
-    interests: [],
+    interests: ["testing"],
+    newsletter: false,
     acceptTerms: false,
   });
 
@@ -197,12 +229,31 @@ export class AppComponent {
     { value: "jp", label: "Japan" },
   ];
 
+  readonly countryFlags: Record<string, string> = {
+    it: "🇮🇹",
+    us: "🇺🇸",
+    uk: "🇬🇧",
+    de: "🇩🇪",
+    fr: "🇫🇷",
+    es: "🇪🇸",
+    jp: "🇯🇵",
+  };
+
   readonly interestOptions: readonly NgxSelectOption[] = [
     { value: "angular", label: "Angular" },
     { value: "signals", label: "Signals" },
     { value: "rxjs", label: "RxJS" },
     { value: "typescript", label: "TypeScript" },
     { value: "testing", label: "Testing" },
+    { value: "ngrx", label: "NgRx" },
+    { value: "ssr", label: "SSR" },
+    { value: "a11y", label: "Accessibility" },
+    { value: "perf", label: "Performance" },
+    { value: "animations", label: "Animations" },
+    { value: "pwa", label: "PWA" },
+    { value: "graphql", label: "GraphQL" },
+    { value: "docker", label: "Docker" },
+    { value: "ci-cd", label: "CI/CD" },
   ];
 
   // ── Submit handling ─────────────────────────────────────────────────────────

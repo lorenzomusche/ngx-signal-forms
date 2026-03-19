@@ -5,11 +5,11 @@ import { NgxBaseControl } from "../control/control.directive";
  * Text input renderer component.
  *
  * ```html
- * <ngx-text name="firstName" label="First Name" placeholder="Enter name" />
+ * <ngx-control-text name="firstName" label="First Name" placeholder="Enter name" />
  * ```
  */
 @Component({
-  selector: "ngx-text",
+  selector: "ngx-control-text",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-renderer ngx-renderer--text" },
@@ -39,6 +39,7 @@ import { NgxBaseControl } from "../control/control.directive";
       [attr.aria-invalid]="hasErrors()"
       [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
       [attr.aria-required]="ariaRequired()"
+      [attr.aria-disabled]="effectiveAriaDisabled()"
       [attr.aria-label]="label() || null"
     />
     @if (!inlineErrors && touched() && hasErrors()) {
@@ -59,9 +60,8 @@ export class NgxTextComponent extends NgxBaseControl<string> {
   readonly name = input.required<string>();
   readonly label = input<string>("");
   readonly placeholder = input<string>("");
-  readonly ariaRequired = input<boolean>(false);
 
-  protected readonly fieldId = `ngx-text-${NgxBaseControl.nextId()}`;
+  protected readonly fieldId = `ngx-control-text-${NgxBaseControl.nextId()}`;
 
   protected onInput(event: Event): void {
     const target = event.target as HTMLInputElement;

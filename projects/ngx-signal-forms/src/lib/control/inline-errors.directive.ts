@@ -8,7 +8,7 @@ import { NGX_INLINE_ERRORS } from "../core/tokens";
  * next to the label instead of as a block below the input.
  *
  * ```html
- * <ngx-text name="email" label="Email" ngxInlineErrors />
+ * <ngx-control-text name="email" label="Email" ngxInlineErrors />
  * ```
  */
 @Directive({

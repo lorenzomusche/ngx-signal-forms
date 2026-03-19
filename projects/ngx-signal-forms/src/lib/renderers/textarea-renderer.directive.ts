@@ -5,11 +5,11 @@ import { NgxBaseControl } from "../control/control.directive";
  * Textarea renderer component.
  *
  * ```html
- * <ngx-textarea name="bio" label="Biography" [rows]="6" />
+ * <ngx-control-textarea name="bio" label="Biography" [rows]="6" />
  * ```
  */
 @Component({
-  selector: "ngx-textarea",
+  selector: "ngx-control-textarea",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-renderer ngx-renderer--textarea" },
@@ -37,6 +37,8 @@ import { NgxBaseControl } from "../control/control.directive";
       (blur)="markAsTouched()"
       [attr.aria-invalid]="hasErrors()"
       [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+      [attr.aria-required]="ariaRequired()"
+      [attr.aria-disabled]="effectiveAriaDisabled()"
       [attr.aria-label]="label() || null"
       >{{ value() }}</textarea
     >
@@ -60,7 +62,7 @@ export class NgxTextareaComponent extends NgxBaseControl<string> {
   readonly placeholder = input<string>("");
   readonly rows = input<number>(4);
 
-  protected readonly fieldId = `ngx-textarea-${NgxBaseControl.nextId()}`;
+  protected readonly fieldId = `ngx-control-textarea-${NgxBaseControl.nextId()}`;
 
   protected onInput(event: Event): void {
     this.setValue((event.target as HTMLTextAreaElement).value);

@@ -2,34 +2,41 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../control/control.directive";
 
 /**
- * Checkbox renderer component.
+ * Toggle (switch) renderer component.
+ *
+ * Renders a styled on/off switch bound to a boolean field.
  *
  * ```html
- * <ngx-control-checkbox name="acceptTerms" label="I accept the terms" />
+ * <ngx-control-toggle name="darkMode" label="Dark Mode" />
  * ```
  */
 @Component({
-  selector: "ngx-control-checkbox",
+  selector: "ngx-control-toggle",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--checkbox" },
+  host: { class: "ngx-renderer ngx-renderer--toggle" },
   template: `
-    <label class="ngx-checkbox">
+    <label class="ngx-toggle">
       <input
         type="checkbox"
+        role="switch"
         [id]="fieldId"
         [checked]="value()"
         [disabled]="isDisabled()"
         (change)="onChange($event)"
         (blur)="markAsTouched()"
+        [attr.aria-checked]="value()"
         [attr.aria-invalid]="hasErrors()"
         [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
         [attr.aria-required]="ariaRequired()"
         [attr.aria-disabled]="effectiveAriaDisabled()"
         [attr.aria-label]="label() || null"
       />
+      <span class="ngx-toggle__track" aria-hidden="true">
+        <span class="ngx-toggle__thumb"></span>
+      </span>
       @if (label()) {
-        <span>
+        <span class="ngx-toggle__label">
           {{ label() }}
           @if (inlineErrors && touched() && hasErrors()) {
             <span
@@ -57,10 +64,10 @@ import { NgxBaseControl } from "../control/control.directive";
     }
   `,
 })
-export class NgxCheckboxComponent extends NgxBaseControl<boolean> {
+export class NgxToggleComponent extends NgxBaseControl<boolean> {
   readonly label = input<string>("");
 
-  protected readonly fieldId = `ngx-control-checkbox-${NgxBaseControl.nextId()}`;
+  protected readonly fieldId = `ngx-control-toggle-${NgxBaseControl.nextId()}`;
 
   protected onChange(event: Event): void {
     this.setValue((event.target as HTMLInputElement).checked);

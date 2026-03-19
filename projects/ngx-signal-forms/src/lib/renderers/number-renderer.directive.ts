@@ -5,11 +5,11 @@ import { NgxBaseControl } from "../control/control.directive";
  * Number input renderer component.
  *
  * ```html
- * <ngx-number name="age" label="Age" [min]="0" [max]="120" />
+ * <ngx-control-number name="age" label="Age" [min]="0" [max]="120" />
  * ```
  */
 @Component({
-  selector: "ngx-number",
+  selector: "ngx-control-number",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-renderer ngx-renderer--number" },
@@ -41,6 +41,8 @@ import { NgxBaseControl } from "../control/control.directive";
       (blur)="markAsTouched()"
       [attr.aria-invalid]="hasErrors()"
       [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+      [attr.aria-required]="ariaRequired()"
+      [attr.aria-disabled]="effectiveAriaDisabled()"
       [attr.aria-label]="label() || null"
     />
     @if (!inlineErrors && touched() && hasErrors()) {
@@ -64,7 +66,7 @@ export class NgxNumberComponent extends NgxBaseControl<number | null> {
   readonly maxValue = input<number | null>(null);
   readonly step = input<number>(1);
 
-  protected readonly fieldId = `ngx-number-${NgxBaseControl.nextId()}`;
+  protected readonly fieldId = `ngx-control-number-${NgxBaseControl.nextId()}`;
 
   protected onInput(event: Event): void {
     const raw = (event.target as HTMLInputElement).value;

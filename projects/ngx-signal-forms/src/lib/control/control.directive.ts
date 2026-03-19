@@ -31,6 +31,12 @@ export abstract class NgxBaseControl<TValue = unknown> {
   protected readonly inlineErrors: boolean =
     inject(NGX_INLINE_ERRORS, { self: true, optional: true }) ?? false;
 
+  /** Marks the field as required for assistive technology. */
+  readonly ariaRequired = input<boolean>(false);
+
+  /** Marks the field as disabled for assistive technology (auto-derived from field state). */
+  readonly ariaDisabled = input<boolean | undefined>(undefined);
+
   /** Resolved field state — reactive to name() changes. */
   protected readonly fieldState: Signal<NgxFieldState<TValue>> = computed(
     () => {
@@ -67,6 +73,10 @@ export abstract class NgxBaseControl<TValue = unknown> {
   );
   protected readonly hasErrors: Signal<boolean> = computed(
     () => this.errors().length > 0,
+  );
+  /** Effective aria-disabled: explicit input overrides field state. */
+  protected readonly effectiveAriaDisabled: Signal<boolean> = computed(
+    () => this.ariaDisabled() ?? this.isDisabled(),
   );
   /** Error messages joined as a single string for inline display. */
   protected readonly inlineErrorText: Signal<string> = computed(() =>
