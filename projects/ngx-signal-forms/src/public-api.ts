@@ -2,43 +2,69 @@
  * Public API Surface of ngx-signal-forms
  *
  * Only expose what consumers need — the @angular/forms/signals
- * internals are encapsulated behind SignalFormAdapter.
+ * internals are encapsulated behind createSignalFormAdapter().
+ *
+ * Naming convention: all exported symbols use the Ngx prefix.
  */
 
-// ---- Core types -------------------------------------------------------------
+// ─── Core types ──────────────────────────────────────────────────────────────
 export type {
+  // Field-level
+  NgxFieldState,
+  NgxFieldRef,
+  NgxFieldTree,
+  NgxFieldError,
+  // Form-level
+  NgxFormError,
+  NgxFormState,
+  NgxFormAdapter,
   NgxFormSubmitEvent,
-  NgxFormContext,
-  NgxFieldRegistration,
-  NgxFieldConfig,
-  NgxSelectOption,
-  ValidatorFn,
-  NgxControlState,
-  NgxFormRegistry,
+  NgxSubmitMode,
+  // Control / renderer helpers
+  NgxControlOption,
+  NgxControlRendererConfig,
 } from './lib/core/types';
 
-// ---- Core tokens (for advanced consumers/controllers) -----------------------
-export { NGX_FORM_CONTEXT, NGX_FORM_REGISTRY } from './lib/core/tokens';
+// ─── DI tokens & interfaces ───────────────────────────────────────────────────
+export {
+  NGX_FORM_ADAPTER,
+  NGX_CONTROL_RENDERER,
+  RAW_FIELD_TREE_SYMBOL,
+} from './lib/core/tokens';
 
-// ---- Form component ---------------------------------------------------------
+export type { NgxControlRenderer } from './lib/core/tokens';
+
+// ─── Adapter factory (sole consumer of @angular/forms/signals) ───────────────
+export {
+  createSignalFormAdapter,
+} from './lib/adapter/signal-form-adapter';
+
+export type {
+  SignalFormAdapterOptions,
+  NgxFormAdapterWithEvent,
+} from './lib/adapter/signal-form-adapter';
+
+// ─── Form component ───────────────────────────────────────────────────────────
 export { NgxFormComponent } from './lib/form/ngx-form.component';
 
-// ---- Control ----------------------------------------------------------------
+// ─── Control (host + base directive + DI token) ───────────────────────────────
 export { ControlComponent } from './lib/control/control.component';
-export { ControlDirective, NGX_CONTROL_DIRECTIVE, RAW_CONTROL_SYMBOL } from './lib/control/control.directive';
+export {
+  ControlDirective,
+  NGX_CONTROL_DIRECTIVE,
+  RAW_CONTROL_SYMBOL,
+} from './lib/control/control.directive';
 
-// ---- Renderer directives ----------------------------------------------------
-export { TextRendererDirective } from './lib/renderers/text-renderer.directive';
-export { SelectRendererDirective } from './lib/renderers/select-renderer.directive';
+// ─── Built-in renderer directives ────────────────────────────────────────────
+export { TextRendererDirective }        from './lib/renderers/text-renderer.directive';
+export { SelectRendererDirective }      from './lib/renderers/select-renderer.directive';
 export { MultiselectRendererDirective } from './lib/renderers/multiselect-renderer.directive';
-export { CheckboxRendererDirective } from './lib/renderers/checkbox-renderer.directive';
-export { NumberRendererDirective } from './lib/renderers/number-renderer.directive';
-export { DateRendererDirective } from './lib/renderers/date-renderer.directive';
-export { TextareaRendererDirective } from './lib/renderers/textarea-renderer.directive';
+export { CheckboxRendererDirective }    from './lib/renderers/checkbox-renderer.directive';
+export { NumberRendererDirective }      from './lib/renderers/number-renderer.directive';
+export { DateRendererDirective }        from './lib/renderers/date-renderer.directive';
+export { TextareaRendererDirective }    from './lib/renderers/textarea-renderer.directive';
 
-// ---- Adapter (exported for DI overrides only) -------------------------------
-
-// ---- Validators (pure functions + compose) ---------------------------------
+// ─── Built-in validators (pure functions) ────────────────────────────────────
 export {
   required,
   minLength,
@@ -50,4 +76,3 @@ export {
   compose,
   composeFirst,
 } from './lib/core/validators';
-export { SignalFormAdapter } from './lib/adapter/signal-form-adapter';
