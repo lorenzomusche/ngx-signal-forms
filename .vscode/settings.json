@@ -1,18 +1,17 @@
 {
   // ─── GitHub Copilot ───────────────────────────────────────────────────────────
 
-  // Le istruzioni custom sono nei file dedicati in .github/copilot/
-  // (nuovo sistema - vedi .github/copilot/*.md)
+  // Abilita lettura dei file in .github/copilot/*.md e .github/copilot-instructions.md
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
 
   // ─── TypeScript ───────────────────────────────────────────────────────────────
 
-  // Usa il TypeScript del progetto (non quello bundled di VS Code)
+  // Usa il TypeScript del workspace invece di quello bundled con VS Code
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  // Chiede all'utente di usare il TS del workspace al primo avvio
+  "typescript.workspaceTrust.useWorkspaceTrust": true,
 
-  // Strict checks visibili nell'editor
-  "typescript.preferences.strictNullChecks": true,
+  // Auto-import
   "typescript.preferences.includePackageJsonAutoImports": "on",
   "typescript.suggest.autoImports": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
@@ -24,10 +23,6 @@
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "typescript.inlayHints.enumMemberValues.enabled": true,
-
-  // ─── Angular Language Service ─────────────────────────────────────────────────
-
-  "angular.experimental-ivy": true,
 
   // ─── Editor ───────────────────────────────────────────────────────────────────
 
@@ -43,11 +38,11 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "editor.occurrencesHighlight": "multiFile",
-  "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": "active",
 
-  // ─── File Associations ────────────────────────────────────────────────────────
+  // Evidenzia lo stesso simbolo in tutti i file aperti
+  "editor.occurrencesHighlight": "multiFile",
+
+  // ─── File & Search ───────────────────────────────────────────────────────
 
   "files.associations": {
     "*.ts": "typescript",
