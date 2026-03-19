@@ -1,40 +1,69 @@
-import { Directive, input, signal, WritableSignal } from '@angular/core';
-import { ControlDirective, NGX_CONTROL_DIRECTIVE } from '../control/control.directive';
-import { ValidatorFn } from '../core/types';
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { NgxBaseControl } from "../control/control.directive";
 
-@Directive({
-  selector: 'ngx-control[textarea]',
+/**
+ * Textarea renderer component.
+ *
+ * ```html
+ * <ngx-textarea name="bio" label="Biography" [rows]="6" />
+ * ```
+ */
+@Component({
+  selector: "ngx-textarea",
   standalone: true,
-  providers: [{ provide: NGX_CONTROL_DIRECTIVE, useExisting: TextareaRendererDirective }],
-  host: { class: 'ngx-renderer ngx-renderer--textarea' },
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: "ngx-renderer ngx-renderer--textarea" },
   template: `
-    <label *ngIf="label()" [for]="_id">{{ label() }}</label>
+    @if (label()) {
+      <label [for]="fieldId">
+        {{ label() }}
+        @if (inlineErrors && touched() && hasErrors()) {
+          <span
+            class="ngx-control__inline-errors"
+            role="alert"
+            aria-live="polite"
+          >
+            ({{ inlineErrorText() }})
+          </span>
+        }
+      </label>
+    }
     <textarea
-      [id]="_id"
+      [id]="fieldId"
       [placeholder]="placeholder()"
-      [disabled]="disabled()"
+      [disabled]="isDisabled()"
       [rows]="rows()"
       (input)="onInput($event)"
       (blur)="markAsTouched()"
-      [attr.aria-invalid]="errors().length > 0"
-    >{{ value() }}</textarea>
+      [attr.aria-invalid]="hasErrors()"
+      [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+      [attr.aria-label]="label() || null"
+      >{{ value() }}</textarea
+    >
+    @if (!inlineErrors && touched() && hasErrors()) {
+      <ul
+        [id]="fieldId + '-errors'"
+        class="ngx-control__errors"
+        role="alert"
+        aria-live="polite"
+      >
+        @for (err of errors(); track $index) {
+          <li class="ngx-control__error">{{ err.message }}</li>
+        }
+      </ul>
+    }
   `,
 })
-export class TextareaRendererDirective extends ControlDirective<string> {
+export class NgxTextareaComponent extends NgxBaseControl<string> {
   readonly name = input.required<string>();
-  readonly label = input<string>('');
-  readonly placeholder = input<string>('');
-  readonly disabled = input<boolean>(false);
+  readonly label = input<string>("");
+  readonly placeholder = input<string>("");
   readonly rows = input<number>(4);
-  readonly validators = input<readonly ValidatorFn<string>[]>([]);
 
-  get fieldName(): string { return this.name(); }
-  readonly value: WritableSignal<string> = signal('');
-
-  protected readonly _id = `ngx-textarea-${Math.random().toString(36).slice(2)}`;
+  protected readonly fieldId = `ngx-textarea-${NgxBaseControl.nextId()}`;
 
   protected onInput(event: Event): void {
-    this.value.set((event.target as HTMLTextAreaElement).value);
+    this.setValue((event.target as HTMLTextAreaElement).value);
     this.markAsDirty();
   }
 }

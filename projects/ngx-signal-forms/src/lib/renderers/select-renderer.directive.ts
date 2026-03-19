@@ -1,59 +1,83 @@
-import {
-  Directive,
-  input,
-  signal,
-  WritableSignal,
-} from '@angular/core';
-import { ControlDirective, NGX_CONTROL_DIRECTIVE } from '../control/control.directive';
-import { NgxSelectOption, ValidatorFn } from '../core/types';
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { NgxBaseControl } from "../control/control.directive";
+import { NgxSelectOption } from "../core/types";
 
 /**
- * Select renderer directive.
+ * Select renderer component.
  *
  * ```html
- * <ngx-control select name="province" [options]="provinces" />
+ * <ngx-select name="province" label="Province" [options]="provinces" />
  * ```
  */
-@Directive({
-  selector: 'ngx-control[select]',
+@Component({
+  selector: "ngx-select",
   standalone: true,
-  providers: [
-    { provide: NGX_CONTROL_DIRECTIVE, useExisting: SelectRendererDirective },
-  ],
-  host: { class: 'ngx-renderer ngx-renderer--select' },
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: "ngx-renderer ngx-renderer--select" },
   template: `
-    <label *ngIf="label()" [for]="_id">{{ label() }}</label>
+    @if (label()) {
+      <label [for]="fieldId">
+        {{ label() }}
+        @if (inlineErrors && touched() && hasErrors()) {
+          <span
+            class="ngx-control__inline-errors"
+            role="alert"
+            aria-live="polite"
+          >
+            ({{ inlineErrorText() }})
+          </span>
+        }
+      </label>
+    }
     <select
-      [id]="_id"
-      [disabled]="disabled()"
+      [id]="fieldId"
+      [disabled]="isDisabled()"
       (change)="onChange($event)"
       (blur)="markAsTouched()"
-      [attr.aria-invalid]="errors().length > 0"
+      [attr.aria-invalid]="hasErrors()"
+      [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+      [attr.aria-label]="label() || null"
     >
-      <option *ngIf="placeholder()" value="" disabled [selected]="!value()">{{ placeholder() }}</option>
+      @if (placeholder()) {
+        <option value="" disabled [selected]="value() === null">
+          {{ placeholder() }}
+        </option>
+      }
       @for (opt of options(); track opt.value) {
-        <option [value]="opt.value" [selected]="opt.value === value()">{{ opt.label }}</option>
+        <option [value]="opt.value" [selected]="opt.value === value()">
+          {{ opt.label }}
+        </option>
       }
     </select>
+    @if (!inlineErrors && touched() && hasErrors()) {
+      <ul
+        [id]="fieldId + '-errors'"
+        class="ngx-control__errors"
+        role="alert"
+        aria-live="polite"
+      >
+        @for (err of errors(); track $index) {
+          <li class="ngx-control__error">{{ err.message }}</li>
+        }
+      </ul>
+    }
   `,
 })
-export class SelectRendererDirective<TValue = string> extends ControlDirective<TValue | null> {
-  readonly name = input.required<string>();
-  readonly label = input<string>('');
-  readonly placeholder = input<string>('');
-  readonly disabled = input<boolean>(false);
+export class NgxSelectComponent<
+  TValue = string,
+> extends NgxBaseControl<TValue | null> {
+  readonly label = input<string>("");
+  readonly placeholder = input<string>("");
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
-  readonly validators = input<readonly ValidatorFn<TValue | null>[]>([]);
 
-  get fieldName(): string { return this.name(); }
-  readonly value: WritableSignal<TValue | null> = signal(null);
-
-  protected readonly _id = `ngx-select-${Math.random().toString(36).slice(2)}`;
+  protected readonly fieldId = `ngx-select-${NgxBaseControl.nextId()}`;
 
   protected onChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    const matched = this.options().find(o => String(o.value) === target.value);
-    this.value.set(matched?.value ?? null);
+    const matched = this.options().find(
+      (o: NgxSelectOption<TValue>) => String(o.value) === target.value,
+    );
+    this.setValue(matched?.value ?? null);
     this.markAsDirty();
   }
 }

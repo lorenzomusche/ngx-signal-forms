@@ -1,95 +1,105 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  contentChildren,
-  effect,
-  inject,
+  forwardRef,
   input,
-  OnDestroy,
   output,
-  signal,
-} from '@angular/core';
-import { SignalFormAdapter } from '../adapter/signal-form-adapter';
-import { NGX_FORM_CONTEXT, NGX_FORM_REGISTRY } from '../core/tokens';
+  Signal,
+} from "@angular/core";
+import { NGX_FORM_ADAPTER } from "../core/tokens";
 import {
-  NgxFieldConfig,
-  NgxFormContext,
+  NgxFieldRef,
+  NgxFormAdapter,
+  NgxFormError,
+  NgxFormState,
   NgxFormSubmitEvent,
-  ValidatorFn,
-} from '../core/types';
-import { ControlDirective } from '../control/control.directive';
+} from "../core/types";
 
 /**
  * Host component for a declarative signal-driven form.
  *
+ * Provides the adapter to all descendant renderer components via DI.
+ *
  * Usage:
  * ```html
- * <ngx-form [action]="onSubmit" (submitted)="handle($event)">
- *   <control text name="firstName" />
- *   <control select name="province" [options]="provinces" />
+ * <ngx-form [adapter]="adapter" [action]="onSubmit" (submitted)="handle($event)">
+ *   <ngx-text name="firstName" label="First Name" />
+ *   <ngx-select name="province" [options]="provinces" />
+ *   <button type="submit">Submit</button>
  * </ngx-form>
  * ```
  */
 @Component({
-  selector: 'ngx-form',
+  selector: "ngx-form",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form (submit)="$event.preventDefault(); handleSubmit()" novalidate>
       <ng-content />
-      <ng-content select="[formActions]" />
     </form>
   `,
   providers: [
-    SignalFormAdapter,
     {
-      provide: NGX_FORM_REGISTRY,
-      useFactory: () => inject(SignalFormAdapter),
-    },
-    {
-      provide: NGX_FORM_CONTEXT,
-      useFactory: (): NgxFormContext<unknown> => {
-        const adapter = inject(SignalFormAdapter);
-        return {
-          valid: adapter.valid,
-          submitting: adapter.submitting,
-          submitCount: adapter.submitCount,
-          lastSubmitErrors: adapter.lastSubmitErrors,
-        };
-      },
+      provide: NGX_FORM_ADAPTER,
+      useExisting: forwardRef(() => NgxFormComponent),
     },
   ],
 })
-export class NgxFormComponent<T extends Record<string, unknown>> implements OnDestroy {
-  // ---- inputs ----------------------------------------------------------------
-  readonly action = input.required<(value: T) => Promise<readonly string[]> | Promise<void>>();
-  readonly validators = input<readonly ValidatorFn<T>[]>([]);
+export class NgxFormComponent<
+  T extends Record<string, unknown>,
+> implements NgxFormAdapter<T> {
+  // ── Inputs ──────────────────────────────────────────────────────────────────
+  readonly adapter = input.required<NgxFormAdapter<T>>();
+  readonly action = input<
+    | ((value: T) => Promise<NgxFormError[] | void> | NgxFormError[] | void)
+    | undefined
+  >(undefined);
 
-  // ---- outputs ---------------------------------------------------------------
+  // ── Outputs ─────────────────────────────────────────────────────────────────
   readonly submitted = output<NgxFormSubmitEvent<T>>();
 
-  // ---- internals -------------------------------------------------------------
-  private readonly adapter = inject(SignalFormAdapter);
-  private readonly controls = contentChildren(ControlDirective);
+  // ── NgxFormAdapter delegation ───────────────────────────────────────────────
 
-  private readonly _submitEffect = effect(() => {
-    const lastEvent = this.adapter.lastSubmitEvent();
-    if (lastEvent !== null) {
-      this.submitted.emit(lastEvent as NgxFormSubmitEvent<T>);
-    }
-  });
-
-  // ---- public API ------------------------------------------------------------
-  /** Programmatic submit trigger */
-  submit(): void {
-    this.handleSubmit();
+  get state(): NgxFormState {
+    return this.adapter().state;
   }
 
-  // ---- lifecycle -------------------------------------------------------------
-  ngOnDestroy(): void {
-    this.adapter.destroy();
+  getValue(): T {
+    return this.adapter().getValue();
   }
 
-  // ---- private ---------------------------------------------------------------
-  protected handleSubmit(): void {
-    this.adapter.submit(this.action() as Parameters<SignalFormAdapter['submit']>[0]);
+  getField<K extends keyof T>(name: K): NgxFieldRef<T[K]> | null {
+    return this.adapter().getField(name);
+  }
+
+  errorsFor(path: keyof T | string): Signal<ReadonlyArray<NgxFormError>> {
+    return this.adapter().errorsFor(path);
+  }
+
+  async submit(
+    action: (
+      value: T,
+    ) => Promise<NgxFormError[] | void> | NgxFormError[] | void,
+  ): Promise<void> {
+    return this.adapter().submit(action);
+  }
+
+  markAllTouched(): void {
+    this.adapter().markAllTouched();
+  }
+
+  // ── Template handler ────────────────────────────────────────────────────────
+
+  protected async handleSubmit(): Promise<void> {
+    const act = this.action();
+    if (!act) return;
+
+    await this.submit(act);
+
+    this.submitted.emit({
+      value: this.getValue(),
+      valid: this.state.valid(),
+      errors: [...this.state.lastSubmitErrors()],
+    });
   }
 }

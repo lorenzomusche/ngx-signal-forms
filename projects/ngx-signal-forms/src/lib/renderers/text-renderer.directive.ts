@@ -1,66 +1,71 @@
-import {
-  Directive,
-  ElementRef,
-  HostListener,
-  inject,
-  input,
-  signal,
-  WritableSignal,
-} from '@angular/core';
-import { ControlDirective, NGX_CONTROL_DIRECTIVE } from '../control/control.directive';
-import { ValidatorFn } from '../core/types';
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { NgxBaseControl } from "../control/control.directive";
 
 /**
- * Text renderer directive.
- * Attach to <ngx-control> to render a native text input.
+ * Text input renderer component.
  *
  * ```html
- * <ngx-control text name="firstName" />
+ * <ngx-text name="firstName" label="First Name" placeholder="Enter name" />
  * ```
  */
-@Directive({
-  selector: 'ngx-control[text]',
+@Component({
+  selector: "ngx-text",
   standalone: true,
-  providers: [
-    { provide: NGX_CONTROL_DIRECTIVE, useExisting: TextRendererDirective },
-  ],
-  host: {
-    class: 'ngx-renderer ngx-renderer--text',
-  },
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: "ngx-renderer ngx-renderer--text" },
   template: `
-    <label *ngIf="label()" [for]="_id">{{ label() }}</label>
+    @if (label()) {
+      <label [for]="fieldId">
+        {{ label() }}
+        @if (inlineErrors && touched() && hasErrors()) {
+          <span
+            class="ngx-control__inline-errors"
+            role="alert"
+            aria-live="polite"
+          >
+            ({{ inlineErrorText() }})
+          </span>
+        }
+      </label>
+    }
     <input
-      [id]="_id"
+      [id]="fieldId"
       type="text"
       [placeholder]="placeholder()"
       [value]="value()"
-      [disabled]="disabled()"
+      [disabled]="isDisabled()"
       (input)="onInput($event)"
       (blur)="markAsTouched()"
-      [attr.aria-invalid]="errors().length > 0"
-      [attr.aria-describedby]="_id + '-errors'"
+      [attr.aria-invalid]="hasErrors()"
+      [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+      [attr.aria-required]="ariaRequired()"
+      [attr.aria-label]="label() || null"
     />
+    @if (!inlineErrors && touched() && hasErrors()) {
+      <ul
+        [id]="fieldId + '-errors'"
+        class="ngx-control__errors"
+        role="alert"
+        aria-live="polite"
+      >
+        @for (err of errors(); track $index) {
+          <li class="ngx-control__error">{{ err.message }}</li>
+        }
+      </ul>
+    }
   `,
 })
-export class TextRendererDirective extends ControlDirective<string> {
-  // ---- inputs ----------------------------------------------------------------
+export class NgxTextComponent extends NgxBaseControl<string> {
   readonly name = input.required<string>();
-  readonly label = input<string>('');
-  readonly placeholder = input<string>('');
-  readonly disabled = input<boolean>(false);
-  readonly validators = input<readonly ValidatorFn<string>[]>([]);
+  readonly label = input<string>("");
+  readonly placeholder = input<string>("");
+  readonly ariaRequired = input<boolean>(false);
 
-  // ---- ControlDirective impl -------------------------------------------------
-  get fieldName(): string { return this.name(); }
-
-  readonly value: WritableSignal<string> = signal('');
-
-  // ---- private ---------------------------------------------------------------
-  protected readonly _id = `ngx-text-${Math.random().toString(36).slice(2)}`;
+  protected readonly fieldId = `ngx-text-${NgxBaseControl.nextId()}`;
 
   protected onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
-    this.value.set(target.value);
+    this.setValue(target.value);
     this.markAsDirty();
   }
 }

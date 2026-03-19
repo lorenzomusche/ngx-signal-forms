@@ -1,47 +1,74 @@
-import { Directive, input, signal, WritableSignal } from '@angular/core';
-import { ControlDirective, NGX_CONTROL_DIRECTIVE } from '../control/control.directive';
-import { ValidatorFn } from '../core/types';
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { NgxBaseControl } from "../control/control.directive";
 
-@Directive({
-  selector: 'ngx-control[number]',
+/**
+ * Number input renderer component.
+ *
+ * ```html
+ * <ngx-number name="age" label="Age" [min]="0" [max]="120" />
+ * ```
+ */
+@Component({
+  selector: "ngx-number",
   standalone: true,
-  providers: [{ provide: NGX_CONTROL_DIRECTIVE, useExisting: NumberRendererDirective }],
-  host: { class: 'ngx-renderer ngx-renderer--number' },
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: "ngx-renderer ngx-renderer--number" },
   template: `
-    <label *ngIf="label()" [for]="_id">{{ label() }}</label>
+    @if (label()) {
+      <label [for]="fieldId">
+        {{ label() }}
+        @if (inlineErrors && touched() && hasErrors()) {
+          <span
+            class="ngx-control__inline-errors"
+            role="alert"
+            aria-live="polite"
+          >
+            ({{ inlineErrorText() }})
+          </span>
+        }
+      </label>
+    }
     <input
-      [id]="_id"
+      [id]="fieldId"
       type="number"
       [placeholder]="placeholder()"
       [value]="value() ?? ''"
-      [disabled]="disabled()"
-      [min]="min() ?? null"
-      [max]="max() ?? null"
+      [disabled]="isDisabled()"
+      [min]="minValue()"
+      [max]="maxValue()"
       [step]="step()"
       (input)="onInput($event)"
       (blur)="markAsTouched()"
-      [attr.aria-invalid]="errors().length > 0"
+      [attr.aria-invalid]="hasErrors()"
+      [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+      [attr.aria-label]="label() || null"
     />
+    @if (!inlineErrors && touched() && hasErrors()) {
+      <ul
+        [id]="fieldId + '-errors'"
+        class="ngx-control__errors"
+        role="alert"
+        aria-live="polite"
+      >
+        @for (err of errors(); track $index) {
+          <li class="ngx-control__error">{{ err.message }}</li>
+        }
+      </ul>
+    }
   `,
 })
-export class NumberRendererDirective extends ControlDirective<number | null> {
-  readonly name = input.required<string>();
-  readonly label = input<string>('');
-  readonly placeholder = input<string>('');
-  readonly disabled = input<boolean>(false);
-  readonly min = input<number | null>(null);
-  readonly max = input<number | null>(null);
+export class NgxNumberComponent extends NgxBaseControl<number | null> {
+  readonly label = input<string>("");
+  readonly placeholder = input<string>("");
+  readonly minValue = input<number | null>(null);
+  readonly maxValue = input<number | null>(null);
   readonly step = input<number>(1);
-  readonly validators = input<readonly ValidatorFn<number | null>[]>([]);
 
-  get fieldName(): string { return this.name(); }
-  readonly value: WritableSignal<number | null> = signal(null);
-
-  protected readonly _id = `ngx-number-${Math.random().toString(36).slice(2)}`;
+  protected readonly fieldId = `ngx-number-${NgxBaseControl.nextId()}`;
 
   protected onInput(event: Event): void {
     const raw = (event.target as HTMLInputElement).value;
-    this.value.set(raw === '' ? null : Number(raw));
+    this.setValue(raw === "" ? null : Number(raw));
     this.markAsDirty();
   }
 }

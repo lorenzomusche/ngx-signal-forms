@@ -4,30 +4,31 @@
  * THE ONLY FILE that imports from @angular/forms/signals.
  * If Angular changes the Signal Forms API, only this file needs updating.
  */
-import { computed, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, Signal, signal, WritableSignal } from "@angular/core";
 import {
   form,
-  required as ngRequired,
-  email as ngEmail,
-  min as ngMin,
-  max as ngMax,
-  minLength as ngMinLength,
-  maxLength as ngMaxLength,
-  pattern as ngPattern,
   debounce as ngDebounce,
-} from '@angular/forms/signals';
+  email as ngEmail,
+  max as ngMax,
+  maxLength as ngMaxLength,
+  min as ngMin,
+  minLength as ngMinLength,
+  pattern as ngPattern,
+  required as ngRequired,
+} from "@angular/forms/signals";
 
+import { RAW_FIELD_TREE_SYMBOL } from "../core/tokens";
 import {
-  NgxFormAdapter,
-  NgxFormError,
-  NgxFormState,
+  NgxFieldError,
   NgxFieldRef,
   NgxFieldState,
   NgxFieldTree,
-  NgxSubmitMode,
+  NgxFormAdapter,
+  NgxFormError,
+  NgxFormState,
   NgxFormSubmitEvent,
-} from '../core/types';
-import { RAW_FIELD_TREE_SYMBOL } from '../core/tokens';
+  NgxSubmitMode,
+} from "../core/types";
 
 // ─── Validator re-exports ────────────────────────────────────────────────────────────
 // Consumers import validators from us, never from @angular/forms/signals
@@ -41,30 +42,49 @@ export const maxLength = ngMaxLength;
 export const pattern = ngPattern;
 export const debounce = ngDebounce;
 
+// ─── Internal type for raw Angular field state ───────────────────────────────────
+
+/** Shape returned by Angular's form() field signal — typed as unknown to avoid any. */
+interface RawAngularFieldState {
+  readonly value: WritableSignal<unknown>;
+  readonly valid: Signal<boolean>;
+  readonly touched: Signal<boolean>;
+  readonly dirty: Signal<boolean>;
+  readonly disabled: Signal<boolean>;
+  readonly readonly: Signal<boolean>;
+  readonly pending: Signal<boolean>;
+  readonly errors: Signal<ReadonlyArray<Record<string, unknown>> | null>;
+}
+
 // ─── Adapter Factory ────────────────────────────────────────────────────────────
 
 export interface SignalFormAdapterOptions<T extends object> {
-  model: Signal<T>;
-  schema?: (schemaPath: NgxFieldTree<T>) => void;
-  submitMode: NgxSubmitMode;
+  readonly model: Signal<T>;
+  readonly schema?: (schemaPath: NgxFieldTree<T>) => void;
+  readonly submitMode: NgxSubmitMode;
 }
 
-export type NgxFormAdapterWithEvent<T extends object> =
-  NgxFormAdapter<T> & {
-    buildSubmitEvent(value: T): NgxFormSubmitEvent<T>;
-  };
+export type NgxFormAdapterWithEvent<T extends object> = NgxFormAdapter<T> & {
+  buildSubmitEvent(value: T): NgxFormSubmitEvent<T>;
+};
 
 export function createSignalFormAdapter<T extends object>(
-  options: SignalFormAdapterOptions<T>
+  options: SignalFormAdapterOptions<T>,
 ): NgxFormAdapterWithEvent<T> {
   const { model, schema, submitMode } = options;
 
   // ① Create FieldTree via Angular's form() — isolated here
-  const rawFieldTree = schema
-    ? form(model as WritableSignal<T>, schema as (path: any) => void)
-    : form(model as WritableSignal<T>);
+  const rawFieldTree: Record<string, () => RawAngularFieldState> = schema
+    ? (form(model as WritableSignal<T>, schema) as unknown as Record<
+        string,
+        () => RawAngularFieldState
+      >)
+    : (form(model as WritableSignal<T>) as unknown as Record<
+        string,
+        () => RawAngularFieldState
+      >);
 
-  const fieldKeys = Object.keys(rawFieldTree) as Array<keyof T>;
+  const fieldKeys = Object.keys(rawFieldTree) as Array<keyof T & string>;
 
   // ② Internal writable signals
   const _submitting = signal(false);
@@ -73,15 +93,21 @@ export function createSignalFormAdapter<T extends object>(
 
   // ③ Derived signals from all fields
   const _valid = computed(() =>
-    fieldKeys.every((k) => (rawFieldTree[k] as any)().valid())
+    fieldKeys.every((k) => {
+      const ref = rawFieldTree[k];
+      return ref !== undefined ? ref().valid() : true;
+    }),
   );
   const _pending = computed(() =>
-    fieldKeys.some((k) => (rawFieldTree[k] as any)().pending())
+    fieldKeys.some((k) => {
+      const ref = rawFieldTree[k];
+      return ref !== undefined ? ref().pending() : false;
+    }),
   );
   const _canSubmit = computed(() => {
     if (_submitting()) return false;
-    if (submitMode === 'valid-only') return _valid() && !_pending();
-    if (submitMode === 'always') return true;
+    if (submitMode === "valid-only") return _valid() && !_pending();
+    if (submitMode === "always") return true;
     return false; // 'manual'
   });
 
@@ -94,69 +120,125 @@ export function createSignalFormAdapter<T extends object>(
     lastSubmitErrors: _lastSubmitErrors.asReadonly(),
   };
 
-  // ④ Wrap Angular FieldRef -> NgxFieldRef (stable contract)
-  function wrapFieldRef<TValue>(angularRef: any): NgxFieldRef<TValue> {
-    return (): NgxFieldState<TValue> => {
-      const s = angularRef();
-      return {
-        value: s.value,
-        valid: computed(() => s.valid()),
-        touched: computed(() => s.touched()),
-        dirty: computed(() => s.dirty()),
-        disabled: computed(() => s.disabled()),
-        readonly: computed(() => s.readonly()),
-        pending: computed(() => s.pending()),
-        errors: computed(() =>
-          (s.errors() ?? []).map((e: any) => ({
-            kind: e.kind,
-            message: e.message,
-            payload: e.payload,
-          }))
-        ),
-      };
+  // ④ Default error messages by kind (when Angular doesn't provide one)
+  const defaultMessages: Record<
+    string,
+    (e: Record<string, unknown>) => string
+  > = {
+    required: () => "This field is required",
+    email: () => "Invalid email address",
+    min: (e) => `Value must be at least ${String(e["min"] ?? "")}`,
+    max: (e) => `Value must be at most ${String(e["max"] ?? "")}`,
+    minLength: (e) =>
+      `Must be at least ${String(e["minLength"] ?? "")} characters`,
+    maxLength: (e) =>
+      `Must be at most ${String(e["maxLength"] ?? "")} characters`,
+    pattern: () => "Invalid format",
+  };
+
+  function resolveErrorMessage(e: Record<string, unknown>): string {
+    const message = e["message"];
+    if (typeof message === "string" && message.length > 0) return message;
+
+    const kind = String(e["kind"] ?? "");
+    const fallback = defaultMessages[kind];
+    return fallback ? fallback(e) : kind;
+  }
+
+  // ⑤ Memoized field ref cache
+  const fieldCache = new Map<string, NgxFieldRef<unknown>>();
+
+  function wrapFieldRef<TValue>(
+    angularRef: () => RawAngularFieldState,
+  ): NgxFieldRef<TValue> {
+    const rawState = angularRef();
+    const _touched = signal(false);
+    const _dirty = signal(false);
+
+    const wrappedErrors = computed<ReadonlyArray<NgxFieldError>>(() => {
+      const raw = rawState.errors() ?? [];
+      return raw.map((e: Record<string, unknown>) => ({
+        kind: String(e["kind"] ?? ""),
+        message: resolveErrorMessage(e),
+        payload: e["payload"],
+      }));
+    });
+
+    const fieldState: NgxFieldState<TValue> = {
+      value: rawState.value as WritableSignal<TValue>,
+      valid: rawState.valid,
+      touched: _touched,
+      dirty: _dirty,
+      disabled: rawState.disabled,
+      readonly: rawState.readonly,
+      pending: rawState.pending,
+      errors: wrappedErrors,
     };
+
+    return () => fieldState;
   }
 
   function getField<K extends keyof T>(name: K): NgxFieldRef<T[K]> | null {
-    const ref = rawFieldTree[name];
-    return ref ? wrapFieldRef<T[K]>(ref) : null;
+    const key = name as string;
+    const cached = fieldCache.get(key);
+    if (cached) return cached as NgxFieldRef<T[K]>;
+
+    const ref = rawFieldTree[key];
+    if (!ref) return null;
+
+    const wrapped = wrapFieldRef<T[K]>(ref);
+    fieldCache.set(key, wrapped as NgxFieldRef<unknown>);
+    return wrapped;
   }
 
-  function errorsFor(path: keyof T | string): Signal<ReadonlyArray<NgxFormError>> {
-    const ref = rawFieldTree[path as keyof T];
-    if (!ref) {
-      return computed(() => _lastSubmitErrors().filter((e) => e.path === path));
+  function getValue(): T {
+    return model();
+  }
+
+  function errorsFor(
+    path: keyof T | string,
+  ): Signal<ReadonlyArray<NgxFormError>> {
+    const key = path as string;
+    const fieldRef = getField(key as keyof T);
+    if (!fieldRef) {
+      return computed(() =>
+        _lastSubmitErrors().filter((e: NgxFormError) => e.path === key),
+      );
     }
     return computed(() =>
-      ((ref as any)().errors() ?? []).map((e: any) => ({
-        path: path as string,
-        kind: e.kind,
-        message: e.message,
-        payload: e.payload,
-      }))
+      fieldRef()
+        .errors()
+        .map((e: NgxFieldError) => ({
+          path: key,
+          kind: e.kind,
+          message: e.message,
+          payload: e.payload,
+        })),
     );
   }
 
   function markAllTouched(): void {
-    fieldKeys.forEach((k) => {
-      const s = (rawFieldTree[k] as any)();
-      if (!s.touched()) {
-        s.value.set(s.value());
+    for (const k of fieldKeys) {
+      const ref = getField(k as keyof T);
+      if (ref) {
+        ref().touched.set(true);
       }
-    });
+    }
   }
 
   async function submit(
-    action: (value: T) => Promise<NgxFormError[] | void> | NgxFormError[] | void
+    action: (
+      value: T,
+    ) => Promise<NgxFormError[] | void> | NgxFormError[] | void,
   ): Promise<void> {
-    if (submitMode === 'valid-only' && !_valid()) {
+    if (submitMode === "valid-only" && !_valid()) {
       markAllTouched();
       return;
     }
     if (_submitting()) return;
 
     _submitting.set(true);
-    _submitCount.update((c) => c + 1);
+    _submitCount.update((count: number) => count + 1);
     _lastSubmitErrors.set([]);
 
     try {
@@ -165,6 +247,10 @@ export function createSignalFormAdapter<T extends object>(
       if (Array.isArray(errors) && errors.length > 0) {
         _lastSubmitErrors.set(errors);
       }
+    } catch (e: unknown) {
+      _lastSubmitErrors.set([
+        { path: null, kind: "unknown", message: String(e) },
+      ]);
     } finally {
       _submitting.set(false);
     }
@@ -179,5 +265,13 @@ export function createSignalFormAdapter<T extends object>(
     } as NgxFormSubmitEvent<T>;
   }
 
-  return { state, getField, errorsFor, submit, markAllTouched, buildSubmitEvent };
+  return {
+    state,
+    getValue,
+    getField,
+    errorsFor,
+    submit,
+    markAllTouched,
+    buildSubmitEvent,
+  };
 }

@@ -1,61 +1,96 @@
 import {
+  computed,
   Directive,
   inject,
-  InjectionToken,
-  OnInit,
-  signal,
-  WritableSignal,
-} from '@angular/core';
-import { NGX_FORM_REGISTRY } from '../core/tokens';
-import { NgxControlState, NgxFieldRegistration, ValidatorFn } from '../core/types';
+  input,
+  InputSignal,
+  Signal,
+} from "@angular/core";
+import { NGX_FORM_ADAPTER, NGX_INLINE_ERRORS } from "../core/tokens";
+import { NgxFieldError, NgxFieldState, NgxFormAdapter } from "../core/types";
 
-/** Symbol for internal raw-field access (adapter/controllers only) */
-export const RAW_CONTROL_SYMBOL: unique symbol = Symbol('NgxRawControl');
+/** Global counter for generating unique field IDs. */
+let _nextFieldId = 0;
 
 /**
- * Abstract base directive for all renderer directives.
- * Registers the field with the parent SignalFormAdapter.
+ * Abstract base class for all renderer components.
+ *
+ * Injects the nearest NgxFormAdapter (provided by NgxFormComponent)
+ * and resolves the field state by name. Provides convenience computed
+ * signals that concrete renderers bind in their templates.
  */
 @Directive()
-export abstract class ControlDirective<TValue = unknown> implements OnInit {
-  protected readonly registry = inject(NGX_FORM_REGISTRY, { optional: true });
+export abstract class NgxBaseControl<TValue = unknown> {
+  /** Concrete renderers must declare: `readonly name = input.required<string>();` */
+  public readonly name: InputSignal<string> = input.required<string>();
 
-  abstract readonly fieldName: string;
-  abstract readonly value: WritableSignal<TValue>;
-  abstract readonly validators: readonly ValidatorFn<TValue>[];
+  private readonly adapter: NgxFormAdapter<Record<string, unknown>> =
+    inject<NgxFormAdapter<Record<string, unknown>>>(NGX_FORM_ADAPTER);
 
-  readonly errors: WritableSignal<readonly string[]> = signal([]);
-  readonly touched: WritableSignal<boolean> = signal(false);
-  readonly dirty: WritableSignal<boolean> = signal(false);
+  /** True when NgxInlineErrorsDirective is applied to this element. */
+  protected readonly inlineErrors: boolean =
+    inject(NGX_INLINE_ERRORS, { self: true, optional: true }) ?? false;
 
-  ngOnInit(): void {
-    if (!this.registry) return;
-    const reg: NgxFieldRegistration<TValue> = {
-      name: this.fieldName,
-      value: this.value,
-      errors: this.errors,
-      touched: this.touched,
-      dirty: this.dirty,
-      validators: this.validators,
-    };
-    this.registry.register(reg);
+  /** Resolved field state — reactive to name() changes. */
+  protected readonly fieldState: Signal<NgxFieldState<TValue>> = computed(
+    () => {
+      const n = this.name();
+      const ref = this.adapter.getField(n);
+      if (!ref) {
+        throw new Error(
+          `[ngx-signal-forms] Field "${n}" not found in form adapter`,
+        );
+      }
+      return ref() as NgxFieldState<TValue>;
+    },
+  );
+
+  // ── Convenience signals for templates ───────────────────────────────────────
+
+  protected readonly value: Signal<TValue> = computed(() =>
+    this.fieldState().value(),
+  );
+  protected readonly errors: Signal<ReadonlyArray<NgxFieldError>> = computed(
+    () => this.fieldState().errors(),
+  );
+  protected readonly touched: Signal<boolean> = computed(() =>
+    this.fieldState().touched(),
+  );
+  protected readonly dirty: Signal<boolean> = computed(() =>
+    this.fieldState().dirty(),
+  );
+  protected readonly isDisabled: Signal<boolean> = computed(() =>
+    this.fieldState().disabled(),
+  );
+  protected readonly isValid: Signal<boolean> = computed(() =>
+    this.fieldState().valid(),
+  );
+  protected readonly hasErrors: Signal<boolean> = computed(
+    () => this.errors().length > 0,
+  );
+  /** Error messages joined as a single string for inline display. */
+  protected readonly inlineErrorText: Signal<string> = computed(() =>
+    this.errors()
+      .map((e: NgxFieldError) => e.message)
+      .join(", "),
+  );
+
+  // ── Mutation helpers ────────────────────────────────────────────────────────
+
+  protected setValue(newValue: TValue): void {
+    this.fieldState().value.set(newValue);
   }
 
-  markAsTouched(): void { this.touched.set(true); }
-  markAsDirty(): void { this.dirty.set(true); }
+  protected markAsTouched(): void {
+    this.fieldState().touched.set(true);
+  }
 
-  /** Raw state accessor — for adapter/controllers via Symbol */
-  get [RAW_CONTROL_SYMBOL](): NgxControlState<TValue> {
-    return {
-      value: this.value(),
-      errors: this.errors,
-      touched: this.touched,
-      dirty: this.dirty,
-    };
+  protected markAsDirty(): void {
+    this.fieldState().dirty.set(true);
+  }
+
+  /** Generate a unique ID for template label/input association. */
+  protected static nextId(): number {
+    return _nextFieldId++;
   }
 }
-
-/** DI token: ControlComponent uses this to inject the active renderer */
-export const NGX_CONTROL_DIRECTIVE = new InjectionToken<ControlDirective>(
-  'NGX_CONTROL_DIRECTIVE'
-);

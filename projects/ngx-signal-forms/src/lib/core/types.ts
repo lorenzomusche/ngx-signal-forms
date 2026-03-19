@@ -1,4 +1,5 @@
-import { Signal, WritableSignal } from '@angular/core';
+import { Signal, WritableSignal } from "@angular/core";
+import { SchemaPathTree } from "@angular/forms/signals";
 
 // ─── Validator ───────────────────────────────────────────────────────────────
 
@@ -8,7 +9,7 @@ import { Signal, WritableSignal } from '@angular/core';
  * (empty array = valid).
  */
 export type ValidatorFn<TValue = unknown> = (
-  value: TValue
+  value: TValue,
 ) => readonly string[];
 
 // ─── Field State ─────────────────────────────────────────────────────────────
@@ -20,8 +21,8 @@ export type ValidatorFn<TValue = unknown> = (
 export interface NgxFieldState<TValue> {
   readonly value: WritableSignal<TValue>;
   readonly valid: Signal<boolean>;
-  readonly touched: Signal<boolean>;
-  readonly dirty: Signal<boolean>;
+  readonly touched: WritableSignal<boolean>;
+  readonly dirty: WritableSignal<boolean>;
   readonly disabled: Signal<boolean>;
   readonly readonly: Signal<boolean>;
   readonly pending: Signal<boolean>;
@@ -32,9 +33,7 @@ export interface NgxFieldState<TValue> {
 export type NgxFieldRef<TValue> = () => NgxFieldState<TValue>;
 
 /** Mirrors the shape of the form model. */
-export type NgxFieldTree<T extends object> = {
-  readonly [K in keyof T]: NgxFieldRef<T[K]>;
-};
+export type NgxFieldTree<T> = SchemaPathTree<T>;
 
 // ─── Errors ───────────────────────────────────────────────────────────────────
 export interface NgxFieldError {
@@ -53,9 +52,9 @@ export interface NgxFormError {
 
 // ─── Submit ───────────────────────────────────────────────────────────────────
 export type NgxSubmitMode =
-  | 'valid-only' // submit blocked if form is invalid
-  | 'always'     // submit fires even if invalid
-  | 'manual';    // library never auto-submits
+  | "valid-only" // submit blocked if form is invalid
+  | "always" // submit fires even if invalid
+  | "manual"; // library never auto-submits
 
 export interface NgxFormSubmitEvent<T extends object> {
   readonly value: T;
@@ -69,6 +68,9 @@ export interface NgxControlOption<TValue = string> {
   readonly label: string;
   readonly disabled?: boolean;
 }
+
+/** Alias for NgxControlOption — used by select/multiselect renderers. */
+export type NgxSelectOption<TValue = string> = NgxControlOption<TValue>;
 
 // ─── Renderer Config ─────────────────────────────────────────────────────────
 export interface NgxControlRendererConfig {
@@ -90,10 +92,13 @@ export interface NgxFormState {
 
 export interface NgxFormAdapter<T extends object> {
   readonly state: NgxFormState;
+  getValue(): T;
   getField<K extends keyof T>(name: K): NgxFieldRef<T[K]> | null;
   errorsFor(path: keyof T | string): Signal<ReadonlyArray<NgxFormError>>;
   submit(
-    action: (value: T) => Promise<NgxFormError[] | void> | NgxFormError[] | void
+    action: (
+      value: T,
+    ) => Promise<NgxFormError[] | void> | NgxFormError[] | void,
   ): Promise<void>;
   markAllTouched(): void;
 }
@@ -114,15 +119,3 @@ export interface NgxFieldConfig<TValue = unknown> {
 }
 
 // ─── Control State (internal signal state per field) ─────────────────────────
-export interface NgxControlState<TValue = unknown> {
-  readonly value: WritableSignal<TValue>;
-  readonly errors: WritableSignal<ReadonlyArray<string>>;
-  readonly touched: WritableSignal<boolean>;
-  readonly dirty: WritableSignal<boolean>;
-}
-
-// ─── Field Registration (used by ControlDirective to register with the form) ──
-export interface NgxFieldRegistration<TValue = unknown> extends NgxControlState<TValue> {
-  readonly name: string;
-  readonly validators: ReadonlyArray<ValidatorFn<TValue>>;
-}

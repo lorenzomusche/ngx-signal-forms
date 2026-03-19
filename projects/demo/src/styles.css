@@ -1,0 +1,91 @@
+/* ─── Library theme (provides all renderer styles via CSS custom properties) ─ */
+@import 'ngx-signal-forms/styles/ngx-signal-forms.css';
+
+/*
+ * To customise the theme, override any --ngx-* variable:
+ *
+ * :root {
+ *   --ngx-input-focus-color: hotpink;
+ *   --ngx-error-color: orangered;
+ * }
+ */
+
+/* ─── Reset & Base ─────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #f4f4f8;
+    margin: 0;
+    padding: 2rem;
+}
+
+/* ─── Demo Layout ─────────────────────────────────────────────────────────── */
+
+.demo-card {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.demo-card h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
+}
+
+.demo-card p.subtitle {
+    margin: 0 0 1.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────────────── */
+
+button[type="submit"] {
+    margin-top: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    background: #4361ee;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+button[type="submit"]:hover {
+    background: #3a56d4;
+}
+
+button[type="submit"]:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+}
+
+/* ─── Submit result ────────────────────────────────────────────────────── */
+
+.submit-result {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.submit-result pre {
+    margin: 0.5rem 0 0;
+    white-space: pre-wrap;
+    font-size: 0.8rem;
+}

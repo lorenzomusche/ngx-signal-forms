@@ -1,39 +1,66 @@
-import { Directive, input, signal, WritableSignal } from '@angular/core';
-import { ControlDirective, NGX_CONTROL_DIRECTIVE } from '../control/control.directive';
-import { ValidatorFn } from '../core/types';
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { NgxBaseControl } from "../control/control.directive";
 
-@Directive({
-  selector: 'ngx-control[checkbox]',
+/**
+ * Checkbox renderer component.
+ *
+ * ```html
+ * <ngx-checkbox name="acceptTerms" label="I accept the terms" />
+ * ```
+ */
+@Component({
+  selector: "ngx-checkbox",
   standalone: true,
-  providers: [{ provide: NGX_CONTROL_DIRECTIVE, useExisting: CheckboxRendererDirective }],
-  host: { class: 'ngx-renderer ngx-renderer--checkbox' },
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: "ngx-renderer ngx-renderer--checkbox" },
   template: `
     <label class="ngx-checkbox">
       <input
         type="checkbox"
-        [id]="_id"
+        [id]="fieldId"
         [checked]="value()"
-        [disabled]="disabled()"
+        [disabled]="isDisabled()"
         (change)="onChange($event)"
         (blur)="markAsTouched()"
+        [attr.aria-invalid]="hasErrors()"
+        [attr.aria-label]="label() || null"
       />
-      <span *ngIf="label()">{{ label() }}</span>
+      @if (label()) {
+        <span>
+          {{ label() }}
+          @if (inlineErrors && touched() && hasErrors()) {
+            <span
+              class="ngx-control__inline-errors"
+              role="alert"
+              aria-live="polite"
+            >
+              ({{ inlineErrorText() }})
+            </span>
+          }
+        </span>
+      }
     </label>
+    @if (!inlineErrors && touched() && hasErrors()) {
+      <ul
+        [id]="fieldId + '-errors'"
+        class="ngx-control__errors"
+        role="alert"
+        aria-live="polite"
+      >
+        @for (err of errors(); track $index) {
+          <li class="ngx-control__error">{{ err.message }}</li>
+        }
+      </ul>
+    }
   `,
 })
-export class CheckboxRendererDirective extends ControlDirective<boolean> {
-  readonly name = input.required<string>();
-  readonly label = input<string>('');
-  readonly disabled = input<boolean>(false);
-  readonly validators = input<readonly ValidatorFn<boolean>[]>([]);
+export class NgxCheckboxComponent extends NgxBaseControl<boolean> {
+  readonly label = input<string>("");
 
-  get fieldName(): string { return this.name(); }
-  readonly value: WritableSignal<boolean> = signal(false);
-
-  protected readonly _id = `ngx-checkbox-${Math.random().toString(36).slice(2)}`;
+  protected readonly fieldId = `ngx-checkbox-${NgxBaseControl.nextId()}`;
 
   protected onChange(event: Event): void {
-    this.value.set((event.target as HTMLInputElement).checked);
+    this.setValue((event.target as HTMLInputElement).checked);
     this.markAsDirty();
   }
 }

@@ -1,43 +1,70 @@
-import { Directive, input, signal, WritableSignal } from '@angular/core';
-import { ControlDirective, NGX_CONTROL_DIRECTIVE } from '../control/control.directive';
-import { ValidatorFn } from '../core/types';
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { NgxBaseControl } from "../control/control.directive";
 
-@Directive({
-  selector: 'ngx-control[date]',
+/**
+ * Date input renderer component.
+ *
+ * ```html
+ * <ngx-date name="birthDate" label="Date of Birth" />
+ * ```
+ */
+@Component({
+  selector: "ngx-date",
   standalone: true,
-  providers: [{ provide: NGX_CONTROL_DIRECTIVE, useExisting: DateRendererDirective }],
-  host: { class: 'ngx-renderer ngx-renderer--date' },
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: "ngx-renderer ngx-renderer--date" },
   template: `
-    <label *ngIf="label()" [for]="_id">{{ label() }}</label>
+    @if (label()) {
+      <label [for]="fieldId">
+        {{ label() }}
+        @if (inlineErrors && touched() && hasErrors()) {
+          <span
+            class="ngx-control__inline-errors"
+            role="alert"
+            aria-live="polite"
+          >
+            ({{ inlineErrorText() }})
+          </span>
+        }
+      </label>
+    }
     <input
-      [id]="_id"
+      [id]="fieldId"
       type="date"
       [value]="value() ?? ''"
-      [disabled]="disabled()"
-      [min]="min() ?? ''"
-      [max]="max() ?? ''"
+      [disabled]="isDisabled()"
+      [min]="minDate() ?? ''"
+      [max]="maxDate() ?? ''"
       (change)="onChange($event)"
       (blur)="markAsTouched()"
-      [attr.aria-invalid]="errors().length > 0"
+      [attr.aria-invalid]="hasErrors()"
+      [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+      [attr.aria-label]="label() || null"
     />
+    @if (!inlineErrors && touched() && hasErrors()) {
+      <ul
+        [id]="fieldId + '-errors'"
+        class="ngx-control__errors"
+        role="alert"
+        aria-live="polite"
+      >
+        @for (err of errors(); track $index) {
+          <li class="ngx-control__error">{{ err.message }}</li>
+        }
+      </ul>
+    }
   `,
 })
-export class DateRendererDirective extends ControlDirective<string | null> {
-  readonly name = input.required<string>();
-  readonly label = input<string>('');
-  readonly disabled = input<boolean>(false);
-  readonly min = input<string | null>(null);
-  readonly max = input<string | null>(null);
-  readonly validators = input<readonly ValidatorFn<string | null>[]>([]);
+export class NgxDateComponent extends NgxBaseControl<string | null> {
+  readonly label = input<string>("");
+  readonly minDate = input<string | null>(null);
+  readonly maxDate = input<string | null>(null);
 
-  get fieldName(): string { return this.name(); }
-  readonly value: WritableSignal<string | null> = signal(null);
-
-  protected readonly _id = `ngx-date-${Math.random().toString(36).slice(2)}`;
+  protected readonly fieldId = `ngx-date-${NgxBaseControl.nextId()}`;
 
   protected onChange(event: Event): void {
     const raw = (event.target as HTMLInputElement).value;
-    this.value.set(raw || null);
+    this.setValue(raw || null);
     this.markAsDirty();
   }
 }

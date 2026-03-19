@@ -1,0 +1,170 @@
+/*
+ * ngx-signal-forms — Default Theme
+ *
+ * Import this file in your application's global styles:
+ *   @import 'ngx-signal-forms/styles/ngx-signal-forms.css';
+ *
+ * Override any CSS custom property on :root or a scoped selector
+ * to create a custom theme.
+ */
+
+/* ─── Custom Properties (theming API) ─────────────────────────────────────── */
+
+:root {
+    /* Typography */
+    --ngx-label-font-weight: 600;
+    --ngx-label-font-size: 0.875rem;
+
+    /* Inputs */
+    --ngx-input-padding: 0.5rem 0.75rem;
+    --ngx-input-border: 1.5px solid var(--ngx-input-border-color);
+    --ngx-input-border-color: #ccc;
+    --ngx-input-border-radius: 6px;
+    --ngx-input-font-size: 0.95rem;
+    --ngx-input-focus-color: #4361ee;
+    --ngx-input-focus-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+
+    /* Errors */
+    --ngx-error-color: #e63946;
+    --ngx-error-font-size: 0.8rem;
+    --ngx-error-line-height: inherit;
+    --ngx-error-focus-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
+
+    /* Checkbox */
+    --ngx-checkbox-size: 1.1rem;
+    --ngx-checkbox-accent: var(--ngx-input-focus-color);
+    --ngx-checkbox-gap: 0.5rem;
+
+    /* Multiselect */
+    --ngx-multiselect-border: 1.5px solid var(--ngx-input-border-color);
+    --ngx-multiselect-border-radius: var(--ngx-input-border-radius);
+    --ngx-multiselect-padding: 0.75rem 1rem;
+
+    /* Layout */
+    --ngx-renderer-gap: 0.25rem;
+    --ngx-renderer-margin-bottom: 0.5rem;
+}
+
+/* ─── Renderer Layout ─────────────────────────────────────────────────────── */
+
+.ngx-renderer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ngx-renderer-gap);
+    margin-bottom: var(--ngx-renderer-margin-bottom);
+}
+
+/* Reserve one error line of space when NOT using inline errors.
+   Uses identical font-size + line-height as .ngx-control__error
+   to prevent layout shift. */
+.ngx-renderer:not(.ngx-inline-errors)::after {
+    content: '\00a0';
+    display: block;
+    font-size: var(--ngx-error-font-size);
+    line-height: var(--ngx-error-line-height);
+    visibility: hidden;
+}
+
+.ngx-renderer:not(.ngx-inline-errors):has(.ngx-control__errors)::after {
+    display: none;
+}
+
+/* ─── Labels ──────────────────────────────────────────────────────────────── */
+
+.ngx-renderer label {
+    font-weight: var(--ngx-label-font-weight);
+    font-size: var(--ngx-label-font-size);
+}
+
+/* ─── Inputs ──────────────────────────────────────────────────────────────── */
+
+.ngx-renderer input[type="text"],
+.ngx-renderer input[type="number"],
+.ngx-renderer input[type="date"],
+.ngx-renderer input[type="email"],
+.ngx-renderer textarea,
+.ngx-renderer select {
+    padding: var(--ngx-input-padding);
+    border: var(--ngx-input-border);
+    border-radius: var(--ngx-input-border-radius);
+    font-size: var(--ngx-input-font-size);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+}
+
+.ngx-renderer input:focus,
+.ngx-renderer textarea:focus,
+.ngx-renderer select:focus {
+    border-color: var(--ngx-input-focus-color);
+    box-shadow: var(--ngx-input-focus-shadow);
+}
+
+.ngx-renderer input[aria-invalid="true"],
+.ngx-renderer textarea[aria-invalid="true"],
+.ngx-renderer select[aria-invalid="true"] {
+    border-color: var(--ngx-error-color);
+}
+
+.ngx-renderer input[aria-invalid="true"]:focus,
+.ngx-renderer textarea[aria-invalid="true"]:focus {
+    box-shadow: var(--ngx-error-focus-shadow);
+}
+
+/* ─── Checkbox ────────────────────────────────────────────────────────────── */
+
+.ngx-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--ngx-checkbox-gap);
+    cursor: pointer;
+}
+
+.ngx-checkbox input[type="checkbox"] {
+    width: var(--ngx-checkbox-size);
+    height: var(--ngx-checkbox-size);
+    accent-color: var(--ngx-checkbox-accent);
+}
+
+/* ─── Multiselect ─────────────────────────────────────────────────────────── */
+
+.ngx-renderer--multiselect fieldset {
+    border: var(--ngx-multiselect-border);
+    border-radius: var(--ngx-multiselect-border-radius);
+    padding: var(--ngx-multiselect-padding);
+}
+
+.ngx-renderer--multiselect legend {
+    font-weight: var(--ngx-label-font-weight);
+    font-size: var(--ngx-label-font-size);
+    padding: 0 0.25rem;
+}
+
+.ngx-multiselect__option {
+    display: flex;
+    align-items: center;
+    gap: var(--ngx-checkbox-gap);
+    padding: 0.25rem 0;
+    cursor: pointer;
+}
+
+/* ─── Block Errors (below input) ──────────────────────────────────────────── */
+
+.ngx-control__errors {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ngx-control__error {
+    color: var(--ngx-error-color);
+    font-size: var(--ngx-error-font-size);
+    line-height: var(--ngx-error-line-height);
+}
+
+/* ─── Inline Errors (next to label) ───────────────────────────────────────── */
+
+.ngx-control__inline-errors {
+    color: var(--ngx-error-color);
+    font-size: var(--ngx-error-font-size);
+    font-weight: 400;
+}
