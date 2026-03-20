@@ -5,6 +5,7 @@ import {
   computed,
   contentChild,
   ElementRef,
+  inject,
   input,
   signal,
   TemplateRef,
@@ -90,7 +91,17 @@ import { NgxSelectOption } from "../core/types";
         </button>
 
         @if (open()) {
-          <div class="ngx-select__dropdown">
+          @if (overlayMode()) {
+            <div
+              class="ngx-select__overlay-backdrop"
+              (click)="open.set(false)"
+            ></div>
+          }
+          <div
+            class="ngx-select__dropdown"
+            [class.ngx-select__dropdown--above]="dropUp()"
+            [class.ngx-select__dropdown--overlay]="overlayMode()"
+          >
             @if (searchable()) {
               <input
                 #searchInput
@@ -190,6 +201,12 @@ export class NgxSelectComponent<
   /** Whether the custom dropdown is open. */
   protected readonly open = signal(false);
 
+  /** Whether the dropdown opens above the trigger. */
+  protected readonly dropUp = signal(false);
+
+  /** Whether the dropdown renders as a centered overlay (no space above or below). */
+  protected readonly overlayMode = signal(false);
+
   /** Index of the keyboard-active option (for arrow navigation). */
   protected readonly activeIndex = signal(-1);
 
@@ -218,6 +235,7 @@ export class NgxSelectComponent<
   private readonly wrapperRef = viewChild<ElementRef<HTMLElement>>("wrapper");
   private readonly searchInputRef =
     viewChild<ElementRef<HTMLInputElement>>("searchInput");
+  private readonly hostRef = inject(ElementRef);
 
   // ── Custom dropdown interactions ────────────────────────────────────────────
 
@@ -232,6 +250,23 @@ export class NgxSelectComponent<
         (o: NgxSelectOption<TValue>) => o.value === this.value(),
       );
       this.activeIndex.set(idx >= 0 ? idx : 0);
+      // Compute position: below → above → overlay
+      const rect = (
+        this.hostRef.nativeElement as HTMLElement
+      ).getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const minSpace = 128;
+      if (spaceBelow >= minSpace) {
+        this.dropUp.set(false);
+        this.overlayMode.set(false);
+      } else if (spaceAbove >= minSpace) {
+        this.dropUp.set(true);
+        this.overlayMode.set(false);
+      } else {
+        this.dropUp.set(false);
+        this.overlayMode.set(true);
+      }
       // Focus search input after DOM renders
       if (this.searchable()) {
         setTimeout(() => this.searchInputRef()?.nativeElement.focus(), 0);

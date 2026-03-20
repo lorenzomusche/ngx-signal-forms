@@ -106,6 +106,14 @@ interface ContactForm extends Record<string, unknown> {
           <ngx-control-date name="birthDate" label="Date of Birth" />
         </div>
 
+        <ngx-control-multiselect
+          name="interests"
+          label="Interests"
+          [options]="interestOptions"
+          [searchable]="true"
+          mode="multi"
+        />
+
         <ngx-control-select
           name="country"
           label="Country"
@@ -129,13 +137,6 @@ interface ContactForm extends Record<string, unknown> {
           label="Bio"
           placeholder="Tell us about yourself…"
           [rows]="3"
-        />
-
-        <ngx-control-multiselect
-          name="interests"
-          label="Interests"
-          [options]="interestOptions"
-          [searchable]="true"
         />
 
         <div class="form-row">

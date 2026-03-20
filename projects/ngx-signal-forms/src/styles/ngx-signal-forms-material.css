@@ -42,7 +42,7 @@
     --ngx-input-padding: 0.625rem 0.75rem calc(0.625rem + 2px);
     --ngx-input-border: none;
     --ngx-input-border-color: transparent;
-    --ngx-input-border-radius: 4px 4px 0 0;
+    --ngx-input-border-radius: 0;
     --ngx-input-font-size: 0.9375rem;
     --ngx-input-focus-color: #18181b;
     --ngx-input-focus-shadow: none;
@@ -57,7 +57,7 @@
     --ngx-checkbox-size: 1.125rem;
     --ngx-checkbox-accent: #18181b;
     --ngx-checkbox-border: 2px solid #71717a;
-    --ngx-checkbox-border-radius: 4px;
+    --ngx-checkbox-border-radius: 0;
     --ngx-checkbox-gap: 0.5rem;
     --ngx-checkbox-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
 
@@ -97,10 +97,10 @@
     /* Custom Select dropdown — M3 menu surface */
     --ngx-select-dropdown-bg: #f4f4f5;
     --ngx-select-dropdown-border: none;
-    --ngx-select-dropdown-border-radius: 4px;
+    --ngx-select-dropdown-border-radius: 0;
     --ngx-select-dropdown-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15),
         0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --ngx-select-dropdown-max-height: 18rem;
+    --ngx-select-dropdown-max-height: calc(var(--ngx-multiselect-max-height) + 40px);
     --ngx-select-option-padding: 0.5rem 0.75rem;
     --ngx-select-option-hover-bg: rgba(24, 24, 27, 0.08);
     --ngx-select-option-selected-bg: rgba(24, 24, 27, 0.12);
@@ -179,7 +179,7 @@
     background: #e4e4e7;
     border: none;
     border-bottom: 1px solid #3f3f46;
-    border-radius: 4px 4px 0 0;
+    border-radius: 0;
     padding-bottom: calc(0.625rem + 2px);
 }
 
@@ -266,22 +266,19 @@
 
 /* ─── Custom Checkbox — high-contrast neutral ─────────────────────────────── */
 
-/* ─── Multiselect — filter chips ───────────────────────────────────────────── */
+/* ─── Multiselect — filter chips + overlay ─────────────────────────────────── */
 
 .ngx-multiselect__label {
     color: #3f3f46;
     letter-spacing: 0.006em;
 }
 
-.ngx-multiselect__search {
-    border-color: #d4d4d8;
-    border-radius: 0.5rem;
-    font-size: 0.8125rem;
+.ngx-multiselect__search-btn {
+    color: #3f3f46;
 }
 
-.ngx-multiselect__search:focus {
-    border-color: #18181b;
-    box-shadow: none;
+.ngx-multiselect__search-btn:hover:not(:disabled) {
+    background: rgba(24, 24, 27, 0.08);
 }
 
 .ngx-multiselect__options {
@@ -294,8 +291,37 @@
     border-color: #a1a1aa;
 }
 
-.ngx-chip--selected:hover:not(:disabled) {
+.ngx-chip--selected:hover:not(:disabled):not(.ngx-chip--counter) {
     background: #27272a;
+}
+
+.ngx-chip__btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Overlay — select-style dropdown */
+.ngx-multiselect-overlay__panel {
+    background: #ffffff;
+    border: 1px solid #d4d4d8;
+    border-radius: 0;
+    box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15),
+        0 1px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.ngx-multiselect-overlay__input {
+    border-bottom-color: #e4e4e7;
+}
+
+.ngx-multiselect-overlay__panel--above .ngx-multiselect-overlay__input {
+    border-top-color: #e4e4e7;
+}
+
+.ngx-multiselect-overlay__input:focus {
+    border-color: #18181b;
+}
+
+.ngx-multiselect-overlay__empty {
+    color: #71717a;
 }
 
 /* ─── Inline errors — M3 body-small ───────────────────────────────────────── */

@@ -2,8 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
+  inject,
   input,
   signal,
+  viewChild,
 } from "@angular/core";
 import { NgxBaseControl } from "../control/control.directive";
 import { NgxSelectOption } from "../core/types";
@@ -12,40 +15,61 @@ import { NgxSelectOption } from "../core/types";
  * Multiselect renderer component.
  * Renders selectable filter chips and delivers ReadonlyArray<TValue>.
  *
+ * Supports two modes:
+ * - `'single'` (default): each option selected at most once.
+ * - `'multi'`: counter-based — options can be selected multiple times;
+ *   chips show a count badge with increment / decrement controls.
+ *
+ * When `searchable` is true, a search icon opens a full-screen overlay
+ * where options float around a centered search input.
+ *
  * ```html
- * <ngx-control-multiselect name="tags" label="Tags" [options]="tagOptions" />
+ * <ngx-control-multiselect name="tags" label="Tags"
+ *   [options]="tagOptions" [searchable]="true" mode="multi" />
  * ```
  */
 @Component({
   selector: "ngx-control-multiselect",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--multiselect" },
+  host: {
+    class: "ngx-renderer ngx-renderer--multiselect",
+    "(document:keydown.escape)": "searchOpen() && closeSearch()",
+  },
   template: `
-    @if (label()) {
-      <label class="ngx-multiselect__label">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <span
-            class="ngx-control__inline-errors"
-            role="alert"
-            aria-live="polite"
-          >
-            ({{ inlineErrorText() }})
-          </span>
+    @if (label() || searchable()) {
+      <div class="ngx-multiselect__header">
+        @if (label()) {
+          <label class="ngx-multiselect__label">
+            {{ label() }}
+            @if (inlineErrors && touched() && hasErrors()) {
+              <span
+                class="ngx-control__inline-errors"
+                role="alert"
+                aria-live="polite"
+              >
+                ({{ inlineErrorText() }})
+              </span>
+            }
+          </label>
         }
-      </label>
+        @if (searchable()) {
+          <button
+            type="button"
+            class="ngx-multiselect__search-btn"
+            [disabled]="isDisabled()"
+            (click)="openSearch()"
+            aria-label="Search options"
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="8.5" cy="8.5" r="5.5" />
+              <line x1="12.5" y1="12.5" x2="17" y2="17" />
+            </svg>
+          </button>
+        }
+      </div>
     }
-    @if (searchable()) {
-      <input
-        type="text"
-        class="ngx-multiselect__search"
-        placeholder="Search…"
-        autocomplete="off"
-        [value]="searchQuery()"
-        (input)="onSearchInput($event)"
-      />
-    }
+
     <div
       class="ngx-multiselect__options"
       role="group"
@@ -55,26 +79,141 @@ import { NgxSelectOption } from "../core/types";
       [attr.aria-required]="ariaRequired()"
       [attr.aria-disabled]="effectiveAriaDisabled()"
     >
-      @for (opt of filteredOptions(); track opt.value) {
-        <button
-          type="button"
-          class="ngx-chip"
-          [class.ngx-chip--selected]="isSelected(opt.value)"
-          [disabled]="isDisabled()"
-          [title]="opt.label"
-          [attr.aria-pressed]="isSelected(opt.value)"
-          (click)="onToggle(opt.value)"
-          (blur)="markAsTouched()"
-        >
-          @if (isSelected(opt.value)) {
-            <svg class="ngx-chip__check" viewBox="0 0 18 18" aria-hidden="true">
-              <polyline points="3.5 9.5 7 13 14.5 5.5" />
-            </svg>
-          }
-          <span class="ngx-chip__label">{{ opt.label }}</span>
-        </button>
+      @for (opt of options(); track opt.value) {
+        @if (mode() === "multi") {
+          <div
+            class="ngx-chip ngx-chip--counter"
+            [class.ngx-chip--selected]="countOf(opt.value) > 0"
+            [title]="opt.label"
+          >
+            <button
+              type="button"
+              class="ngx-chip__btn"
+              [disabled]="isDisabled() || countOf(opt.value) === 0"
+              (click)="decrement(opt.value)"
+              aria-label="Decrease"
+            >
+              <svg viewBox="0 0 12 12" aria-hidden="true">
+                <line x1="3" y1="6" x2="9" y2="6" />
+              </svg>
+            </button>
+            <span class="ngx-chip__label">{{ opt.label }}</span>
+            <span class="ngx-chip__count">&times;{{ countOf(opt.value) }}</span>
+            <button
+              type="button"
+              class="ngx-chip__btn"
+              [disabled]="isDisabled()"
+              (click)="increment(opt.value)"
+              aria-label="Increase"
+            >
+              <svg viewBox="0 0 12 12" aria-hidden="true">
+                <line x1="3" y1="6" x2="9" y2="6" />
+                <line x1="6" y1="3" x2="6" y2="9" />
+              </svg>
+            </button>
+          </div>
+        } @else {
+          <button
+            type="button"
+            class="ngx-chip"
+            [class.ngx-chip--selected]="isSelected(opt.value)"
+            [disabled]="isDisabled()"
+            [title]="opt.label"
+            [attr.aria-pressed]="isSelected(opt.value)"
+            (click)="onToggle(opt.value)"
+            (blur)="markAsTouched()"
+          >
+            @if (isSelected(opt.value)) {
+              <svg
+                class="ngx-chip__check"
+                viewBox="0 0 18 18"
+                aria-hidden="true"
+              >
+                <polyline points="3.5 9.5 7 13 14.5 5.5" />
+              </svg>
+            }
+            <span class="ngx-chip__label">{{ opt.label }}</span>
+          </button>
+        }
       }
     </div>
+
+    @if (searchOpen()) {
+      <div class="ngx-multiselect-overlay" (click)="closeSearch()"></div>
+      <div
+        class="ngx-multiselect-overlay__panel"
+        [class.ngx-multiselect-overlay__panel--above]="dropUp()"
+        [class.ngx-multiselect-overlay__panel--overlay]="overlayMode()"
+        [style.top.px]="dropUp() || overlayMode() ? null : panelTop()"
+        (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search options"
+      >
+        <input
+          #overlayInput
+          type="text"
+          class="ngx-multiselect-overlay__input"
+          placeholder="Search…"
+          autocomplete="off"
+          [value]="searchQuery()"
+          (input)="onSearchInput($event)"
+          (keydown.escape)="closeSearch()"
+        />
+        <div class="ngx-multiselect-overlay__grid">
+          @for (opt of searchResults(); track opt.value; let i = $index) {
+            @if (mode() === "multi") {
+              <div
+                class="ngx-multiselect-overlay__item ngx-multiselect-overlay__item--counter"
+                [class.ngx-multiselect-overlay__item--selected]="
+                  countOf(opt.value) > 0
+                "
+              >
+                <button
+                  type="button"
+                  class="ngx-multiselect-overlay__item-btn"
+                  (click)="decrement(opt.value)"
+                  [disabled]="countOf(opt.value) === 0"
+                  aria-label="Decrease"
+                >
+                  <svg viewBox="0 0 12 12" aria-hidden="true">
+                    <line x1="3" y1="6" x2="9" y2="6" />
+                  </svg>
+                </button>
+                <span class="ngx-multiselect-overlay__item-label">{{
+                  opt.label
+                }}</span>
+                <span class="ngx-multiselect-overlay__count"
+                  >&times;{{ countOf(opt.value) }}</span
+                >
+                <button
+                  type="button"
+                  class="ngx-multiselect-overlay__item-btn"
+                  (click)="increment(opt.value)"
+                  aria-label="Increase"
+                >
+                  <svg viewBox="0 0 12 12" aria-hidden="true">
+                    <line x1="3" y1="6" x2="9" y2="6" />
+                    <line x1="6" y1="3" x2="6" y2="9" />
+                  </svg>
+                </button>
+              </div>
+            } @else {
+              <button
+                type="button"
+                class="ngx-multiselect-overlay__item"
+                (click)="onOverlaySelect(opt.value)"
+              >
+                {{ opt.label }}
+              </button>
+            }
+          } @empty {
+            <span class="ngx-multiselect-overlay__empty">No results</span>
+          }
+        </div>
+      </div>
+    }
+
     @if (!inlineErrors && touched() && hasErrors()) {
       <ul
         [id]="fieldId + '-errors'"
@@ -95,27 +234,47 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
   readonly label = input<string>("");
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
   readonly searchable = input<boolean>(false);
-
-  /** Search query for filtering visible chips. */
-  protected readonly searchQuery = signal("");
-
-  /** Options filtered by the current search query. */
-  protected readonly filteredOptions = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    if (!query) return this.options();
-    return this.options().filter((o) => o.label.toLowerCase().includes(query));
-  });
+  readonly mode = input<"single" | "multi">("single");
 
   protected readonly fieldId = `ngx-control-multiselect-${NgxBaseControl.nextId()}`;
+
+  /** Whether the search overlay is open. */
+  protected readonly searchOpen = signal(false);
+
+  /** Current search query in the overlay. */
+  protected readonly searchQuery = signal("");
+
+  /** Options available in the search overlay (filtered by query + mode). */
+  protected readonly searchResults = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    let opts = this.options();
+    if (this.mode() === "single") {
+      const val = this.value();
+      opts = opts.filter((o) => !val.includes(o.value));
+    }
+    if (!query) return opts;
+    return opts.filter((o) => o.label.toLowerCase().includes(query));
+  });
+
+  private readonly overlayInputRef =
+    viewChild<ElementRef<HTMLInputElement>>("overlayInput");
+
+  private readonly hostRef = inject(ElementRef);
+
+  /** Whether the panel should open above the controller. */
+  protected readonly dropUp = signal(false);
+
+  /** Whether the panel renders as a centered overlay (no space above or below). */
+  protected readonly overlayMode = signal(false);
+
+  /** Top offset in pixels — top edge of .ngx-multiselect__options relative to host. */
+  protected readonly panelTop = signal(0);
+
+  // ── Single-mode helpers ─────────────────────────────────────────────────────
 
   /** Check whether a given option value is currently selected. */
   protected isSelected(optValue: TValue): boolean {
     return this.value().includes(optValue);
-  }
-
-  protected onSearchInput(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
   }
 
   protected onToggle(optValue: TValue): void {
@@ -125,5 +284,87 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
       : [...current, optValue];
     this.setValue(next);
     this.markAsDirty();
+  }
+
+  // ── Multi-mode (counter) helpers ────────────────────────────────────────────
+
+  /** Count how many times a value appears in the current selection. */
+  protected countOf(optValue: TValue): number {
+    return this.value().filter((v) => v === optValue).length;
+  }
+
+  protected increment(optValue: TValue): void {
+    this.setValue([...this.value(), optValue]);
+    this.markAsDirty();
+  }
+
+  protected decrement(optValue: TValue): void {
+    const arr = [...this.value()];
+    const idx = arr.indexOf(optValue);
+    if (idx >= 0) {
+      arr.splice(idx, 1);
+      this.setValue(arr);
+      this.markAsDirty();
+    }
+  }
+
+  // ── Search overlay ──────────────────────────────────────────────────────────
+
+  protected openSearch(): void {
+    this.searchQuery.set("");
+    const host = this.hostRef.nativeElement as HTMLElement;
+    const optionsEl = host.querySelector(".ngx-multiselect__options");
+    // Use the options container bottom for space calculation (ignore errors/::after)
+    const anchorBottom = optionsEl
+      ? optionsEl.getBoundingClientRect().bottom
+      : host.getBoundingClientRect().bottom;
+    const anchorTop = optionsEl
+      ? optionsEl.getBoundingClientRect().top
+      : host.getBoundingClientRect().top;
+    const spaceBelow = window.innerHeight - anchorBottom;
+    const spaceAbove = anchorTop;
+    const minSpace = 128;
+    if (spaceBelow >= minSpace) {
+      this.dropUp.set(false);
+      this.overlayMode.set(false);
+    } else if (spaceAbove >= minSpace) {
+      this.dropUp.set(true);
+      this.overlayMode.set(false);
+    } else {
+      this.dropUp.set(false);
+      this.overlayMode.set(true);
+    }
+    // Measure the top of the options container relative to the host
+    if (optionsEl) {
+      const hostRect = host.getBoundingClientRect();
+      const optionsRect = optionsEl.getBoundingClientRect();
+      this.panelTop.set(optionsRect.top - hostRect.top);
+    }
+    this.searchOpen.set(true);
+    setTimeout(() => this.overlayInputRef()?.nativeElement.focus(), 0);
+  }
+
+  protected closeSearch(): void {
+    this.searchOpen.set(false);
+  }
+
+  protected onSearchInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(value);
+  }
+
+  protected onOverlaySelect(optValue: TValue): void {
+    if (this.mode() === "single") {
+      if (!this.value().includes(optValue)) {
+        this.setValue([...this.value(), optValue]);
+        this.markAsDirty();
+      }
+      // Close only when no more options are available
+      if (this.searchResults().length === 0) {
+        this.searchOpen.set(false);
+      }
+    } else {
+      this.increment(optValue);
+    }
   }
 }
