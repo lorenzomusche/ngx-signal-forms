@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import {
   createSignalFormAdapter,
   NgxCheckboxComponent,
-  NgxDateComponent,
+  NgxDatePickerComponent,
   NgxFormAdapter,
   NgxFormComponent,
   NgxFormError,
@@ -49,7 +49,7 @@ interface ContactForm extends Record<string, unknown> {
     NgxSelectComponent,
     NgxCheckboxComponent,
     NgxTextareaComponent,
-    NgxDateComponent,
+    NgxDatePickerComponent,
     NgxMultiselectComponent,
     NgxInlineErrorsDirective,
     NgxToggleComponent,
@@ -103,7 +103,7 @@ interface ContactForm extends Record<string, unknown> {
             [maxValue]="120"
           />
 
-          <ngx-control-date name="birthDate" label="Date of Birth" />
+          <ngx-control-datepicker name="birthDate" label="Date of Birth" />
         </div>
 
         <ngx-control-multiselect
