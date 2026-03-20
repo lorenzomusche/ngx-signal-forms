@@ -26,6 +26,6 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
     "[attr.data-field]": "name()",
   },
 })
-export class ControlComponent {
+export class NgxControlComponent {
   readonly name = input.required<string>();
 }

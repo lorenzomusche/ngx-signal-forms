@@ -10,13 +10,6 @@ export const NGX_FORM_ADAPTER = new InjectionToken<
 >("NGX_FORM_ADAPTER");
 
 /**
- * Symbol for accessing the raw Angular FieldTree from NgxFormSubmitEvent.
- * Power-user escape hatch — use sparingly.
- */
-export const RAW_FIELD_TREE_SYMBOL: unique symbol =
-  Symbol("NGX_RAW_FIELD_TREE");
-
-/**
  * When provided on an element injector, renderers display errors
  * inline next to the label rather than as a block below the input.
  */

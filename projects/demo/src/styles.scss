@@ -1,5 +1,13 @@
 /* ─── Library theme — Modern Neutral ───────────────────────────────────────── */
+@use 'sass:color';
+@use 'color-scheme' as ngx;
 @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
+
+/* Apply a custom color scheme — change the color to theme the entire form */
+$primary: #56bd43;
+
+@include ngx.color-scheme($primary);
+@include ngx.color-scheme-dark($primary);
 
 /*
  * Available themes:
@@ -25,10 +33,17 @@
 body {
     font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
     line-height: 1.5;
-    color: #09090b;
+    color: color.mix(#000, $primary, 80%);
     background: #ffffff;
     margin: 0;
     padding: 1.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        color: color.mix(#fff, $primary, 90%);
+        background: color.mix(#000, $primary, 92%);
+    }
 }
 
 /* ─── Demo Layout ─────────────────────────────────────────────────────────── */
@@ -46,14 +61,29 @@ body {
     margin: 0 0 0.125rem;
     font-size: 1.25rem;
     font-weight: 400;
-    color: #09090b;
+    color: color.mix(#000, $primary, 80%);
 }
 
 .demo-card p.subtitle {
     margin: 0 0 1rem;
-    color: #3f3f46;
+    color: color.mix(#000, $primary, 40%);
     font-size: 0.8125rem;
     letter-spacing: 0.016em;
+}
+
+@media (prefers-color-scheme: dark) {
+    .demo-card {
+        background: color.mix(#000, $primary, 85%);
+        box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .demo-card h1 {
+        color: color.mix(#fff, $primary, 90%);
+    }
+
+    .demo-card p.subtitle {
+        color: color.mix(#fff, $primary, 60%);
+    }
 }
 
 /* ─── Buttons — M3 filled button: 40dp height, 100dp corner, label-large ─── */
@@ -73,8 +103,6 @@ button[type="submit"] {
     margin-top: 0.25rem;
     padding: 0.5rem 1.25rem;
     min-height: 2.25rem;
-    background: #18181b;
-    color: #fff;
     border: none;
     border-radius: 100px;
     font-size: 0.875rem;
@@ -86,14 +114,11 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background: rgba(24, 24, 27, 0.88);
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3),
         0 1px 3px 1px rgba(0, 0, 0, 0.15);
 }
 
 button[type="submit"]:disabled {
-    background: rgba(24, 24, 27, 0.12);
-    color: rgba(24, 24, 27, 0.38);
     box-shadow: none;
     cursor: not-allowed;
 }
@@ -103,8 +128,8 @@ button[type="submit"]:disabled {
 .submit-result {
     margin-top: 1rem;
     padding: 0.75rem;
-    background: #d0f0c0;
-    border: none;
+    background: color.mix(#fff, $primary, 90%);
+    border: 1px solid color.mix(#fff, $primary, 60%);
     border-radius: 8px;
     font-size: 0.8125rem;
 }
@@ -113,4 +138,12 @@ button[type="submit"]:disabled {
     margin: 0.5rem 0 0;
     white-space: pre-wrap;
     font-size: 0.8rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .submit-result {
+        background: color.mix(#000, $primary, 78%);
+        border-color: color.mix(#000, $primary, 55%);
+        color: color.mix(#fff, $primary, 90%);
+    }
 }

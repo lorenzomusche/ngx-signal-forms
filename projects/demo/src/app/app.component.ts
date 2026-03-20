@@ -268,7 +268,7 @@ export class AppComponent {
     this.lastSubmitResult.set(JSON.stringify(value, null, 2));
   };
 
-  onSubmitted(event: NgxFormSubmitEvent<ContactForm>): void {
-    console.log("Form submitted:", event);
+  onSubmitted(_event: NgxFormSubmitEvent<ContactForm>): void {
+    // Event can be inspected during development via browser devtools
   }
 }

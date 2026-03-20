@@ -35,8 +35,13 @@
                         "browser": "projects/demo/src/main.ts",
                         "tsConfig": "projects/demo/tsconfig.app.json",
                         "styles": [
-                            "projects/demo/src/styles.css"
-                        ]
+                            "projects/demo/src/styles.scss"
+                        ],
+                        "stylePreprocessorOptions": {
+                            "includePaths": [
+                                "projects/ngx-signal-forms/src/styles"
+                            ]
+                        }
                     },
                     "configurations": {
                         "production": {

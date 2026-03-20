@@ -43,6 +43,8 @@
     --ngx-input-border: none;
     --ngx-input-border-color: transparent;
     --ngx-input-border-radius: 0;
+    --ngx-input-color: #18181b;
+    --ngx-input-placeholder-color: #71717a;
     --ngx-input-font-size: 0.9375rem;
     --ngx-input-focus-color: #18181b;
     --ngx-input-focus-shadow: none;
@@ -56,6 +58,7 @@
     /* Checkbox — custom styled, 18dp, rounded */
     --ngx-checkbox-size: 1.125rem;
     --ngx-checkbox-accent: #18181b;
+    --ngx-checkbox-checkmark-color: #fff;
     --ngx-checkbox-border: 2px solid #71717a;
     --ngx-checkbox-border-radius: 0;
     --ngx-checkbox-gap: 0.5rem;
@@ -94,6 +97,13 @@
     --ngx-chip-max-width: 11rem;
     --ngx-chip-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
 
+    /* Chip hover/selected hover */
+    --ngx-chip-hover-bg: rgba(24, 24, 27, 0.06);
+    --ngx-chip-hover-border: #a1a1aa;
+    --ngx-chip-hover-color: inherit;
+    --ngx-chip-selected-hover-bg: #27272a;
+    --ngx-chip-selected-hover-color: #fff;
+
     /* Custom Select dropdown — M3 menu surface */
     --ngx-select-dropdown-bg: #f4f4f5;
     --ngx-select-dropdown-border: none;
@@ -103,8 +113,23 @@
     --ngx-select-dropdown-max-height: calc(var(--ngx-multiselect-max-height) + 40px);
     --ngx-select-option-padding: 0.5rem 0.75rem;
     --ngx-select-option-hover-bg: rgba(24, 24, 27, 0.08);
+    --ngx-select-option-hover-color: inherit;
     --ngx-select-option-selected-bg: rgba(24, 24, 27, 0.12);
+    --ngx-select-option-selected-color: inherit;
     --ngx-select-option-selected-weight: 500;
+
+    /* Surface & semantic colors (M3-like tokens) */
+    --ngx-surface: #fff;
+    --ngx-surface-container: #f4f4f5;
+    --ngx-surface-container-highest: #e4e4e7;
+    --ngx-surface-container-highest-hover: #d4d4d8;
+    --ngx-on-surface: #09090b;
+    --ngx-on-surface-variant: #3f3f46;
+    --ngx-outline: #71717a;
+    --ngx-outline-variant: #a1a1aa;
+    --ngx-outline-subtle: #d4d4d8;
+    --ngx-disabled-bg: rgba(24, 24, 27, 0.04);
+    --ngx-disabled-color: rgba(24, 24, 27, 0.38);
 
     /* Layout — compact */
     --ngx-renderer-gap: 0.125rem;
@@ -121,18 +146,19 @@
 .ngx-renderer input[type="email"],
 .ngx-renderer textarea,
 .ngx-renderer select {
-    background: #e4e4e7;
-    border-bottom: 1px solid #3f3f46;
+    background: var(--ngx-surface-container-highest);
+    color: var(--ngx-input-color);
+    border-bottom: 1px solid var(--ngx-on-surface-variant);
     padding-bottom: calc(0.625rem + 2px);
     transition: border-color 0.2s cubic-bezier(0.2, 0, 0, 1),
-        background 0.2s;
+        background 0.2s, color 0.2s;
 }
 
 .ngx-renderer input:hover,
 .ngx-renderer textarea:hover,
 .ngx-renderer select:hover {
-    background: #d4d4d8;
-    border-bottom-color: #09090b;
+    background: var(--ngx-surface-container-highest-hover);
+    border-bottom-color: var(--ngx-on-surface);
 }
 
 /* On focus: keep 1px border but add a 3px box-shadow to simulate the thick
@@ -140,97 +166,107 @@
 .ngx-renderer input:focus,
 .ngx-renderer textarea:focus,
 .ngx-renderer select:focus {
-    background: #e4e4e7;
-    border-bottom-color: #18181b;
-    box-shadow: inset 0 -2px 0 0 #18181b;
+    background: var(--ngx-surface-container-highest);
+    border-bottom-color: var(--ngx-input-focus-color);
+    box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
     outline: none;
 }
 
 .ngx-renderer input[aria-invalid="true"],
 .ngx-renderer textarea[aria-invalid="true"],
 .ngx-renderer select[aria-invalid="true"] {
-    border-bottom-color: #dc2626;
+    border-bottom-color: var(--ngx-error-color);
 }
 
 .ngx-renderer input[aria-invalid="true"]:focus,
 .ngx-renderer textarea[aria-invalid="true"]:focus {
-    border-bottom-color: #dc2626;
-    box-shadow: inset 0 -2px 0 0 #dc2626;
+    border-bottom-color: var(--ngx-error-color);
+    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 }
 
 .ngx-renderer input:disabled,
 .ngx-renderer textarea:disabled,
 .ngx-renderer select:disabled {
-    background: rgba(24, 24, 27, 0.04);
-    border-bottom-color: rgba(24, 24, 27, 0.38);
-    color: rgba(24, 24, 27, 0.38);
+    background: var(--ngx-disabled-bg);
+    border-bottom-color: var(--ngx-disabled-color);
+    color: var(--ngx-disabled-color);
 }
 
-/* ─── Labels — on-surface-variant (zinc-700) ──────────────────────────────── */
+.ngx-renderer input::placeholder,
+.ngx-renderer textarea::placeholder {
+    color: var(--ngx-input-placeholder-color);
+}
+
+.ngx-renderer input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: var(--ngx-calendar-icon-filter, none);
+}
+
+/* ─── Labels — on-surface-variant ─────────────────────────────────────────── */
 
 .ngx-renderer label {
-    color: #3f3f46;
+    color: var(--ngx-on-surface-variant);
     letter-spacing: 0.006em;
 }
 
 /* ─── Custom select trigger (filled style) ────────────────────────────────── */
 
 .ngx-select__trigger {
-    background: #e4e4e7;
+    background: var(--ngx-surface-container-highest);
+    color: var(--ngx-input-color);
     border: none;
-    border-bottom: 1px solid #3f3f46;
+    border-bottom: 1px solid var(--ngx-on-surface-variant);
     border-radius: 0;
     padding-bottom: calc(0.625rem + 2px);
 }
 
 .ngx-select__trigger:hover {
-    background: #d4d4d8;
-    border-bottom-color: #09090b;
+    background: var(--ngx-surface-container-highest-hover);
+    border-bottom-color: var(--ngx-on-surface);
 }
 
 .ngx-select__trigger:focus {
-    background: #e4e4e7;
-    border-bottom-color: #18181b;
-    box-shadow: inset 0 -2px 0 0 #18181b;
+    background: var(--ngx-surface-container-highest);
+    border-bottom-color: var(--ngx-input-focus-color);
+    box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
     outline: none;
 }
 
 .ngx-select__trigger[aria-invalid="true"] {
-    border-bottom-color: #dc2626;
+    border-bottom-color: var(--ngx-error-color);
 }
 
 .ngx-select__trigger[aria-invalid="true"]:focus {
-    box-shadow: inset 0 -2px 0 0 #dc2626;
+    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 }
 
 .ngx-select__trigger:disabled {
-    background: rgba(24, 24, 27, 0.04);
-    border-bottom-color: rgba(24, 24, 27, 0.38);
-    color: rgba(24, 24, 27, 0.38);
+    background: var(--ngx-disabled-bg);
+    border-bottom-color: var(--ngx-disabled-color);
+    color: var(--ngx-disabled-color);
 }
 
 .ngx-select__placeholder {
-    color: #71717a;
+    color: var(--ngx-outline);
 }
 
 .ngx-select__arrow {
-    color: #3f3f46;
+    color: var(--ngx-on-surface-variant);
 }
 
 /* ─── Dropdown surface — M3 menu specs ────────────────────────────────────── */
 
 .ngx-select__dropdown {
     margin-top: 0.25rem;
-    background: #f4f4f5;
+    background: var(--ngx-surface-container);
 }
 
 .ngx-select__search {
-    border-bottom-color: #d4d4d8;
+    border-bottom-color: var(--ngx-outline-subtle);
     font-size: 0.875rem;
 }
 
 .ngx-select__search:focus {
-    border-bottom-color: #18181b;
+    border-bottom-color: var(--ngx-input-focus-color);
 }
 
 .ngx-select__list {
@@ -238,7 +274,7 @@
 }
 
 .ngx-select__no-results {
-    color: #71717a;
+    color: var(--ngx-outline);
 }
 
 .ngx-select__option {
@@ -246,8 +282,7 @@
     transition: background 0.15s cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* ─── Toggle / Switch — 52×32 track, high-contrast handle ─────────────────── */
-/* Handle is zinc-500 when off, white when on. Track gets dark fill on. */
+/* ─── Toggle / Switch ─────────────────────────────────────────────────────── */
 
 .ngx-toggle__track {
     box-sizing: border-box;
@@ -258,9 +293,9 @@
         0 1px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* M3 focus: 40dp state layer around thumb */
+/* M3 focus: state layer around thumb */
 .ngx-toggle input:focus-visible+.ngx-toggle__track {
-    outline: 2px solid #18181b;
+    outline: 2px solid var(--ngx-input-focus-color);
     outline-offset: 2px;
 }
 
@@ -269,30 +304,43 @@
 /* ─── Multiselect — filter chips + overlay ─────────────────────────────────── */
 
 .ngx-multiselect__label {
-    color: #3f3f46;
+    color: var(--ngx-on-surface-variant);
     letter-spacing: 0.006em;
 }
 
 .ngx-multiselect__search-btn {
-    color: #3f3f46;
+    color: var(--ngx-on-surface-variant);
 }
 
 .ngx-multiselect__search-btn:hover:not(:disabled) {
-    background: rgba(24, 24, 27, 0.08);
+    background: var(--ngx-select-option-hover-bg);
+    color: var(--ngx-select-option-hover-color);
 }
 
 .ngx-multiselect__options {
     scrollbar-width: thin;
-    scrollbar-color: #a1a1aa transparent;
+    scrollbar-color: var(--ngx-outline-variant) transparent;
+}
+
+.ngx-select__list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ngx-outline-variant) transparent;
+}
+
+.ngx-multiselect-overlay__grid {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ngx-outline-variant) transparent;
 }
 
 .ngx-chip:hover:not(:disabled):not(.ngx-chip--selected) {
-    background: rgba(24, 24, 27, 0.06);
-    border-color: #a1a1aa;
+    background: var(--ngx-chip-hover-bg);
+    border-color: var(--ngx-chip-hover-border);
+    color: var(--ngx-chip-hover-color);
 }
 
 .ngx-chip--selected:hover:not(:disabled):not(.ngx-chip--counter) {
-    background: #27272a;
+    background: var(--ngx-chip-selected-hover-bg);
+    color: var(--ngx-chip-selected-hover-color);
 }
 
 .ngx-chip__btn:hover:not(:disabled) {
@@ -301,27 +349,27 @@
 
 /* Overlay — select-style dropdown */
 .ngx-multiselect-overlay__panel {
-    background: #ffffff;
-    border: 1px solid #d4d4d8;
+    background: var(--ngx-surface);
+    border: 1px solid var(--ngx-outline-subtle);
     border-radius: 0;
     box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15),
         0 1px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
 .ngx-multiselect-overlay__input {
-    border-bottom-color: #e4e4e7;
+    border-bottom-color: var(--ngx-surface-container-highest);
 }
 
 .ngx-multiselect-overlay__panel--above .ngx-multiselect-overlay__input {
-    border-top-color: #e4e4e7;
+    border-top-color: var(--ngx-surface-container-highest);
 }
 
 .ngx-multiselect-overlay__input:focus {
-    border-color: #18181b;
+    border-color: var(--ngx-input-focus-color);
 }
 
 .ngx-multiselect-overlay__empty {
-    color: #71717a;
+    color: var(--ngx-outline);
 }
 
 /* ─── Inline errors — M3 body-small ───────────────────────────────────────── */

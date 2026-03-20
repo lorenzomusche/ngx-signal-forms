@@ -62,6 +62,20 @@ export interface NgxFormSubmitEvent<T extends object> {
   readonly errors: ReadonlyArray<NgxFormError>;
 }
 
+/**
+ * Symbol for accessing the raw Angular FieldTree from NgxFormSubmitEvent.
+ * Power-user escape hatch — use sparingly.
+ */
+export const RAW_FIELD_TREE_SYMBOL: unique symbol =
+  Symbol("NGX_RAW_FIELD_TREE");
+
+/** Submit event with internal raw field tree access. */
+export interface NgxFormSubmitEventInternal<
+  T extends object,
+> extends NgxFormSubmitEvent<T> {
+  readonly [RAW_FIELD_TREE_SYMBOL]: unknown;
+}
+
 // ─── Control Options ─────────────────────────────────────────────────────────
 export interface NgxControlOption<TValue = string> {
   readonly value: TValue;

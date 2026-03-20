@@ -8,6 +8,11 @@
       "input": "./src/styles",
       "glob": "**/*.css",
       "output": "./styles"
+    },
+    {
+      "input": "./src/styles",
+      "glob": "**/*.scss",
+      "output": "./styles"
     }
   ],
   "deleteDestPath": false

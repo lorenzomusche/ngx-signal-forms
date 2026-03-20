@@ -150,7 +150,7 @@ const fieldNames = computed(() => Object.keys(this.adapter.fields()));
 
 ### Dependency Flow (strict)
 ```
-renderers/ → core/types.ts
+renderers/ → control/ + core/types.ts
 control/   → core/types.ts + core/tokens.ts
 form/      → core/types.ts + core/tokens.ts
 adapter/   → core/types.ts + @angular/forms/signals  (← ONLY file allowed)

@@ -21,6 +21,9 @@
     --ngx-input-border-color: #ccc;
     --ngx-input-border-radius: 6px;
     --ngx-input-font-size: 0.95rem;
+    --ngx-input-color: inherit;
+    --ngx-input-placeholder-color: #999;
+    --ngx-input-icon-color: currentColor;
     --ngx-input-focus-color: #4361ee;
     --ngx-input-focus-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
 
@@ -33,6 +36,7 @@
     /* Checkbox */
     --ngx-checkbox-size: 1.125rem;
     --ngx-checkbox-accent: var(--ngx-input-focus-color);
+    --ngx-checkbox-checkmark-color: #fff;
     --ngx-checkbox-border: 2px solid #999;
     --ngx-checkbox-border-radius: 3px;
     --ngx-checkbox-gap: 0.5rem;
@@ -78,8 +82,34 @@
     --ngx-select-dropdown-max-height: 15rem;
     --ngx-select-option-padding: 0.5rem 0.75rem;
     --ngx-select-option-hover-bg: #f0f4ff;
+    --ngx-select-option-hover-color: inherit;
     --ngx-select-option-selected-bg: #e6ecff;
+    --ngx-select-option-selected-color: inherit;
     --ngx-select-option-selected-weight: 600;
+    --ngx-select-placeholder-color: #999;
+    --ngx-select-arrow-color: #666;
+    --ngx-select-border-subtle: #eee;
+    --ngx-select-no-results-color: #999;
+
+    /* Surface & semantic colors (M3-like tokens) */
+    --ngx-surface: #fff;
+    --ngx-surface-container: #f4f4f5;
+    --ngx-surface-container-highest: #e4e4e7;
+    --ngx-surface-container-highest-hover: #d4d4d8;
+    --ngx-on-surface: #09090b;
+    --ngx-on-surface-variant: #3f3f46;
+    --ngx-outline: #71717a;
+    --ngx-outline-variant: #a1a1aa;
+    --ngx-outline-subtle: #d4d4d8;
+    --ngx-disabled-bg: rgba(24, 24, 27, 0.04);
+    --ngx-disabled-color: rgba(24, 24, 27, 0.38);
+
+    /* Chip hover */
+    --ngx-chip-hover-bg: rgba(24, 24, 27, 0.06);
+    --ngx-chip-hover-border: #a1a1aa;
+    --ngx-chip-hover-color: inherit;
+    --ngx-chip-selected-hover-bg: #27272a;
+    --ngx-chip-selected-hover-color: #fff;
 
     /* Layout */
     --ngx-renderer-gap: 0.25rem;
@@ -129,8 +159,18 @@
     border: var(--ngx-input-border);
     border-radius: var(--ngx-input-border-radius);
     font-size: var(--ngx-input-font-size);
+    color: var(--ngx-input-color);
     transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
+}
+
+.ngx-renderer input::placeholder,
+.ngx-renderer textarea::placeholder {
+    color: var(--ngx-input-placeholder-color);
+}
+
+.ngx-renderer input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: var(--ngx-calendar-icon-filter, none);
 }
 
 .ngx-renderer input:focus,
@@ -204,7 +244,7 @@
     top: 50%;
     width: calc(var(--ngx-checkbox-size) * 0.3);
     height: calc(var(--ngx-checkbox-size) * 0.55);
-    border: solid #fff;
+    border: solid var(--ngx-checkbox-checkmark-color);
     border-width: 0 2px 2px 0;
     transform: translateY(-60%) rotate(45deg) scale(0);
     transition: transform var(--ngx-checkbox-transition);
@@ -518,19 +558,24 @@
     width: 100%;
     padding: 0.5rem 0.75rem;
     border: none;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--ngx-select-border-subtle);
     border-radius: 0;
     font-size: var(--ngx-input-font-size);
     font-family: inherit;
+    color: var(--ngx-input-color);
     outline: none;
     background: transparent;
     box-sizing: border-box;
     flex-shrink: 0;
 }
 
+.ngx-multiselect-overlay__input::placeholder {
+    color: var(--ngx-input-placeholder-color);
+}
+
 .ngx-multiselect-overlay__panel--above .ngx-multiselect-overlay__input {
     border-bottom: none;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--ngx-select-border-subtle);
 }
 
 .ngx-multiselect-overlay__input:focus {
@@ -633,7 +678,7 @@ button.ngx-multiselect-overlay__item:hover {
 }
 
 .ngx-multiselect-overlay__empty {
-    color: #999;
+    color: var(--ngx-select-no-results-color);
     font-style: italic;
     padding: 0.25rem 0;
 }
@@ -700,13 +745,13 @@ button.ngx-multiselect-overlay__item:hover {
 
 .ngx-select__placeholder {
     flex: 1;
-    color: #999;
+    color: var(--ngx-select-placeholder-color);
 }
 
 .ngx-select__arrow {
     margin-left: 0.5rem;
     font-size: 0.75rem;
-    color: #666;
+    color: var(--ngx-select-arrow-color);
 }
 
 .ngx-select__dropdown {
@@ -755,12 +800,17 @@ button.ngx-multiselect-overlay__item:hover {
     width: 100%;
     padding: 0.5rem 0.75rem;
     border: none;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--ngx-select-border-subtle);
     font-size: var(--ngx-input-font-size);
     font-family: inherit;
+    color: var(--ngx-input-color);
     outline: none;
     background: transparent;
     box-sizing: border-box;
+}
+
+.ngx-select__search::placeholder {
+    color: var(--ngx-input-placeholder-color);
 }
 
 .ngx-select__list {
@@ -769,11 +819,12 @@ button.ngx-multiselect-overlay__item:hover {
     margin: 0;
     max-height: var(--ngx-select-dropdown-max-height);
     overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 .ngx-select__no-results {
     padding: var(--ngx-select-option-padding);
-    color: #999;
+    color: var(--ngx-select-no-results-color);
     font-style: italic;
 }
 

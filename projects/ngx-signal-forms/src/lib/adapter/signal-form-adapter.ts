@@ -17,7 +17,6 @@ import {
   required as ngRequired,
 } from "@angular/forms/signals";
 
-import { RAW_FIELD_TREE_SYMBOL } from "../core/tokens";
 import {
   NgxFieldError,
   NgxFieldRef,
@@ -26,8 +25,9 @@ import {
   NgxFormAdapter,
   NgxFormError,
   NgxFormState,
-  NgxFormSubmitEvent,
+  NgxFormSubmitEventInternal,
   NgxSubmitMode,
+  RAW_FIELD_TREE_SYMBOL,
 } from "../core/types";
 
 // ─── Validator re-exports ────────────────────────────────────────────────────────────
@@ -58,31 +58,31 @@ interface RawAngularFieldState {
 
 // ─── Adapter Factory ────────────────────────────────────────────────────────────
 
+/** Configuration for {@link createSignalFormAdapter}. */
 export interface SignalFormAdapterOptions<T extends object> {
-  readonly model: Signal<T>;
+  /** Writable signal holding the form model. */
+  readonly model: WritableSignal<T>;
+  /** Schema function that declares validators via Angular's schema API. */
   readonly schema?: (schemaPath: NgxFieldTree<T>) => void;
+  /** Controls when the form may be submitted. */
   readonly submitMode: NgxSubmitMode;
 }
 
+/** Adapter with an additional `buildSubmitEvent` helper. */
 export type NgxFormAdapterWithEvent<T extends object> = NgxFormAdapter<T> & {
-  buildSubmitEvent(value: T): NgxFormSubmitEvent<T>;
+  buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T>;
 };
 
+/** Create a signal-driven form adapter from the given options. */
 export function createSignalFormAdapter<T extends object>(
   options: SignalFormAdapterOptions<T>,
 ): NgxFormAdapterWithEvent<T> {
   const { model, schema, submitMode } = options;
 
   // ① Create FieldTree via Angular's form() — isolated here
-  const rawFieldTree: Record<string, () => RawAngularFieldState> = schema
-    ? (form(model as WritableSignal<T>, schema) as unknown as Record<
-        string,
-        () => RawAngularFieldState
-      >)
-    : (form(model as WritableSignal<T>) as unknown as Record<
-        string,
-        () => RawAngularFieldState
-      >);
+  const rawFieldTree = (schema
+    ? form(model, schema)
+    : form(model)) as unknown as Record<string, () => RawAngularFieldState>;
 
   const fieldKeys = Object.keys(rawFieldTree) as Array<keyof T & string>;
 
@@ -152,8 +152,6 @@ export function createSignalFormAdapter<T extends object>(
     angularRef: () => RawAngularFieldState,
   ): NgxFieldRef<TValue> {
     const rawState = angularRef();
-    const _touched = signal(false);
-    const _dirty = signal(false);
 
     const wrappedErrors = computed<ReadonlyArray<NgxFieldError>>(() => {
       const raw = rawState.errors() ?? [];
@@ -163,6 +161,10 @@ export function createSignalFormAdapter<T extends object>(
         payload: e["payload"],
       }));
     });
+
+    // Bridge touched/dirty: start from Angular's value, allow local override
+    const _touched = signal(rawState.touched());
+    const _dirty = signal(rawState.dirty());
 
     const fieldState: NgxFieldState<TValue> = {
       value: rawState.value as WritableSignal<TValue>,
@@ -256,13 +258,13 @@ export function createSignalFormAdapter<T extends object>(
     }
   }
 
-  function buildSubmitEvent(value: T): NgxFormSubmitEvent<T> {
+  function buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T> {
     return {
       value,
       valid: _valid(),
       errors: _lastSubmitErrors(),
       [RAW_FIELD_TREE_SYMBOL]: rawFieldTree,
-    } as NgxFormSubmitEvent<T>;
+    };
   }
 
   return {

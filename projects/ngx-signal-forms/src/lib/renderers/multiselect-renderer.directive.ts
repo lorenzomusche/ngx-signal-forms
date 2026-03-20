@@ -249,8 +249,8 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
     const query = this.searchQuery().toLowerCase().trim();
     let opts = this.options();
     if (this.mode() === "single") {
-      const val = this.value();
-      opts = opts.filter((o) => !val.includes(o.value));
+      const selected = this.selectedSet();
+      opts = opts.filter((o) => !selected.has(o.value));
     }
     if (!query) return opts;
     return opts.filter((o) => o.label.toLowerCase().includes(query));
@@ -270,11 +270,23 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
   /** Top offset in pixels — top edge of .ngx-multiselect__options relative to host. */
   protected readonly panelTop = signal(0);
 
+  /** Pre-computed count map for multi-mode (avoids O(n\u00d7m) in template). */
+  protected readonly counts = computed(() => {
+    const map = new Map<TValue, number>();
+    for (const v of this.value()) {
+      map.set(v, (map.get(v) ?? 0) + 1);
+    }
+    return map;
+  });
+
+  /** Pre-computed selection set for single-mode (avoids O(n) per chip). */
+  protected readonly selectedSet = computed(() => new Set(this.value()));
+
   // ── Single-mode helpers ─────────────────────────────────────────────────────
 
   /** Check whether a given option value is currently selected. */
   protected isSelected(optValue: TValue): boolean {
-    return this.value().includes(optValue);
+    return this.selectedSet().has(optValue);
   }
 
   protected onToggle(optValue: TValue): void {
@@ -290,7 +302,7 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
 
   /** Count how many times a value appears in the current selection. */
   protected countOf(optValue: TValue): number {
-    return this.value().filter((v) => v === optValue).length;
+    return this.counts().get(optValue) ?? 0;
   }
 
   protected increment(optValue: TValue): void {

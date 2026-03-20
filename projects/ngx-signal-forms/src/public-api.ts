@@ -32,11 +32,9 @@ export type {
 } from "./lib/core/types";
 
 // ─── DI tokens ────────────────────────────────────────────────────────────────
-export {
-  NGX_FORM_ADAPTER,
-  NGX_INLINE_ERRORS,
-  RAW_FIELD_TREE_SYMBOL,
-} from "./lib/core/tokens";
+export { NGX_FORM_ADAPTER, NGX_INLINE_ERRORS } from "./lib/core/tokens";
+
+export { RAW_FIELD_TREE_SYMBOL } from "./lib/core/types";
 
 // ─── Adapter factory (sole consumer of @angular/forms/signals) ───────────────
 export { createSignalFormAdapter } from "./lib/adapter/signal-form-adapter";
@@ -50,7 +48,7 @@ export type {
 export { NgxFormComponent } from "./lib/form/ngx-form.component";
 
 // ─── Control base class & optional wrapper ───────────────────────────────────
-export { ControlComponent } from "./lib/control/control.component";
+export { NgxControlComponent } from "./lib/control/control.component";
 export { NgxBaseControl } from "./lib/control/control.directive";
 export { NgxInlineErrorsDirective } from "./lib/control/inline-errors.directive";
 export { NgxOptionDirective } from "./lib/control/option.directive";

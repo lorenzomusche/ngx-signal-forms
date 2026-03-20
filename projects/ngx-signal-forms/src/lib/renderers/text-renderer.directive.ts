@@ -57,7 +57,6 @@ import { NgxBaseControl } from "../control/control.directive";
   `,
 })
 export class NgxTextComponent extends NgxBaseControl<string> {
-  readonly name = input.required<string>();
   readonly label = input<string>("");
   readonly placeholder = input<string>("");
 

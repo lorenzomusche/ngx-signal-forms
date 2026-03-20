@@ -1,0 +1,424 @@
+/*
+ * ngx-signal-forms — Color Scheme Mixin
+ *
+ * Derives a complete M3-inspired color palette from a single primary color.
+ * Replaces ALL neutral/zinc hardcoded colors with primary-tinted equivalents.
+ *
+ * Usage (in your global styles.scss):
+ *
+ *   @use 'ngx-signal-forms/styles/color-scheme' as ngx;
+ *
+ *   // Full color scheme (recommended):
+ *   @include ngx.color-scheme(#4361ee);
+ *
+ *   // With custom error color:
+ *   @include ngx.color-scheme(#4361ee, $error: #e63946);
+ *
+ *   // Only CSS custom properties (scoped to a container):
+ *   .my-form-wrapper {
+ *     @include ngx.color-scheme-vars(#4361ee);
+ *   }
+ */
+
+@use 'sass:color';
+@use 'sass:math';
+
+// ── Private helpers ────────────────────────────────────────────────────────
+
+/// Returns white or black depending on which has better perceived contrast against $bg.
+/// Uses the ITU-R BT.601 luma formula instead of HSL lightness, so saturated
+/// blues like #4361ee correctly get white text.
+@function _on-color($bg) {
+    $luma: color.red($bg) * 0.299 + color.green($bg) * 0.587 + color.blue($bg) * 0.114;
+
+    @if $luma >128 {
+        @return #000;
+    }
+
+    @return #fff;
+}
+
+/// Mix a color toward white by a percentage.
+@function _tint($clr, $weight) {
+    @return color.mix(#fff, $clr, $weight);
+}
+
+/// Mix a color toward black by a percentage.
+@function _shade($clr, $weight) {
+    @return color.mix(#000, $clr, $weight);
+}
+
+/// Ensures a color meets a minimum perceived lightness for readability on white backgrounds.
+/// If the input shade is too dark (luma < $floor), tint it toward mid-gray to guarantee
+/// visual separation from body text. Good for labels, placeholders, secondary text.
+@function _ensure-mid($clr, $floor: 80) {
+    $luma: color.red($clr) * 0.299 + color.green($clr) * 0.587 + color.blue($clr) * 0.114;
+
+    @if $luma < $floor {
+        @return color.mix(#808080, $clr, 50%);
+    }
+
+    @return $clr;
+}
+
+/// Ensures a color is bright enough to be readable on dark backgrounds.
+/// If luma < $floor, tints toward white until legible.
+@function _ensure-light($clr, $floor: 150) {
+    $luma: color.red($clr) * 0.299 + color.green($clr) * 0.587 + color.blue($clr) * 0.114;
+
+    @if $luma < $floor {
+        @return _tint($clr, 50%);
+    }
+
+    @return $clr;
+}
+
+// ── Palette generation ─────────────────────────────────────────────────────
+// Maps a single primary to a full M3-like tonal palette:
+//
+//   primary         → the input color
+//   on-primary      → white or black (contrast)
+//   primary-950     → very dark shade  (text, on-surface)
+//   primary-900     → dark shade       (headings, buttons)
+//   primary-700     → medium-dark      (labels, on-surface-variant)
+//   primary-500     → medium           (outline, borders)
+//   primary-400     → lighter          (outline-variant)
+//   primary-300     → light border     (chip-border, subtle dividers)
+//   primary-200     → surface-highest  (input fill, containers)
+//   primary-100     → surface          (dropdown bg)
+//   primary-50      → surface-tint     (hover bg)
+//   error           → the error input
+//   error-container → very light error tint
+
+// ── Public: CSS custom property block ──────────────────────────────────────
+
+/// Outputs ALL `--ngx-*` custom properties derived from a single primary color.
+/// Can be included inside any selector to scope the scheme.
+///
+/// @param {Color} $primary — The primary accent color.
+/// @param {Color} $error   — The error color (default: #dc2626).
+@mixin color-scheme-vars($primary, $error: #dc2626) {
+    // ── Derived palette ───────────────────────────────────────────────────
+    $on-primary: _on-color($primary);
+    $on-error: _on-color($error);
+
+    $primary-950: _shade($primary, 80%); // on-surface (text)
+    $primary-900: _shade($primary, 65%); // buttons, headings
+    $primary-700: _ensure-mid(_shade($primary, 40%)); // on-surface-variant (labels) — readable on white
+    $primary-500: _ensure-mid(color.mix($primary, #808080, 50%), 100); // outline — always mid-range
+    $primary-400: _tint($primary, 40%); // outline-variant
+    $primary-300: _tint($primary, 60%); // outline-subtle (borders)
+    $primary-200: _tint($primary, 88%); // surface-container-highest (input bg)
+    $primary-200-hover: _tint($primary, 80%); // surface-container-highest hover
+    $primary-100: _tint($primary, 93%); // surface-container (dropdown bg)
+    $primary-50: _tint($primary, 96%); // surface
+    $primary-hover: _shade($primary, 12%);
+
+    // ── Surface & semantic colors ─────────────────────────────────────────
+    --ngx-surface: #{$primary-50};
+    --ngx-surface-container: #{$primary-100};
+    --ngx-surface-container-highest: #{$primary-200};
+    --ngx-surface-container-highest-hover: #{$primary-200-hover};
+    --ngx-on-surface: #{$primary-950};
+    --ngx-on-surface-variant: #{$primary-700};
+    --ngx-outline: #{$primary-500};
+    --ngx-outline-variant: #{$primary-400};
+    --ngx-outline-subtle: #{$primary-300};
+    --ngx-disabled-bg: #{_tint($primary, 92%)};
+    --ngx-disabled-color: #{_tint($primary-900, 62%)};
+
+    // ── Inputs ────────────────────────────────────────────────────────────
+    --ngx-input-color: #{$primary-950};
+    --ngx-input-placeholder-color: #{$primary-500};
+    --ngx-input-focus-color: #{$primary};
+    --ngx-input-focus-shadow: none;
+    --ngx-input-border-color: #{$primary-300};
+
+    // ── Errors ────────────────────────────────────────────────────────────
+    --ngx-error-color: #{$error};
+    --ngx-error-focus-shadow: none;
+
+    // ── Checkbox ──────────────────────────────────────────────────────────
+    --ngx-checkbox-accent: #{$primary};
+    --ngx-checkbox-checkmark-color: #{$on-primary};
+    --ngx-checkbox-border: 2px solid #{$primary-500};
+
+    // ── Toggle ────────────────────────────────────────────────────────────
+    --ngx-toggle-thumb-color: #{$primary-500};
+    --ngx-toggle-thumb-color-checked: #{$on-primary};
+    --ngx-toggle-bg: #{$primary-200};
+    --ngx-toggle-bg-checked: #{$primary};
+    --ngx-toggle-border: 2px solid #{$primary-500};
+    --ngx-toggle-border-checked: 2px solid #{$primary};
+
+    // ── Chips ─────────────────────────────────────────────────────────────
+    --ngx-chip-border: 1px solid #{$primary-300};
+    --ngx-chip-color: #{$primary-700};
+    --ngx-chip-selected-bg: #{$primary};
+    --ngx-chip-selected-color: #{$on-primary};
+    --ngx-chip-selected-border: 1px solid #{$primary};
+    --ngx-chip-hover-bg: #{$primary-200};
+    --ngx-chip-hover-border: #{$primary-400};
+    --ngx-chip-hover-color: #{_on-color($primary-200)};
+    --ngx-chip-selected-hover-bg: #{$primary-hover};
+    --ngx-chip-selected-hover-color: #{_on-color($primary-hover)};
+
+    // ── Select dropdown ───────────────────────────────────────────────────
+    --ngx-select-dropdown-bg: #{$primary-100};
+    --ngx-select-option-hover-bg: #{$primary-200};
+    --ngx-select-option-hover-color: #{_on-color($primary-200)};
+    --ngx-select-option-selected-bg: #{$primary};
+    --ngx-select-option-selected-color: #{$on-primary};
+    --ngx-select-option-selected-weight: 600;
+    --ngx-select-placeholder-color: #{$primary-500};
+    --ngx-select-arrow-color: #{$primary-700};
+    --ngx-select-border-subtle: #{$primary-300};
+    --ngx-select-no-results-color: #{$primary-500};
+}
+
+// ── Public: Material-style submit button & extras ──────────────────────────
+
+/// Outputs class-level overrides for elements that don't have
+/// corresponding custom properties (submit button, overlay items).
+///
+/// @param {Color} $primary — The primary accent color.
+/// @param {Color} $error   — The error color (default: #dc2626).
+@mixin color-scheme-material($primary, $error: #dc2626) {
+    $on-primary: _on-color($primary);
+    $primary-200: _tint($primary, 88%);
+    $primary-hover: _shade($primary, 12%);
+
+    // ── Multiselect overlay items ─────────────────────────────────────────
+
+    button.ngx-multiselect-overlay__item:hover {
+        background: #{$primary-200};
+        color: #{_on-color($primary-200)};
+    }
+
+    .ngx-multiselect-overlay__item--selected {
+        background: #{$primary};
+        color: #{$on-primary};
+        border-color: #{$primary};
+    }
+
+    button.ngx-multiselect-overlay__item--selected:hover {
+        background: #{$primary-hover};
+        color: #{_on-color($primary-hover)};
+    }
+
+    // ── Submit button ─────────────────────────────────────────────────────
+
+    button[type="submit"] {
+        background: #{$primary};
+        color: #{$on-primary};
+    }
+
+    button[type="submit"]:hover {
+        background: #{$primary-hover};
+        color: #{_on-color($primary-hover)};
+    }
+
+    button[type="submit"]:disabled {
+        background: #{$primary-200};
+        color: #{_on-color($primary-200)};
+        opacity: 0.5;
+    }
+}
+
+// ── Public: All-in-one convenience mixin ───────────────────────────────────
+
+/// Generates a COMPLETE color scheme from a single primary color.
+/// Overrides every neutral/hardcoded color with primary-derived tones.
+///
+/// @param {Color} $primary  — The primary accent color.
+/// @param {Color} $error    — The error color (default: #dc2626).
+/// @param {Bool}  $material — Whether to include Material filled-field overrides (default: true).
+@mixin color-scheme($primary, $error: #dc2626, $material: true) {
+    :root {
+        @include color-scheme-vars($primary, $error);
+    }
+
+    @if $material {
+        @include color-scheme-material($primary, $error);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Dark: CSS custom properties ────────────────────────────────────────────
+
+/// Outputs ALL `--ngx-*` custom properties for DARK mode.
+/// The tonal scale is inverted: surfaces are dark shades, text is light tints.
+///
+/// @param {Color} $primary — The primary accent color.
+/// @param {Color} $error   — The error color (default: #f87171 — lighter red for dark bg).
+@mixin color-scheme-vars-dark($primary, $error: #f87171) {
+    $on-primary: _on-color($primary);
+    $on-error: _on-color($error);
+
+    // In dark mode the primary is often lightened for better contrast on dark surfaces
+    $primary-light: _ensure-light($primary, 150);
+    $on-primary-light: _on-color($primary-light);
+
+    // Dark surfaces — shade the primary toward black
+    $surface-950: _shade($primary, 92%); // darkest (body bg)
+    $surface-900: _shade($primary, 85%); // card bg
+    $surface-800: _shade($primary, 78%); // surface-container (dropdown)
+    $surface-700: _shade($primary, 70%); // surface-container-highest (input bg)
+    $surface-700-hover: _shade($primary, 62%); // input hover
+    $surface-600: _shade($primary, 55%); // subtle borders
+
+    // Light text/outlines — tint the primary toward white
+    $text-50: _tint($primary, 95%); // on-surface (body text)
+    $text-200: _tint($primary, 80%); // on-surface-variant (labels)
+    $text-400: _tint($primary, 50%); // outline
+    $text-500: _tint($primary, 40%); // outline-variant
+    $text-600: _shade($primary, 45%); // disabled text
+
+    $primary-hover: _tint($primary-light, 15%);
+
+    // ── Surface & semantic colors ─────────────────────────────────────────
+    --ngx-surface: #{$surface-900};
+    --ngx-surface-container: #{$surface-800};
+    --ngx-surface-container-highest: #{$surface-700};
+    --ngx-surface-container-highest-hover: #{$surface-700-hover};
+    --ngx-on-surface: #{$text-50};
+    --ngx-on-surface-variant: #{$text-200};
+    --ngx-outline: #{$text-400};
+    --ngx-outline-variant: #{$text-500};
+    --ngx-outline-subtle: #{$surface-600};
+    --ngx-disabled-bg: #{_shade($primary, 88%)};
+    --ngx-disabled-color: #{$text-600};
+
+    // ── Inputs ────────────────────────────────────────────────────────────
+    --ngx-input-color: #{$text-50};
+    --ngx-input-placeholder-color: #{$text-400};
+    --ngx-calendar-icon-filter: invert(1);
+    --ngx-input-focus-color: #{$primary-light};
+    --ngx-input-focus-shadow: none;
+    --ngx-input-border-color: #{$surface-600};
+
+    // ── Errors ────────────────────────────────────────────────────────────
+    --ngx-error-color: #{$error};
+    --ngx-error-focus-shadow: none;
+
+    // ── Checkbox ──────────────────────────────────────────────────────────
+    --ngx-checkbox-accent: #{$primary-light};
+    --ngx-checkbox-checkmark-color: #{$on-primary-light};
+    --ngx-checkbox-border: 2px solid #{$text-400};
+
+    // ── Toggle ────────────────────────────────────────────────────────────
+    --ngx-toggle-thumb-color: #{$text-400};
+    --ngx-toggle-thumb-color-checked: #{$on-primary-light};
+    --ngx-toggle-bg: #{$surface-700};
+    --ngx-toggle-bg-checked: #{$primary-light};
+    --ngx-toggle-border: 2px solid #{$text-400};
+    --ngx-toggle-border-checked: 2px solid #{$primary-light};
+
+    // ── Chips ─────────────────────────────────────────────────────────────
+    --ngx-chip-border: 1px solid #{$surface-600};
+    --ngx-chip-color: #{$text-200};
+    --ngx-chip-selected-bg: #{$primary-light};
+    --ngx-chip-selected-color: #{$on-primary-light};
+    --ngx-chip-selected-border: 1px solid #{$primary-light};
+    --ngx-chip-hover-bg: #{$surface-700-hover};
+    --ngx-chip-hover-border: #{$text-500};
+    --ngx-chip-hover-color: #{$text-50};
+    --ngx-chip-selected-hover-bg: #{$primary-hover};
+    --ngx-chip-selected-hover-color: #{_on-color($primary-hover)};
+
+    // ── Select dropdown ───────────────────────────────────────────────────
+    --ngx-select-dropdown-bg: #{$surface-800};
+    --ngx-select-option-hover-bg: #{$surface-700};
+    --ngx-select-option-hover-color: #{$text-50};
+    --ngx-select-option-selected-bg: #{$primary-light};
+    --ngx-select-option-selected-color: #{$on-primary-light};
+    --ngx-select-option-selected-weight: 600;
+    --ngx-select-placeholder-color: #{$text-400};
+    --ngx-select-arrow-color: #{$text-200};
+    --ngx-select-border-subtle: #{$surface-600};
+    --ngx-select-no-results-color: #{$text-400};
+}
+
+// ── Dark: Material-style class overrides ───────────────────────────────────
+
+/// Outputs class-level overrides for dark mode elements without a custom property.
+///
+/// @param {Color} $primary — The primary accent color.
+/// @param {Color} $error   — The error color (default: #f87171).
+@mixin color-scheme-material-dark($primary, $error: #f87171) {
+    $primary-light: _ensure-light($primary, 150);
+    $on-primary-light: _on-color($primary-light);
+    $surface-700: _shade($primary, 70%);
+    $surface-700-hover: _shade($primary, 62%);
+    $primary-hover: _tint($primary-light, 15%);
+
+    button.ngx-multiselect-overlay__item:hover {
+        background: #{$surface-700-hover};
+        color: #{_on-color($surface-700-hover)};
+    }
+
+    .ngx-multiselect-overlay__item--selected {
+        background: #{$primary-light};
+        color: #{$on-primary-light};
+        border-color: #{$primary-light};
+    }
+
+    button.ngx-multiselect-overlay__item--selected:hover {
+        background: #{$primary-hover};
+        color: #{_on-color($primary-hover)};
+    }
+
+    button[type="submit"] {
+        background: #{$primary-light};
+        color: #{$on-primary-light};
+    }
+
+    button[type="submit"]:hover {
+        background: #{$primary-hover};
+        color: #{_on-color($primary-hover)};
+    }
+
+    button[type="submit"]:disabled {
+        background: #{$surface-700};
+        color: #{_on-color($surface-700)};
+        opacity: 0.5;
+    }
+}
+
+// ── Dark: All-in-one convenience mixin ─────────────────────────────────────
+
+/// Generates a COMPLETE dark color scheme wrapped in `@media (prefers-color-scheme: dark)`.
+/// Also accepts a $selector to scope manually (e.g. `[data-theme="dark"]`).
+///
+/// @param {Color}       $primary  — The primary accent color.
+/// @param {Color}       $error    — The error color (default: #f87171).
+/// @param {Bool}        $material — Include Material overrides (default: true).
+/// @param {String|null} $selector — Optional selector instead of media query (e.g. '.dark').
+@mixin color-scheme-dark($primary, $error: #f87171, $material: true, $selector: null) {
+    @if $selector {
+        #{$selector} {
+            @include color-scheme-vars-dark($primary, $error);
+        }
+
+        @if $material {
+            #{$selector} {
+                @include color-scheme-material-dark($primary, $error);
+            }
+        }
+    }
+
+    @else {
+        @media (prefers-color-scheme: dark) {
+            :root {
+                @include color-scheme-vars-dark($primary, $error);
+            }
+
+            @if $material {
+                @include color-scheme-material-dark($primary, $error);
+            }
+        }
+    }
+}

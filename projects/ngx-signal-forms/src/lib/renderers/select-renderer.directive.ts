@@ -322,14 +322,16 @@ export class NgxSelectComponent<
       case "Enter":
         event.preventDefault();
         if (idx >= 0 && idx < opts.length) {
-          this.selectOption(opts[idx]!);
+          const opt = opts[idx];
+          if (opt) this.selectOption(opt);
         }
         break;
       case " ":
         if (!isSearchFocused) {
           event.preventDefault();
           if (idx >= 0 && idx < opts.length) {
-            this.selectOption(opts[idx]!);
+            const opt = opts[idx];
+            if (opt) this.selectOption(opt);
           }
         }
         break;
