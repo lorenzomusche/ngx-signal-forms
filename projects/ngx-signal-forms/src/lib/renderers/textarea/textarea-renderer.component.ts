@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { NgxBaseControl } from "../control/control.directive";
+import { NgxBaseControl } from "../../control/control.directive";
+import { NgxErrorListComponent } from "../../control/error-list.component";
+import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 
 /**
  * Textarea renderer component.
@@ -11,6 +13,7 @@ import { NgxBaseControl } from "../control/control.directive";
 @Component({
   selector: "ngx-control-textarea",
   standalone: true,
+  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-renderer ngx-renderer--textarea" },
   template: `
@@ -18,13 +21,7 @@ import { NgxBaseControl } from "../control/control.directive";
       <label [for]="fieldId">
         {{ label() }}
         @if (inlineErrors && touched() && hasErrors()) {
-          <span
-            class="ngx-control__inline-errors"
-            role="alert"
-            aria-live="polite"
-          >
-            ({{ inlineErrorText() }})
-          </span>
+          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
         }
       </label>
     }
@@ -43,16 +40,7 @@ import { NgxBaseControl } from "../control/control.directive";
       >{{ value() }}</textarea
     >
     @if (!inlineErrors && touched() && hasErrors()) {
-      <ul
-        [id]="fieldId + '-errors'"
-        class="ngx-control__errors"
-        role="alert"
-        aria-live="polite"
-      >
-        @for (err of errors(); track $index) {
-          <li class="ngx-control__error">{{ err.message }}</li>
-        }
-      </ul>
+      <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }
   `,
 })

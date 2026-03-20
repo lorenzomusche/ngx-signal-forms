@@ -8,8 +8,14 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { NgxBaseControl } from "../control/control.directive";
-import { NgxSelectOption } from "../core/types";
+import { NgxBaseControl } from "../../control/control.directive";
+import { NgxErrorListComponent } from "../../control/error-list.component";
+import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
+import {
+  computeOverlayPosition,
+  OverlayPosition,
+} from "../../core/overlay-position";
+import { NgxSelectOption } from "../../core/types";
 
 /**
  * Multiselect renderer component.
@@ -31,6 +37,7 @@ import { NgxSelectOption } from "../core/types";
 @Component({
   selector: "ngx-control-multiselect",
   standalone: true,
+  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-renderer ngx-renderer--multiselect",
@@ -43,13 +50,7 @@ import { NgxSelectOption } from "../core/types";
           <label class="ngx-multiselect__label">
             {{ label() }}
             @if (inlineErrors && touched() && hasErrors()) {
-              <span
-                class="ngx-control__inline-errors"
-                role="alert"
-                aria-live="polite"
-              >
-                ({{ inlineErrorText() }})
-              </span>
+              <ngx-inline-error-icon [errorText]="inlineErrorText()" />
             }
           </label>
         }
@@ -215,16 +216,7 @@ import { NgxSelectOption } from "../core/types";
     }
 
     @if (!inlineErrors && touched() && hasErrors()) {
-      <ul
-        [id]="fieldId + '-errors'"
-        class="ngx-control__errors"
-        role="alert"
-        aria-live="polite"
-      >
-        @for (err of errors(); track $index) {
-          <li class="ngx-control__error">{{ err.message }}</li>
-        }
-      </ul>
+      <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }
   `,
 })
@@ -266,6 +258,9 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
 
   /** Whether the panel renders as a centered overlay (no space above or below). */
   protected readonly overlayMode = signal(false);
+
+  /** Resolved overlay position. */
+  private readonly overlayPosition = signal<OverlayPosition>("below");
 
   /** Top offset in pixels — top edge of .ngx-multiselect__options relative to host. */
   protected readonly panelTop = signal(0);
@@ -326,26 +321,11 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
     this.searchQuery.set("");
     const host = this.hostRef.nativeElement as HTMLElement;
     const optionsEl = host.querySelector(".ngx-multiselect__options");
-    // Use the options container bottom for space calculation (ignore errors/::after)
-    const anchorBottom = optionsEl
-      ? optionsEl.getBoundingClientRect().bottom
-      : host.getBoundingClientRect().bottom;
-    const anchorTop = optionsEl
-      ? optionsEl.getBoundingClientRect().top
-      : host.getBoundingClientRect().top;
-    const spaceBelow = window.innerHeight - anchorBottom;
-    const spaceAbove = anchorTop;
-    const minSpace = 128;
-    if (spaceBelow >= minSpace) {
-      this.dropUp.set(false);
-      this.overlayMode.set(false);
-    } else if (spaceAbove >= minSpace) {
-      this.dropUp.set(true);
-      this.overlayMode.set(false);
-    } else {
-      this.dropUp.set(false);
-      this.overlayMode.set(true);
-    }
+    const spaceAnchor = (optionsEl ?? host) as HTMLElement;
+    const pos = computeOverlayPosition(spaceAnchor);
+    this.overlayPosition.set(pos);
+    this.dropUp.set(pos === "above");
+    this.overlayMode.set(pos === "overlay");
     // Measure the top of the options container relative to the host
     if (optionsEl) {
       const hostRect = host.getBoundingClientRect();

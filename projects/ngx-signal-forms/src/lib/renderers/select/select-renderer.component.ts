@@ -11,9 +11,15 @@ import {
   TemplateRef,
   viewChild,
 } from "@angular/core";
-import { NgxBaseControl } from "../control/control.directive";
-import { NgxOptionDirective } from "../control/option.directive";
-import { NgxSelectOption } from "../core/types";
+import { NgxBaseControl } from "../../control/control.directive";
+import { NgxErrorListComponent } from "../../control/error-list.component";
+import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
+import { NgxOptionDirective } from "../../control/option.directive";
+import {
+  computeOverlayPosition,
+  OverlayPosition,
+} from "../../core/overlay-position";
+import { NgxSelectOption } from "../../core/types";
 
 /**
  * Select renderer component.
@@ -33,7 +39,11 @@ import { NgxSelectOption } from "../core/types";
 @Component({
   selector: "ngx-control-select",
   standalone: true,
-  imports: [NgTemplateOutlet],
+  imports: [
+    NgTemplateOutlet,
+    NgxInlineErrorIconComponent,
+    NgxErrorListComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-renderer ngx-renderer--select",
@@ -45,13 +55,7 @@ import { NgxSelectOption } from "../core/types";
       <label [for]="fieldId">
         {{ label() }}
         @if (inlineErrors && touched() && hasErrors()) {
-          <span
-            class="ngx-control__inline-errors"
-            role="alert"
-            aria-live="polite"
-          >
-            ({{ inlineErrorText() }})
-          </span>
+          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
         }
       </label>
     }
@@ -170,16 +174,7 @@ import { NgxSelectOption } from "../core/types";
     }
 
     @if (!inlineErrors && touched() && hasErrors()) {
-      <ul
-        [id]="fieldId + '-errors'"
-        class="ngx-control__errors"
-        role="alert"
-        aria-live="polite"
-      >
-        @for (err of errors(); track $index) {
-          <li class="ngx-control__error">{{ err.message }}</li>
-        }
-      </ul>
+      <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }
   `,
 })
@@ -201,11 +196,16 @@ export class NgxSelectComponent<
   /** Whether the custom dropdown is open. */
   protected readonly open = signal(false);
 
+  /** Resolved position for the dropdown popup. */
+  protected readonly position = signal<OverlayPosition>("below");
+
   /** Whether the dropdown opens above the trigger. */
-  protected readonly dropUp = signal(false);
+  protected readonly dropUp = computed(() => this.position() === "above");
 
   /** Whether the dropdown renders as a centered overlay (no space above or below). */
-  protected readonly overlayMode = signal(false);
+  protected readonly overlayMode = computed(
+    () => this.position() === "overlay",
+  );
 
   /** Index of the keyboard-active option (for arrow navigation). */
   protected readonly activeIndex = signal(-1);
@@ -250,23 +250,9 @@ export class NgxSelectComponent<
         (o: NgxSelectOption<TValue>) => o.value === this.value(),
       );
       this.activeIndex.set(idx >= 0 ? idx : 0);
-      // Compute position: below → above → overlay
-      const rect = (
-        this.hostRef.nativeElement as HTMLElement
-      ).getBoundingClientRect();
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const spaceAbove = rect.top;
-      const minSpace = 128;
-      if (spaceBelow >= minSpace) {
-        this.dropUp.set(false);
-        this.overlayMode.set(false);
-      } else if (spaceAbove >= minSpace) {
-        this.dropUp.set(true);
-        this.overlayMode.set(false);
-      } else {
-        this.dropUp.set(false);
-        this.overlayMode.set(true);
-      }
+      this.position.set(
+        computeOverlayPosition(this.hostRef.nativeElement as HTMLElement),
+      );
       // Focus search input after DOM renders
       if (this.searchable()) {
         setTimeout(() => this.searchInputRef()?.nativeElement.focus(), 0);
