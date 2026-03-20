@@ -10,119 +10,189 @@
 
 ## Features
 
-- **Declarative syntax** — `<ngx-control text name="firstName" />`
+- **Declarative syntax** — `<ngx-control-text name="firstName" label="First Name" />`
 - **Signal-first** — all state exposed as `Signal<T>`, no `Observable` boilerplate
-- **Polymorphic control** — one `<ngx-control>` host, renderer injected via DI token (no boolean flags)
-- **7 built-in renderers** — text, select, multiselect (checkbox, `ReadonlyArray<TValue>`), checkbox, number, date, textarea
-- **Custom renderers** — extend `ControlDirective<T>` and provide `NGX_CONTROL_DIRECTIVE`
-- **Pure validator functions** — `required`, `minLength`, `email`, `pattern`, `min`, `max`, `compose`
+- **8 built-in renderers** — text, number, date, select, multiselect, checkbox, toggle, textarea
+- **Custom renderers** — extend `NgxBaseControl<T>` and register in your module
+- **Schema validators** — `schemaRequired`, `schemaEmail`, `schemaMin`, `schemaMax`, `schemaMinLength`, `schemaMaxLength`, `schemaPattern`
+- **Pure validators** — `required`, `minLength`, `email`, `pattern`, `min`, `max`, `compose`, `composeFirst`
 - **Rich submit event** — `{ value, valid, errors, [RAW_FIELD_TREE_SYMBOL] }`
 - **Adapter encapsulation** — `@angular/forms/signals` API never leaks to consumers
+- **Inline errors** — `ngxInlineErrors` directive displays errors next to labels
+- **Searchable select & multiselect** — built-in search with dropdown positioning (below → above → overlay)
+- **Theming** — CSS custom properties with base and Material Design 3 themes
 - **Full strict TypeScript** — no `any`, immutable arrays, functional composition
 
 ---
 
 ## Quick Start
 
-### 1. Import
+### 1. Install
+
+```bash
+npm install ngx-signal-forms
+```
+
+### 2. Import theme
+
+```scss
+@import 'ngx-signal-forms/styles/ngx-signal-forms.css';
+// Optional: Material Design 3 theme
+@import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
+```
+
+### 3. Import components
 
 ```ts
 import {
   NgxFormComponent,
-  ControlComponent,
-  TextRendererDirective,
-  SelectRendererDirective,
-  MultiselectRendererDirective,
-  required,
-  minLength,
-  compose,
+  NgxTextComponent,
+  NgxNumberComponent,
+  NgxSelectComponent,
+  NgxMultiselectComponent,
+  NgxCheckboxComponent,
+  NgxToggleComponent,
+  NgxDateComponent,
+  NgxTextareaComponent,
+  NgxInlineErrorsDirective,
+  NgxOptionDirective,
+  createSignalFormAdapter,
+  schemaRequired,
+  schemaEmail,
+  schemaMinLength,
 } from 'ngx-signal-forms';
 
 @Component({
+  standalone: true,
   imports: [
     NgxFormComponent,
-    ControlComponent,
-    TextRendererDirective,
-    SelectRendererDirective,
-    MultiselectRendererDirective,
+    NgxTextComponent,
+    NgxNumberComponent,
+    NgxSelectComponent,
+    NgxMultiselectComponent,
+    NgxCheckboxComponent,
+    NgxToggleComponent,
+    NgxDateComponent,
+    NgxTextareaComponent,
+    NgxInlineErrorsDirective,
+    NgxOptionDirective,
   ],
 })
 ```
 
-### 2. Template
+### 4. Create adapter
+
+```ts
+interface MyForm extends Record<string, unknown> {
+  firstName: string;
+  lastName: string;
+  email: string;
+  country: string | null;
+}
+
+export class MyComponent {
+  private readonly model = signal<MyForm>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    country: null,
+  });
+
+  readonly adapter = createSignalFormAdapter({
+    model: this.model,
+    submitMode: 'valid-only',
+    schema: (path) => {
+      schemaRequired(path.firstName);
+      schemaMinLength(path.firstName, 2);
+      schemaRequired(path.lastName);
+      schemaRequired(path.email);
+      schemaEmail(path.email);
+    },
+  });
+}
+```
+
+### 5. Template
 
 ```html
-<ngx-form [action]="onSubmit" (submitted)="handleResult($event)">
+<ngx-form [adapter]="adapter" [action]="submitAction" (submitted)="onSubmitted($event)">
 
-  <!-- Text input -->
-  <ngx-control text name="firstName" label="Nome" [validators]="firstNameValidators" />
-  <ngx-control text name="lastName"  label="Cognome" />
+  <ngx-control-text name="firstName" label="First Name" ngxInlineErrors />
+  <ngx-control-text name="lastName" label="Last Name" ngxInlineErrors />
+  <ngx-control-text name="email" label="Email" ngxInlineErrors />
 
-  <!-- Select -->
-  <ngx-control select name="province" label="Provincia" [options]="provinces" />
-
-  <!-- Multiselect with custom option template -->
-  <ngx-control multiselect name="tags" [options]="tagOptions">
-    <ng-template #optionTpl let-opt>
+  <ngx-control-select
+    name="country"
+    label="Country"
+    placeholder="Select a country…"
+    [options]="countries"
+    [searchable]="true"
+  >
+    <ng-template ngxOption let-opt>
       <strong>{{ opt.label }}</strong>
     </ng-template>
-  </ngx-control>
+  </ngx-control-select>
 
-  <!-- Submit button reacts to form validity signal -->
-  <button type="submit" formActions [disabled]="!formContext.valid()">Invia</button>
+  <button type="submit" [disabled]="!adapter.state.canSubmit()">Submit</button>
 
 </ngx-form>
 ```
 
-### 3. Component
+---
+
+## Built-in Renderers
+
+| Selector | Component | Value type |
+|---|---|---|
+| `ngx-control-text` | `NgxTextComponent` | `string` |
+| `ngx-control-number` | `NgxNumberComponent` | `number \| null` |
+| `ngx-control-date` | `NgxDateComponent` | `string \| null` |
+| `ngx-control-select` | `NgxSelectComponent` | `TValue \| null` |
+| `ngx-control-multiselect` | `NgxMultiselectComponent` | `ReadonlyArray<TValue>` |
+| `ngx-control-checkbox` | `NgxCheckboxComponent` | `boolean` |
+| `ngx-control-toggle` | `NgxToggleComponent` | `boolean` |
+| `ngx-control-textarea` | `NgxTextareaComponent` | `string` |
+
+---
+
+## Submit Event
 
 ```ts
-export class MyFormComponent {
-  readonly firstNameValidators = compose(
-    required(),
-    minLength(2),
-  );
-
-  readonly provinces: NgxSelectOption<string>[] = [
-    { value: 'MI', label: 'Milano' },
-    { value: 'RM', label: 'Roma' },
-  ];
-
-  async onSubmit(value: MyFormModel): Promise<readonly string[]> {
-    const result = await this.myService.save(value);
-    return result.errors ?? [];
-  }
-
-  handleResult(event: NgxFormSubmitEvent<MyFormModel>): void {
-    console.log('valid:', event.valid);
-    console.log('value:', event.value);
-    console.log('errors:', event.errors);
-  }
+interface NgxFormSubmitEvent<T extends object> {
+  readonly value: T;
+  readonly valid: boolean;
+  readonly errors: ReadonlyArray<NgxFormError>;
 }
 ```
 
 ---
 
-## Submit Event Shape
+## Validators
+
+### Schema-level (applied in adapter, powered by `@angular/forms/signals`)
 
 ```ts
-interface NgxFormSubmitEvent<T> {
-  value: T;                        // form model
-  valid: boolean;                  // all fields valid
-  errors: readonly string[];       // global submit errors
-  [RAW_FIELD_TREE_SYMBOL]: ...;    // raw signal tree (adapter/controllers only)
-}
+import { schemaRequired, schemaEmail, schemaMin, schemaMax, schemaMinLength, schemaMaxLength } from 'ngx-signal-forms';
+
+const adapter = createSignalFormAdapter({
+  model: this.model,
+  submitMode: 'valid-only',
+  schema: (path) => {
+    schemaRequired(path.name);
+    schemaEmail(path.email);
+    schemaMin(path.age, 0);
+    schemaMax(path.age, 120);
+  },
+});
 ```
 
----
-
-## Built-in Validators
+### Pure validators (standalone functions)
 
 ```ts
 import { required, minLength, maxLength, email, pattern, min, max, compose, composeFirst } from 'ngx-signal-forms';
 
 const nameValidators = compose(
-  required('Nome obbligatorio'),
+  required('Name is required'),
   minLength(2),
   maxLength(50),
 );
@@ -132,18 +202,27 @@ const nameValidators = compose(
 
 ## Custom Renderer
 
+Extend `NgxBaseControl<TValue>` to create a custom renderer:
+
 ```ts
-@Directive({
-  selector: 'ngx-control[phone]',
+@Component({
+  selector: 'my-phone-input',
   standalone: true,
-  providers: [{ provide: NGX_CONTROL_DIRECTIVE, useExisting: PhoneRendererDirective }],
-  template: `<input type="tel" ... />`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'ngx-renderer' },
+  template: `
+    <label [for]="fieldId">{{ label() }}</label>
+    <input [id]="fieldId" type="tel" [value]="value()" (input)="onInput($event)" (blur)="markAsTouched()" />
+  `,
 })
-export class PhoneRendererDirective extends ControlDirective<string> {
-  readonly name = input.required<string>();
-  readonly validators = input<readonly ValidatorFn<string>[]>([]);
-  get fieldName() { return this.name(); }
-  readonly value = signal('');
+export class PhoneComponent extends NgxBaseControl<string> {
+  readonly label = input<string>('');
+  protected readonly fieldId = `phone-${NgxBaseControl.nextId()}`;
+
+  protected onInput(event: Event): void {
+    this.setValue((event.target as HTMLInputElement).value);
+    this.markAsDirty();
+  }
 }
 ```
 
@@ -152,14 +231,43 @@ export class PhoneRendererDirective extends ControlDirective<string> {
 ## Architecture
 
 ```
-NgxFormComponent
-  └─ SignalFormAdapter          (sole consumer of @angular/forms/signals)
-      └─ NGX_FORM_REGISTRY      (DI token for field registration)
+NgxFormComponent                           (host, provides NGX_FORM_ADAPTER via DI)
+  └─ createSignalFormAdapter()             (sole consumer of @angular/forms/signals)
+      ├─ form(model, schema)               (Angular Signal Forms API)
+      └─ wrapFieldRef() → NgxFieldRef<T>   (stable public contract)
 
-ngx-control[text|select|...]   (ControlComponent + renderer directive)
-  └─ ControlDirective<TValue>  (abstract base, registers to registry)
-  └─ NGX_CONTROL_DIRECTIVE     (DI token resolves the active renderer)
+ngx-control-text / select / multiselect / …   (standalone components)
+  └─ NgxBaseControl<TValue>                    (abstract base, injects NGX_FORM_ADAPTER)
+      ├─ fieldState → NgxFieldState<TValue>    (value, valid, touched, dirty, errors)
+      └─ setValue() / markAsTouched() / markAsDirty()
 ```
+
+### Dependency flow
+
+```
+renderers/  → control/ + core/types.ts
+control/    → core/types.ts + core/tokens.ts
+form/       → core/types.ts + core/tokens.ts
+adapter/    → core/types.ts + @angular/forms/signals  (← ONLY file allowed)
+core/       → @angular/core only
+```
+
+---
+
+## Theming
+
+Override CSS custom properties to create a custom theme:
+
+```css
+:root {
+  --ngx-input-focus-color: #4361ee;
+  --ngx-chip-selected-bg: #18181b;
+  --ngx-select-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  /* … see ngx-signal-forms.css for all properties */
+}
+```
+
+A Material Design 3 theme is included: `ngx-signal-forms-material.css`.
 
 ---
 
