@@ -1,0 +1,180 @@
+/**
+ * Pure utility functions for ISO 8601 date manipulation.
+ *
+ * All dates are represented as `YYYY-MM-DD` strings (ISO 8601 calendar date).
+ * No `Date` object is exposed in the public API — parsing/formatting
+ * happens internally to avoid timezone ambiguity.
+ */
+
+/** Parsed representation of a calendar date (all 1-based). */
+export interface CalendarDate {
+  readonly year: number;
+  /** 1–12 */
+  readonly month: number;
+  /** 1–31 */
+  readonly day: number;
+}
+
+/** A single cell in the calendar grid. */
+export interface CalendarCell {
+  readonly date: CalendarDate;
+  /** ISO string `YYYY-MM-DD` for quick comparison. */
+  readonly iso: string;
+  /** True when the cell belongs to the displayed month. */
+  readonly inMonth: boolean;
+}
+
+// ── Parsing / Formatting ──────────────────────────────────────────────────────
+
+const ISO_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/** Parse an ISO `YYYY-MM-DD` string. Returns `null` on invalid input. */
+export function parseIsoDate(
+  value: string | null | undefined,
+): CalendarDate | null {
+  if (!value) return null;
+  const m = ISO_DATE_RE.exec(value);
+  if (!m) return null;
+  const year = Number(m[1]);
+  const month = Number(m[2]);
+  const day = Number(m[3]);
+  if (month < 1 || month > 12 || day < 1 || day > daysInMonth(year, month)) {
+    return null;
+  }
+  return { year, month, day };
+}
+
+/** Format a CalendarDate as `YYYY-MM-DD`. */
+export function formatIsoDate(d: CalendarDate): string {
+  const y = String(d.year).padStart(4, "0");
+  const m = String(d.month).padStart(2, "0");
+  const day = String(d.day).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+/** Get today's date as a CalendarDate. */
+export function today(): CalendarDate {
+  const now = new Date();
+  return {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    day: now.getDate(),
+  };
+}
+
+// ── Date Arithmetic ───────────────────────────────────────────────────────────
+
+/** Number of days in a given month (1-based). */
+export function daysInMonth(year: number, month: number): number {
+  // Day 0 of next month = last day of current month
+  return new Date(year, month, 0).getDate();
+}
+
+/** Day of week for the 1st of the month (0 = Sunday, 6 = Saturday). */
+export function firstWeekday(year: number, month: number): number {
+  return new Date(year, month - 1, 1).getDay();
+}
+
+/** Check if two CalendarDates represent the same day. */
+export function isSameDay(a: CalendarDate, b: CalendarDate): boolean {
+  return a.year === b.year && a.month === b.month && a.day === b.day;
+}
+
+/** Compare two CalendarDates. Returns <0, 0, or >0. */
+export function compareDates(a: CalendarDate, b: CalendarDate): number {
+  return a.year - b.year || a.month - b.month || a.day - b.day;
+}
+
+/** Check if a date falls within [min, max] (inclusive). Null bounds are ignored. */
+export function isDateInRange(
+  date: CalendarDate,
+  min: CalendarDate | null,
+  max: CalendarDate | null,
+): boolean {
+  if (min && compareDates(date, min) < 0) return false;
+  if (max && compareDates(date, max) > 0) return false;
+  return true;
+}
+
+/** Add months to a CalendarDate, clamping the day if needed. */
+export function addMonths(d: CalendarDate, count: number): CalendarDate {
+  let month = d.month + count;
+  let year = d.year;
+  // Normalize month to 1–12
+  year += Math.floor((month - 1) / 12);
+  month = ((((month - 1) % 12) + 12) % 12) + 1;
+  const maxDay = daysInMonth(year, month);
+  return { year, month, day: Math.min(d.day, maxDay) };
+}
+
+/** Add years to a CalendarDate, clamping Feb 29 if needed. */
+export function addYears(d: CalendarDate, count: number): CalendarDate {
+  const year = d.year + count;
+  const maxDay = daysInMonth(year, d.month);
+  return { year, month: d.month, day: Math.min(d.day, maxDay) };
+}
+
+/** Add days, returning a new CalendarDate. */
+export function addDays(d: CalendarDate, count: number): CalendarDate {
+  const dt = new Date(d.year, d.month - 1, d.day + count);
+  return {
+    year: dt.getFullYear(),
+    month: dt.getMonth() + 1,
+    day: dt.getDate(),
+  };
+}
+
+// ── Grid Generation ───────────────────────────────────────────────────────────
+
+/**
+ * Build a 6×7 calendar grid for the given month.
+ *
+ * @param year           Full year (e.g. 2026)
+ * @param month          1-based month (1 = January)
+ * @param firstDayOfWeek 0 = Sunday, 1 = Monday, …
+ * @returns              42 CalendarCells (6 rows × 7 columns)
+ */
+export function buildMonthGrid(
+  year: number,
+  month: number,
+  firstDayOfWeek: number,
+): readonly CalendarCell[] {
+  const totalDays = daysInMonth(year, month);
+  const startWeekday = firstWeekday(year, month);
+
+  // How many leading cells from the previous month
+  const leadingBlanks = (startWeekday - firstDayOfWeek + 7) % 7;
+
+  const cells: CalendarCell[] = [];
+
+  // Previous month fill
+  const prevMonth = month === 1 ? 12 : month - 1;
+  const prevYear = month === 1 ? year - 1 : year;
+  const prevDays = daysInMonth(prevYear, prevMonth);
+  for (let i = leadingBlanks - 1; i >= 0; i--) {
+    const day = prevDays - i;
+    const date: CalendarDate = { year: prevYear, month: prevMonth, day };
+    cells.push({ date, iso: formatIsoDate(date), inMonth: false });
+  }
+
+  // Current month
+  for (let d = 1; d <= totalDays; d++) {
+    const date: CalendarDate = { year, month, day: d };
+    cells.push({ date, iso: formatIsoDate(date), inMonth: true });
+  }
+
+  // Next month fill (pad to 42)
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  let nextDay = 1;
+  while (cells.length < 42) {
+    const date: CalendarDate = {
+      year: nextYear,
+      month: nextMonth,
+      day: nextDay++,
+    };
+    cells.push({ date, iso: formatIsoDate(date), inMonth: false });
+  }
+
+  return cells;
+}
