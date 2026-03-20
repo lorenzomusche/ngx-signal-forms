@@ -265,7 +265,6 @@ export class AppComponent {
     value: ContactForm,
   ): Promise<NgxFormError[] | void> => {
     // Simulate async server call
-    await new Promise<void>((resolve) => setTimeout(resolve, 800));
     this.lastSubmitResult.set(JSON.stringify(value, null, 2));
   };
 
