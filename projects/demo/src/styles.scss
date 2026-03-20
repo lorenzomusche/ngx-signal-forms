@@ -6,8 +6,8 @@
 /* Apply a custom color scheme — change the color to theme the entire form */
 $primary: #56bd43;
 
-@include ngx.color-scheme($primary);
-@include ngx.color-scheme-dark($primary);
+@include ngx.color-scheme($primary, $settings: (prefer-light-text: true));
+@include ngx.color-scheme-dark($primary, $settings: (prefer-light-text: true));
 
 /*
  * Available themes:

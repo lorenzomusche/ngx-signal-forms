@@ -14,6 +14,12 @@
  *   // With custom error color:
  *   @include ngx.color-scheme(#4361ee, $error: #e63946);
  *
+ *   // Fine-tune: force white text on filled primary surfaces (buttons, chips,
+ *   // toggles) even when WCAG picks black — useful for mid-brightness greens,
+ *   // cyans, or any color near the contrast crossover point:
+ *   @include ngx.color-scheme(#56bd43, $settings: (prefer-light-text: true));
+ *   @include ngx.color-scheme-dark(#56bd43, $settings: (prefer-light-text: true));
+ *
  *   // Only CSS custom properties (scoped to a container):
  *   .my-form-wrapper {
  *     @include ngx.color-scheme-vars(#4361ee);
@@ -22,20 +28,54 @@
 
 @use 'sass:color';
 @use 'sass:math';
+@use 'sass:map';
+
+// ── Settings defaults ──────────────────────────────────────────────────────
+// Fine-tuning map accepted by all public mixins.
+//
+//   $settings: (
+//     prefer-light-text: true,   // Force white text on primary even when WCAG
+//                                // picks black (useful for mid-brightness greens, cyans).
+//   )
+$_defaults: (
+    prefer-light-text: false,
+);
 
 // ── Private helpers ────────────────────────────────────────────────────────
 
-/// Returns white or black depending on which has better perceived contrast against $bg.
-/// Uses the ITU-R BT.601 luma formula instead of HSL lightness, so saturated
-/// blues like #4361ee correctly get white text.
-@function _on-color($bg) {
-    $luma: color.red($bg) * 0.299 + color.green($bg) * 0.587 + color.blue($bg) * 0.114;
+/// Linearizes an sRGB channel (0–255) to linear-light (0–1) per IEC 61966-2-1.
+@function _srgb-to-linear($channel) {
+    $c: math.div($channel, 255);
 
-    @if $luma >128 {
-        @return #000;
+    @if $c <=0.04045 {
+        @return math.div($c, 12.92);
     }
 
-    @return #fff;
+    @return math.pow(math.div($c + 0.055, 1.055), 2.4);
+}
+
+/// WCAG 2.x relative luminance (0 = black, 1 = white).
+@function _relative-luminance($clr) {
+    @return 0.2126 * _srgb-to-linear(color.red($clr))+0.7152 * _srgb-to-linear(color.green($clr))+0.0722 * _srgb-to-linear(color.blue($clr));
+}
+
+/// Returns white or black — whichever achieves the higher WCAG contrast ratio
+/// against $bg.  When $force-light is true, always returns white (the user
+/// explicitly wants light text on their primary).
+@function _on-color($bg, $force-light: false) {
+    @if $force-light {
+        @return #fff;
+    }
+
+    $l: _relative-luminance($bg);
+    $cw: math.div(1.05, $l + 0.05);
+    $cb: math.div($l + 0.05, 0.05);
+
+    @if $cw >=$cb {
+        @return #fff;
+    }
+
+    @return #000;
 }
 
 /// Mix a color toward white by a percentage.
@@ -95,11 +135,15 @@
 /// Outputs ALL `--ngx-*` custom properties derived from a single primary color.
 /// Can be included inside any selector to scope the scheme.
 ///
-/// @param {Color} $primary — The primary accent color.
-/// @param {Color} $error   — The error color (default: #dc2626).
-@mixin color-scheme-vars($primary, $error: #dc2626) {
+/// @param {Color} $primary  — The primary accent color.
+/// @param {Color} $error    — The error color (default: #dc2626).
+/// @param {Map}   $settings — Fine-tuning overrides (see $_defaults).
+@mixin color-scheme-vars($primary, $error: #dc2626, $settings: ()) {
+    $opts: map.merge($_defaults, $settings);
+    $force-light: map.get($opts, prefer-light-text);
+
     // ── Derived palette ───────────────────────────────────────────────────
-    $on-primary: _on-color($primary);
+    $on-primary: _on-color($primary, $force-light);
     $on-error: _on-color($error);
 
     $primary-950: _shade($primary, 80%); // on-surface (text)
@@ -181,10 +225,14 @@
 /// Outputs class-level overrides for elements that don't have
 /// corresponding custom properties (submit button, overlay items).
 ///
-/// @param {Color} $primary — The primary accent color.
-/// @param {Color} $error   — The error color (default: #dc2626).
-@mixin color-scheme-material($primary, $error: #dc2626) {
-    $on-primary: _on-color($primary);
+/// @param {Color} $primary  — The primary accent color.
+/// @param {Color} $error    — The error color (default: #dc2626).
+/// @param {Map}   $settings — Fine-tuning overrides (see $_defaults).
+@mixin color-scheme-material($primary, $error: #dc2626, $settings: ()) {
+    $opts: map.merge($_defaults, $settings);
+    $force-light: map.get($opts, prefer-light-text);
+
+    $on-primary: _on-color($primary, $force-light);
     $primary-200: _tint($primary, 88%);
     $primary-hover: _shade($primary, 12%);
 
@@ -233,13 +281,14 @@
 /// @param {Color} $primary  — The primary accent color.
 /// @param {Color} $error    — The error color (default: #dc2626).
 /// @param {Bool}  $material — Whether to include Material filled-field overrides (default: true).
-@mixin color-scheme($primary, $error: #dc2626, $material: true) {
+/// @param {Map}   $settings — Fine-tuning overrides (see $_defaults).
+@mixin color-scheme($primary, $error: #dc2626, $material: true, $settings: ()) {
     :root {
-        @include color-scheme-vars($primary, $error);
+        @include color-scheme-vars($primary, $error, $settings);
     }
 
     @if $material {
-        @include color-scheme-material($primary, $error);
+        @include color-scheme-material($primary, $error, $settings);
     }
 }
 
@@ -252,15 +301,19 @@
 /// Outputs ALL `--ngx-*` custom properties for DARK mode.
 /// The tonal scale is inverted: surfaces are dark shades, text is light tints.
 ///
-/// @param {Color} $primary — The primary accent color.
-/// @param {Color} $error   — The error color (default: #f87171 — lighter red for dark bg).
-@mixin color-scheme-vars-dark($primary, $error: #f87171) {
-    $on-primary: _on-color($primary);
+/// @param {Color} $primary  — The primary accent color.
+/// @param {Color} $error    — The error color (default: #f87171 — lighter red for dark bg).
+/// @param {Map}   $settings — Fine-tuning overrides (see $_defaults).
+@mixin color-scheme-vars-dark($primary, $error: #f87171, $settings: ()) {
+    $opts: map.merge($_defaults, $settings);
+    $force-light: map.get($opts, prefer-light-text);
+
+    $on-primary: _on-color($primary, $force-light);
     $on-error: _on-color($error);
 
     // In dark mode the primary is often lightened for better contrast on dark surfaces
     $primary-light: _ensure-light($primary, 150);
-    $on-primary-light: _on-color($primary-light);
+    $on-primary-light: _on-color($primary-light, $force-light);
 
     // Dark surfaces — shade the primary toward black
     $surface-950: _shade($primary, 92%); // darkest (body bg)
@@ -346,11 +399,15 @@
 
 /// Outputs class-level overrides for dark mode elements without a custom property.
 ///
-/// @param {Color} $primary — The primary accent color.
-/// @param {Color} $error   — The error color (default: #f87171).
-@mixin color-scheme-material-dark($primary, $error: #f87171) {
+/// @param {Color} $primary  — The primary accent color.
+/// @param {Color} $error    — The error color (default: #f87171).
+/// @param {Map}   $settings — Fine-tuning overrides (see $_defaults).
+@mixin color-scheme-material-dark($primary, $error: #f87171, $settings: ()) {
+    $opts: map.merge($_defaults, $settings);
+    $force-light: map.get($opts, prefer-light-text);
+
     $primary-light: _ensure-light($primary, 150);
-    $on-primary-light: _on-color($primary-light);
+    $on-primary-light: _on-color($primary-light, $force-light);
     $surface-700: _shade($primary, 70%);
     $surface-700-hover: _shade($primary, 62%);
     $primary-hover: _tint($primary-light, 15%);
@@ -397,15 +454,16 @@
 /// @param {Color}       $error    — The error color (default: #f87171).
 /// @param {Bool}        $material — Include Material overrides (default: true).
 /// @param {String|null} $selector — Optional selector instead of media query (e.g. '.dark').
-@mixin color-scheme-dark($primary, $error: #f87171, $material: true, $selector: null) {
+/// @param {Map}         $settings — Fine-tuning overrides (see $_defaults).
+@mixin color-scheme-dark($primary, $error: #f87171, $material: true, $selector: null, $settings: ()) {
     @if $selector {
         #{$selector} {
-            @include color-scheme-vars-dark($primary, $error);
+            @include color-scheme-vars-dark($primary, $error, $settings);
         }
 
         @if $material {
             #{$selector} {
-                @include color-scheme-material-dark($primary, $error);
+                @include color-scheme-material-dark($primary, $error, $settings);
             }
         }
     }
@@ -413,11 +471,11 @@
     @else {
         @media (prefers-color-scheme: dark) {
             :root {
-                @include color-scheme-vars-dark($primary, $error);
+                @include color-scheme-vars-dark($primary, $error, $settings);
             }
 
             @if $material {
-                @include color-scheme-material-dark($primary, $error);
+                @include color-scheme-material-dark($primary, $error, $settings);
             }
         }
     }
