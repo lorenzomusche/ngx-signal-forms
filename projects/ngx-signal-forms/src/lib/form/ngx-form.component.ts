@@ -13,6 +13,7 @@ import {
   NgxFormError,
   NgxFormState,
   NgxFormSubmitEvent,
+  NgxFormSubmitEventInternal,
 } from "../core/types";
 
 /**
@@ -88,6 +89,10 @@ export class NgxFormComponent<
     this.adapter().markAllTouched();
   }
 
+  buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T> {
+    return this.adapter().buildSubmitEvent(value);
+  }
+
   // ── Template handler ────────────────────────────────────────────────────────
 
   protected async handleSubmit(): Promise<void> {
@@ -95,11 +100,6 @@ export class NgxFormComponent<
     if (!act) return;
 
     await this.submit(act);
-
-    this.submitted.emit({
-      value: this.getValue(),
-      valid: this.state.valid(),
-      errors: [...this.state.lastSubmitErrors()],
-    });
+    this.submitted.emit(this.adapter().buildSubmitEvent(this.getValue()));
   }
 }

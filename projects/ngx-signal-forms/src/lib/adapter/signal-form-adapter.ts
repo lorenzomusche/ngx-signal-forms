@@ -33,14 +33,15 @@ import {
 // ─── Validator re-exports ────────────────────────────────────────────────────────────
 // Consumers import validators from us, never from @angular/forms/signals
 
-export const required = ngRequired;
-export const email = ngEmail;
-export const min = ngMin;
-export const max = ngMax;
-export const minLength = ngMinLength;
-export const maxLength = ngMaxLength;
-export const pattern = ngPattern;
-export const debounce = ngDebounce;
+// Re-export Angular validators with schema prefix to avoid confusion with pure ones
+export const ngxSchemaRequired = ngRequired;
+export const ngxSchemaEmail = ngEmail;
+export const ngxSchemaMin = ngMin;
+export const ngxSchemaMax = ngMax;
+export const ngxSchemaMinLength = ngMinLength;
+export const ngxSchemaMaxLength = ngMaxLength;
+export const ngxSchemaPattern = ngPattern;
+export const ngxSchemaDebounce = ngDebounce;
 
 // ─── Internal type for raw Angular field state ───────────────────────────────────
 
@@ -68,15 +69,10 @@ export interface SignalFormAdapterOptions<T extends object> {
   readonly submitMode: NgxSubmitMode;
 }
 
-/** Adapter with an additional `buildSubmitEvent` helper. */
-export type NgxFormAdapterWithEvent<T extends object> = NgxFormAdapter<T> & {
-  buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T>;
-};
-
 /** Create a signal-driven form adapter from the given options. */
 export function createSignalFormAdapter<T extends object>(
   options: SignalFormAdapterOptions<T>,
-): NgxFormAdapterWithEvent<T> {
+): NgxFormAdapter<T> {
   const { model, schema, submitMode } = options;
 
   // ① Create FieldTree via Angular's form() — isolated here
@@ -233,7 +229,7 @@ export function createSignalFormAdapter<T extends object>(
       value: T,
     ) => Promise<NgxFormError[] | void> | NgxFormError[] | void,
   ): Promise<void> {
-    if (submitMode === "valid-only" && !_valid()) {
+    if (submitMode === "manual" || (submitMode === "valid-only" && !_valid())) {
       markAllTouched();
       return;
     }
