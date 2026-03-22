@@ -1,0 +1,143 @@
+<div class="ngx-timepicker-container" [class.ngx-timepicker--dial]="viewMode() === 'dial'">
+  <div class="ngx-timepicker-content">
+    @if (viewMode() === 'input') {
+      <!-- M3 Input Variant -->
+      <div class="ngx-timepicker-input-variant">
+        <div class="ngx-timepicker-fields">
+          <div class="ngx-timepicker-field" [class.ngx-timepicker-field--active]="focusedField() === 'hour'">
+            <input
+              type="number"
+              min="1"
+              max="12"
+              [value]="hourDisplay()"
+              [disabled]="disabled()"
+              (input)="onHourInput($event)"
+              (focus)="focusedField.set('hour')"
+              aria-label="Hour"
+            />
+            <span class="ngx-timepicker-field__label">Hour</span>
+          </div>
+
+          <span class="ngx-timepicker-separator">:</span>
+
+          <div class="ngx-timepicker-field" [class.ngx-timepicker-field--active]="focusedField() === 'minute'">
+            <input
+              type="number"
+              min="0"
+              max="59"
+              [value]="minuteDisplay()"
+              [disabled]="disabled()"
+              (input)="onMinuteInput($event)"
+              (focus)="focusedField.set('minute')"
+              aria-label="Minute"
+            />
+            <span class="ngx-timepicker-field__label">Minute</span>
+          </div>
+        </div>
+
+        <div class="ngx-timepicker-period-toggle">
+          <button
+            type="button"
+            class="ngx-timepicker-period-btn"
+            [class.ngx-timepicker-period-btn--selected]="periodDisplay() === 'AM'"
+            (click)="togglePeriod('AM')"
+            [disabled]="disabled()"
+          >
+            AM
+          </button>
+          <button
+            type="button"
+            class="ngx-timepicker-period-btn"
+            [class.ngx-timepicker-period-btn--selected]="periodDisplay() === 'PM'"
+            (click)="togglePeriod('PM')"
+            [disabled]="disabled()"
+          >
+            PM
+          </button>
+        </div>
+      </div>
+    } @else {
+      <!-- M3 Dial Variant -->
+      <div class="ngx-timepicker-dial-variant">
+        <!-- Time display header above dial -->
+        <div class="ngx-timepicker-dial-header">
+          <button
+            type="button"
+            class="ngx-timepicker-dial-header__segment"
+            [class.ngx-timepicker-dial-header__segment--active]="focusedField() === 'hour'"
+            (click)="focusedField.set('hour')"
+          >{{ hourDisplay() }}</button>
+          <span class="ngx-timepicker-dial-header__sep">:</span>
+          <button
+            type="button"
+            class="ngx-timepicker-dial-header__segment"
+            [class.ngx-timepicker-dial-header__segment--active]="focusedField() === 'minute'"
+            (click)="focusedField.set('minute')"
+          >{{ minuteDisplay() }}</button>
+          <div class="ngx-timepicker-period-toggle ngx-timepicker-period-toggle--compact">
+            <button
+              type="button"
+              class="ngx-timepicker-period-btn"
+              [class.ngx-timepicker-period-btn--selected]="periodDisplay() === 'AM'"
+              (click)="togglePeriod('AM')"
+              [disabled]="disabled()"
+            >AM</button>
+            <button
+              type="button"
+              class="ngx-timepicker-period-btn"
+              [class.ngx-timepicker-period-btn--selected]="periodDisplay() === 'PM'"
+              (click)="togglePeriod('PM')"
+              [disabled]="disabled()"
+            >PM</button>
+          </div>
+        </div>
+
+        <!-- Clock dial -->
+        <div class="ngx-timepicker-dial">
+          <div
+            #dialFace
+            class="ngx-timepicker-dial__face"
+            (mousedown)="onDragStart($event)"
+            (touchstart)="onDragStart($event)"
+          >
+            <div class="ngx-timepicker-dial__hand" [style.transform]="'rotate(' + handRotation() + 'deg)'"></div>
+            @if (focusedField() === 'hour') {
+              @for (h of [12,1,2,3,4,5,6,7,8,9,10,11]; track h) {
+                <div class="ngx-timepicker-dial__number"
+                     [class.ngx-timepicker-dial__number--selected]="h === numericHour()"
+                     [style.--index]="h">
+                  {{h}}
+                </div>
+              }
+            } @else {
+              @for (m of [0,5,10,15,20,25,30,35,40,45,50,55]; track m; let i = $index) {
+                <div class="ngx-timepicker-dial__number"
+                     [class.ngx-timepicker-dial__number--selected]="m === numericMinute()"
+                     [style.--index]="i === 0 ? 12 : i">
+                  {{m < 10 ? '0' + m : m}}
+                </div>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="ngx-timepicker-actions">
+    <button type="button" class="ngx-timepicker-mode-toggle" (click)="setViewMode(viewMode() === 'input' ? 'dial' : 'input')">
+      @if (viewMode() === 'input') {
+        <!-- Switch to dial icon (clock) -->
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" fill="currentColor"/></svg>
+      } @else {
+        <!-- Switch to keyboard icon -->
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M20 5H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 5H5v-2h2v2zm10 0H7v-2h10v2zm0-3h-2v-2h2v2zm0-3h-2V8h2v2zm3 6h-2v-2h2v2z" fill="currentColor"/></svg>
+      }
+    </button>
+
+    <div class="ngx-timepicker-spacer"></div>
+
+    <button type="button" class="ngx-timepicker-action-btn" (click)="cancelClicked.emit()">Cancel</button>
+    <button type="button" class="ngx-timepicker-action-btn ngx-timepicker-action-btn--confirm" (click)="confirmClicked.emit()">OK</button>
+  </div>
+</div>

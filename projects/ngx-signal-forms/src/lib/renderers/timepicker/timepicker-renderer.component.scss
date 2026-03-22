@@ -1,0 +1,350 @@
+
+:host {
+  display: block;
+}
+
+// ── Container ────────────────────────────────────────────────────────────────
+//
+// All --tp-* tokens cascade from global --ngx-* workspace tokens.
+// No M3 purple fallbacks; primary color always matches --ngx-input-focus-color.
+//
+.ngx-timepicker-container {
+  // Primary = same accent as every other control in the library
+  --tp-primary:           var(--ngx-tp-primary,           var(--ngx-input-focus-color,        #4361ee));
+  --tp-on-primary:        var(--ngx-tp-on-primary,        #fff);
+  // Primary-container = tinted version of primary (light bg for active fields)
+  // We approximate it as a low-opacity primary over the surface base.
+  --tp-primary-container: var(--ngx-tp-primary-container, var(--ngx-select-option-selected-bg, #e6ecff));
+  --tp-on-primary-container: var(--ngx-tp-on-primary-container, var(--ngx-on-surface, #09090b));
+  // Surface / border — same palette as datepicker/select dropdowns
+  --tp-surface:           var(--ngx-tp-surface,           var(--ngx-select-dropdown-bg,       #fff));
+  --tp-surface-variant:   var(--ngx-tp-surface-variant,   var(--ngx-surface-container,        #f4f4f5));
+  --tp-outline:           var(--ngx-tp-outline,           var(--ngx-input-border-color,       #ccc));
+  // Shape — matches datepicker popup / select dropdown
+  --tp-border-radius:     var(--ngx-tp-border-radius,     var(--ngx-datepicker-popup-border-radius, var(--ngx-input-border-radius, 6px)));
+
+  background-color: var(--tp-surface);
+  border: 1px solid var(--tp-outline);
+  border-radius: var(--tp-border-radius);
+  box-shadow: var(--ngx-datepicker-popup-shadow, var(--ngx-select-dropdown-shadow, 0 4px 12px rgba(0,0,0,0.12)));
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  // Stable dimensions for both input and dial variants — no layout shift
+  min-width: 288px;
+  min-height: 380px;
+  font-family: inherit;
+}
+
+// ── Inner content wrapper ─────────────────────────────────────────────────────
+
+.ngx-timepicker-content {
+  display: flex;
+  justify-content: center;
+}
+
+// ── Input Variant ─────────────────────────────────────────────────────────────
+
+.ngx-timepicker-input-variant {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.ngx-timepicker-fields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ngx-timepicker-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ngx-timepicker-field input {
+  width: 96px;
+  height: 72px;
+  background-color: var(--tp-surface-variant);
+  border: 1.5px solid transparent;
+  border-radius: var(--tp-border-radius);
+  font-size: 2.5rem;
+  font-weight: 400;
+  text-align: center;
+  color: var(--tp-on-primary-container);
+  outline: none;
+  transition: background-color 0.15s, border-color 0.15s;
+  font-family: inherit;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.ngx-timepicker-field--active input {
+  // Same solid primary bg as the dial header segment for full contrast
+  background-color: var(--tp-primary);
+  border-color: var(--tp-primary);
+  color: var(--tp-on-primary);
+}
+
+.ngx-timepicker-field__label {
+  font-size: 0.75rem;
+  color: var(--tp-outline);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 4px;
+}
+
+.ngx-timepicker-separator {
+  font-size: 2.5rem;
+  line-height: 72px;
+  color: var(--tp-on-primary-container);
+  font-weight: 300;
+}
+
+// ── AM/PM segmented toggle ────────────────────────────────────────────────────
+
+.ngx-timepicker-period-toggle {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid var(--tp-outline);
+  border-radius: var(--tp-border-radius);
+  overflow: hidden;
+  height: 72px;
+}
+
+.ngx-timepicker-period-toggle--compact {
+  height: auto;
+  align-self: center;
+  margin-left: 8px;
+}
+
+.ngx-timepicker-period-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--ngx-on-surface-variant, #3f3f46);
+  transition: background-color 0.15s, color 0.15s;
+
+  &:first-child {
+    border-bottom: 1.5px solid var(--tp-outline);
+  }
+
+  &--selected {
+    // Solid primary bg — same treatment as active hour/minute segments
+    background-color: var(--tp-primary);
+    color: var(--tp-on-primary);
+    font-weight: 600;
+  }
+
+  &:hover:not(:disabled):not(&--selected) {
+    background-color: var(--ngx-datepicker-hover-bg, rgba(0,0,0,0.06));
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+// ── Dial Variant ──────────────────────────────────────────────────────────────
+
+.ngx-timepicker-dial-variant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+// Header showing HH:MM + AM/PM above the dial
+.ngx-timepicker-dial-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.ngx-timepicker-dial-header__segment {
+  background-color: var(--tp-surface-variant);
+  border: 1.5px solid transparent;
+  border-radius: var(--tp-border-radius);
+  color: var(--tp-on-primary-container);
+  font-size: 2.5rem;
+  font-weight: 400;
+  font-family: inherit;
+  width: 80px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+
+  &--active {
+    // Use solid primary bg so text flips to on-primary (white) — high contrast
+    background-color: var(--tp-primary);
+    border-color: var(--tp-primary);
+    color: var(--tp-on-primary);
+    font-weight: 600;
+  }
+
+  &:hover:not(&--active) {
+    background-color: var(--ngx-datepicker-hover-bg, rgba(0,0,0,0.06));
+  }
+}
+
+.ngx-timepicker-dial-header__sep {
+  font-size: 2.5rem;
+  color: var(--tp-on-primary-container);
+  font-weight: 300;
+  padding: 0 2px;
+}
+
+.ngx-timepicker-dial {
+  width: 240px;
+  height: 240px;
+  background-color: var(--tp-surface-variant);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+}
+
+.ngx-timepicker-dial__face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ngx-timepicker-dial__number {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--tp-on-primary-container);
+  // Must be above the hand ::after circle (z-index 2) for text to render on top
+  z-index: 10;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--index) * 30deg)) translateY(-94px) rotate(calc(var(--index) * -30deg));
+  transition: color 0.12s;
+}
+
+.ngx-timepicker-dial__number--selected {
+  // White text on the primary-colored hand circle — maximum contrast
+  color: var(--tp-on-primary);
+}
+
+// Hand height must match the translateY distance (94px) for the tip to hit numbers
+.ngx-timepicker-dial__hand {
+  position: absolute;
+  bottom: 50%;
+  left: calc(50% - 1px);
+  width: 2px;
+  height: 94px;
+  background-color: var(--tp-primary);
+  transform-origin: bottom center;
+  // No CSS transition — it causes a full reverse spin when crossing 12 o'clock
+  // (CSS interpolates 350°→10° as -340° instead of the intended +20°)
+
+  // Dot at the tip (to sit behind the number)
+  &::after {
+    content: '';
+    position: absolute;
+    top: -18px;   // 36/2 = 18
+    left: -17px;  // 36/2 - 1px = 17
+    width: 36px;
+    height: 36px;
+    background-color: var(--tp-primary);
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+  // Small pivot dot at center
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: -3px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--tp-primary);
+    border-radius: 50%;
+  }
+}
+
+// ── Actions bar (Cancel / OK + mode toggle) ────────────────────────────────────
+
+.ngx-timepicker-actions {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
+}
+
+.ngx-timepicker-spacer {
+  flex: 1;
+}
+
+.ngx-timepicker-mode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--ngx-on-surface-variant, #3f3f46);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background-color 0.15s;
+  width: 32px;
+  height: 32px;
+
+  &:hover {
+    background-color: var(--ngx-datepicker-hover-bg, rgba(0,0,0,0.06));
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.ngx-timepicker-action-btn {
+  background: none;
+  border: none;
+  color: var(--tp-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: inherit;
+  padding: 6px 12px;
+  border-radius: var(--tp-border-radius);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: var(--tp-primary-container);
+  }
+
+  &--confirm {
+    font-weight: 700;
+  }
+}
