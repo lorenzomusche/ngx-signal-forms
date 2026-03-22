@@ -12,6 +12,8 @@ export type {
   // Control / renderer helpers
   NgxControlOption,
   NgxControlRendererConfig,
+  // Date range
+  NgxDateRange,
   NgxFieldConfig,
   NgxFieldError,
   NgxFieldRef,
@@ -28,7 +30,7 @@ export type {
   NgxSelectOption,
   NgxSubmitMode,
   // Validator
-  ValidatorFn
+  ValidatorFn,
 } from "./lib/core/types";
 
 // ─── DI tokens ────────────────────────────────────────────────────────────────
@@ -44,23 +46,30 @@ export type { NgxDateLocale } from "./lib/core/date-locale";
 export {
   formatIsoDate,
   today as isoToday,
-  parseIsoDate
+  parseIsoDate,
 } from "./lib/core/date-utils";
 export type { CalendarCell, CalendarDate } from "./lib/core/date-utils";
+
+// ─── Time utilities (HH:MM AM/PM) ────────────────────────────────────────────
+export {
+  buildTimeString,
+  formatTime as formatTimeString,
+  parseTime,
+} from "./lib/core/time-utils";
+export type { ParsedTime } from "./lib/core/time-utils";
 
 // ─── Overlay positioning ─────────────────────────────────────────────────────
 export { computeOverlayPosition } from "./lib/core/overlay-position";
 export type {
   OverlayPosition,
-  OverlayPositionConfig
+  OverlayPositionConfig,
 } from "./lib/core/overlay-position";
 
 // ─── Adapter factory (sole consumer of @angular/forms/signals) ───────────────
 export { createSignalFormAdapter } from "./lib/adapter/signal-form-adapter";
 
 export type {
-  NgxFormAdapterWithEvent,
-  SignalFormAdapterOptions
+  SignalFormAdapterOptions,
 } from "./lib/adapter/signal-form-adapter";
 
 // ─── Form component ───────────────────────────────────────────────────────────
@@ -81,6 +90,9 @@ export { NgxCalendarGridComponent } from "./lib/renderers/datepicker/calendar-gr
 export { NgxCalendarHeaderComponent } from "./lib/renderers/datepicker/calendar-header.component";
 export { NgxCalendarComponent } from "./lib/renderers/datepicker/calendar.component";
 export { NgxDatePickerComponent } from "./lib/renderers/datepicker/datepicker.component";
+export { NgxDateRangePickerComponent } from "./lib/renderers/datepicker/daterange-renderer.component";
+export { NgxRangeCalendarGridComponent } from "./lib/renderers/datepicker/range-calendar-grid.component";
+export { NgxRangeCalendarComponent } from "./lib/renderers/datepicker/range-calendar.component";
 export { NgxMultiselectComponent } from "./lib/renderers/multiselect/multiselect-renderer.component";
 export { NgxNumberComponent } from "./lib/renderers/number/number-renderer.component";
 export { NgxSelectComponent } from "./lib/renderers/select/select-renderer.component";
@@ -88,28 +100,30 @@ export { NgxTextComponent } from "./lib/renderers/text/text-renderer.component";
 export { NgxTextareaComponent } from "./lib/renderers/textarea/textarea-renderer.component";
 export { NgxToggleComponent } from "./lib/renderers/toggle/toggle-renderer.component";
 
+// Timepicker (Material 3)
+export { NgxTimepickerComponent } from "./lib/renderers/timepicker";
+
 // ─── Built-in validators (pure functions) ────────────────────────────────────
 export {
-  compose,
-  composeFirst,
-  email,
-  max,
-  maxLength,
-  min,
-  minLength,
-  pattern,
-  required
+  compose as ngxCompose,
+  composeFirst as ngxComposeFirst,
+  email as ngxEmail,
+  max as ngxMax,
+  maxLength as ngxMaxLength,
+  min as ngxMin,
+  minLength as ngxMinLength,
+  pattern as ngxPattern,
+  required as ngxRequired,
 } from "./lib/core/validators";
 
 // ─── Angular forms/signals validator re-exports (schema-level) ───────────────
 export {
-  debounce as schemaDebounce,
-  email as schemaEmail,
-  max as schemaMax,
-  maxLength as schemaMaxLength,
-  min as schemaMin,
-  minLength as schemaMinLength,
-  pattern as schemaPattern,
-  required as schemaRequired
+  ngxSchemaDebounce,
+  ngxSchemaEmail,
+  ngxSchemaMax,
+  ngxSchemaMaxLength,
+  ngxSchemaMin,
+  ngxSchemaMinLength,
+  ngxSchemaPattern,
+  ngxSchemaRequired,
 } from "./lib/adapter/signal-form-adapter";
-

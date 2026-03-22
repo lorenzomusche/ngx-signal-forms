@@ -115,6 +115,7 @@ export interface NgxFormAdapter<T extends object> {
     ) => Promise<NgxFormError[] | void> | NgxFormError[] | void,
   ): Promise<void>;
   markAllTouched(): void;
+  buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T>;
 }
 
 // ─── Form Context (provided to child controls via DI) ─────────────────────────
@@ -130,6 +131,17 @@ export interface NgxFieldConfig<TValue = unknown> {
   readonly name: string;
   readonly validators?: ReadonlyArray<ValidatorFn<TValue>>;
   readonly initialValue?: TValue;
+}
+
+// ─── Date Range ───────────────────────────────────────────────────────────────
+
+/**
+ * Represents a date range as two ISO `YYYY-MM-DD` strings.
+ * Both `start` and `end` may be `null` while the user is mid-selection.
+ */
+export interface NgxDateRange {
+  readonly start: string | null;
+  readonly end: string | null;
 }
 
 // ─── Control State (internal signal state per field) ─────────────────────────
