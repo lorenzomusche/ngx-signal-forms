@@ -4,10 +4,15 @@
 @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
 
 /* Apply a custom color scheme — change the color to theme the entire form */
-$primary: #56bd43;
+$primary: #3a3a3a;
 
 @include ngx.color-scheme($primary, $settings: (prefer-light-text: true));
 @include ngx.color-scheme-dark($primary, $settings: (prefer-light-text: true));
+
+/* @use 'color-scheme-ios' as ngxiOS;
+@import 'ngx-signal-forms/styles/ngx-signal-forms-ios.css';
+@include ngxiOS.color-scheme-ios($primary); // light
+@include ngxiOS.color-scheme-ios-dark($primary); // auto dark */
 
 /*
  * Available themes:

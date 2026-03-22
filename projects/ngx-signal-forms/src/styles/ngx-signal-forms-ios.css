@@ -1,0 +1,576 @@
+/*
+ * ngx-signal-forms — iOS / Apple HIG Theme
+ *
+ * A clean, rounded theme inspired by Apple's Human Interface Guidelines.
+ * Uses SF Pro system font, iOS system colors, and UIKit-style controls.
+ *
+ * References:
+ *   - https://developer.apple.com/design/human-interface-guidelines/buttons
+ *   - https://developer.apple.com/design/human-interface-guidelines/text-fields
+ *   - https://developer.apple.com/design/human-interface-guidelines/controls
+ *   - https://developer.apple.com/design/human-interface-guidelines
+ *
+ * ── Option A: Static CSS import (system-blue preset) ──────────────────────
+ *
+ *   @import 'ngx-signal-forms/styles/ngx-signal-forms-ios.css';
+ *
+ * ── Option B: Sass mixin — derive colors from ANY primary ─────────────────
+ *
+ *   @use 'ngx-signal-forms/styles/color-scheme-ios' as ngx;
+ *
+ *   @include ngx.color-scheme-ios(#007AFF);           // light
+ *   @include ngx.color-scheme-ios-dark(#007AFF);      // auto dark
+ *
+ *   See _color-scheme-ios.scss for full API docs.
+ */
+
+@import './ngx-signal-forms.css';
+
+/*
+ * Color Tokens — iOS System Colors
+ *
+ * system-blue:           #007AFF  (primary / accent)
+ * system-red:            #FF3B30  (destructive / error)
+ * system-green:          #34C759  (toggle on)
+ * system-gray:           #8E8E93  (secondary text)
+ * system-gray-2:         #AEAEB2
+ * system-gray-3:         #C7C7CC  (separators)
+ * system-gray-4:         #D1D1D6
+ * system-gray-5:         #E5E5EA  (borders)
+ * system-gray-6:         #F2F2F7  (grouped background)
+ * label:                 #000000  (primary text)
+ * secondary-label:       #3C3C43 @ 60%  (rgba(60,60,67,0.6))
+ * tertiary-label:        #3C3C43 @ 30%  (rgba(60,60,67,0.3))
+ * placeholder:           #3C3C43 @ 30%  (rgba(60,60,67,0.3))
+ * system-background:     #FFFFFF
+ * secondary-bg:          #F2F2F7
+ * tertiary-bg:           #FFFFFF
+ * grouped-bg:            #F2F2F7
+ * secondary-grouped-bg:  #FFFFFF
+ */
+
+/* ─── Custom property overrides ───────────────────────────────────────────── */
+
+:root {
+    /* Typography — SF Pro, iOS body style (17pt), labels (15pt) */
+    --ngx-label-font-weight: 400;
+    --ngx-label-font-size: 0.9375rem;
+
+    /* Text fields — iOS rounded rect style
+       44pt minimum hit target, compact horizontal padding, 1px border */
+    --ngx-input-padding: 0.5rem 0.75rem;
+    --ngx-input-border: 1px solid #C7C7CC;
+    --ngx-input-border-color: #C7C7CC;
+    --ngx-input-border-radius: 10px;
+    --ngx-input-color: #000;
+    --ngx-input-placeholder-color: rgba(60, 60, 67, 0.3);
+    --ngx-input-font-size: 0.9375rem;
+    --ngx-input-icon-color: #8E8E93;
+    --ngx-input-focus-color: #007AFF;
+    --ngx-input-focus-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.25);
+
+    /* Errors — system red */
+    --ngx-error-color: #FF3B30;
+    --ngx-error-font-size: 0.75rem;
+    --ngx-error-line-height: 1.33;
+    --ngx-error-focus-shadow: 0 0 0 3.5px rgba(255, 59, 48, 0.2);
+
+    /* Checkbox — iOS-style rounded checkbox */
+    --ngx-checkbox-size: 1.25rem;
+    --ngx-checkbox-accent: #007AFF;
+    --ngx-checkbox-checkmark-color: #fff;
+    --ngx-checkbox-border: 2px solid #C7C7CC;
+    --ngx-checkbox-border-radius: 50%;
+    --ngx-checkbox-gap: 0.5rem;
+    --ngx-checkbox-transition: 0.2s ease;
+
+    /* Toggle (Switch) — iOS UISwitch dimensions: 51×31pt
+       Thumb: 27pt unchecked, 27pt checked. Green track when on. */
+    --ngx-toggle-width: 3.1875rem;
+    --ngx-toggle-height: 1.9375rem;
+    --ngx-toggle-thumb-size: 1.6875rem;
+    --ngx-toggle-thumb-size-checked: 1.6875rem;
+    --ngx-toggle-thumb-offset: 0.125rem;
+    --ngx-toggle-thumb-color: #fff;
+    --ngx-toggle-thumb-color-checked: #fff;
+    --ngx-toggle-bg: #E5E5EA;
+    --ngx-toggle-bg-checked: #34C759;
+    --ngx-toggle-border: none;
+    --ngx-toggle-border-checked: none;
+    --ngx-toggle-gap: 0.625rem;
+    --ngx-toggle-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Multiselect — iOS capsule chips */
+    --ngx-multiselect-padding: 0.25rem 0;
+    --ngx-multiselect-max-height: 5.5rem;
+    --ngx-chip-height: 1.75rem;
+    --ngx-chip-padding: 0 0.625rem;
+    --ngx-chip-gap: 0.375rem;
+    --ngx-chip-font-size: 0.8125rem;
+    --ngx-chip-border-radius: 1rem;
+    --ngx-chip-border: 1px solid #C7C7CC;
+    --ngx-chip-bg: #fff;
+    --ngx-chip-color: #000;
+    --ngx-chip-selected-bg: #007AFF;
+    --ngx-chip-selected-color: #fff;
+    --ngx-chip-selected-border: 1px solid #007AFF;
+    --ngx-chip-max-width: 11rem;
+    --ngx-chip-transition: 0.2s ease;
+
+    /* Chip hover/selected hover */
+    --ngx-chip-hover-bg: #F2F2F7;
+    --ngx-chip-hover-border: #AEAEB2;
+    --ngx-chip-hover-color: #000;
+    --ngx-chip-selected-hover-bg: #0063CC;
+    --ngx-chip-selected-hover-color: #fff;
+
+    /* Custom Select dropdown — iOS action sheet / picker style */
+    --ngx-select-dropdown-bg: #fff;
+    --ngx-select-dropdown-border: 1px solid #E5E5EA;
+    --ngx-select-dropdown-border-radius: 12px;
+    --ngx-select-dropdown-shadow: 0 4px 24px rgba(0, 0, 0, 0.12),
+        0 0 1px rgba(0, 0, 0, 0.08);
+    --ngx-select-dropdown-max-height: calc(var(--ngx-multiselect-max-height) + 40px);
+    --ngx-select-option-padding: 0.5rem 0.75rem;
+    --ngx-select-option-hover-bg: #F2F2F7;
+    --ngx-select-option-hover-color: #000;
+    --ngx-select-option-selected-bg: rgba(0, 122, 255, 0.1);
+    --ngx-select-option-selected-color: #007AFF;
+    --ngx-select-option-selected-weight: 600;
+    --ngx-select-placeholder-color: rgba(60, 60, 67, 0.3);
+    --ngx-select-arrow-color: #8E8E93;
+    --ngx-select-border-subtle: #E5E5EA;
+    --ngx-select-no-results-color: #8E8E93;
+
+    /* Surface & semantic colors — iOS tokens */
+    --ngx-surface: #fff;
+    --ngx-surface-container: #F2F2F7;
+    --ngx-surface-container-highest: #E5E5EA;
+    --ngx-surface-container-highest-hover: #D1D1D6;
+    --ngx-on-surface: #000;
+    --ngx-on-surface-variant: rgba(60, 60, 67, 0.6);
+    --ngx-outline: #8E8E93;
+    --ngx-outline-variant: #AEAEB2;
+    --ngx-outline-subtle: #E5E5EA;
+    --ngx-disabled-bg: rgba(120, 120, 128, 0.08);
+    --ngx-disabled-color: rgba(60, 60, 67, 0.3);
+
+    /* Date Picker */
+    --ngx-datepicker-cell-size: 2.25rem;
+    --ngx-datepicker-cell-border-radius: 50%;
+    --ngx-datepicker-cell-font-size: 1rem;
+    --ngx-datepicker-today-ring: 2px solid #007AFF;
+    --ngx-datepicker-selected-bg: #007AFF;
+    --ngx-datepicker-selected-color: #fff;
+    --ngx-datepicker-hover-bg: rgba(0, 122, 255, 0.08);
+    --ngx-datepicker-outside-opacity: 0.3;
+    --ngx-datepicker-disabled-opacity: 0.2;
+    --ngx-datepicker-header-gap: 0.25rem;
+    --ngx-datepicker-nav-btn-size: 2.25rem;
+    --ngx-datepicker-popup-padding: 0.5rem;
+    --ngx-datepicker-popup-bg: #fff;
+    --ngx-datepicker-popup-border: 1px solid #E5E5EA;
+    --ngx-datepicker-popup-border-radius: 12px;
+    --ngx-datepicker-popup-shadow: 0 8px 32px rgba(0, 0, 0, 0.14),
+        0 0 1px rgba(0, 0, 0, 0.1);
+    --ngx-datepicker-icon-size: 1.25rem;
+
+    /* Date Range — iOS system blue at low opacity for the band */
+    --ngx-daterange-in-range-bg: rgba(0, 122, 255, 0.12);
+    --ngx-daterange-endpoint-bg: #007AFF;
+    --ngx-daterange-endpoint-color: #fff;
+
+    /* Layout — compact */
+    --ngx-renderer-gap: 0.25rem;
+    --ngx-renderer-margin-bottom: 0.375rem;
+}
+
+/* ─── Global font — SF Pro / System ───────────────────────────────────────── */
+
+.ngx-renderer {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+        'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Text fields — iOS rounded bordered style ────────────────────────────── */
+
+.ngx-renderer input[type="text"],
+.ngx-renderer input[type="number"],
+.ngx-renderer input[type="date"],
+.ngx-renderer input[type="email"],
+.ngx-renderer textarea,
+.ngx-renderer select {
+    background: #fff;
+    color: var(--ngx-input-color);
+    border: var(--ngx-input-border);
+    border-radius: var(--ngx-input-border-radius);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ngx-renderer input:hover:not(:disabled):not(:focus),
+.ngx-renderer textarea:hover:not(:disabled):not(:focus),
+.ngx-renderer select:hover:not(:disabled):not(:focus) {
+    border-color: #AEAEB2;
+}
+
+.ngx-renderer input:focus,
+.ngx-renderer textarea:focus,
+.ngx-renderer select:focus {
+    border-color: var(--ngx-input-focus-color);
+    box-shadow: var(--ngx-input-focus-shadow);
+    outline: none;
+}
+
+.ngx-renderer input[aria-invalid="true"],
+.ngx-renderer textarea[aria-invalid="true"],
+.ngx-renderer select[aria-invalid="true"] {
+    border-color: var(--ngx-error-color);
+}
+
+.ngx-renderer input[aria-invalid="true"]:focus,
+.ngx-renderer textarea[aria-invalid="true"]:focus {
+    border-color: var(--ngx-error-color);
+    box-shadow: var(--ngx-error-focus-shadow);
+}
+
+.ngx-renderer input:disabled,
+.ngx-renderer textarea:disabled,
+.ngx-renderer select:disabled {
+    background: var(--ngx-disabled-bg);
+    border-color: var(--ngx-outline-subtle);
+    color: var(--ngx-disabled-color);
+    cursor: not-allowed;
+}
+
+.ngx-renderer input::placeholder,
+.ngx-renderer textarea::placeholder {
+    color: var(--ngx-input-placeholder-color);
+}
+
+.ngx-renderer input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: var(--ngx-calendar-icon-filter, none);
+}
+
+/* ─── Labels — iOS secondary label style ──────────────────────────────────── */
+
+.ngx-renderer label {
+    color: var(--ngx-on-surface);
+    letter-spacing: -0.01em;
+}
+
+/* ─── Custom select trigger — iOS rounded style ───────────────────────────── */
+
+.ngx-select__trigger {
+    background: #fff;
+    color: var(--ngx-input-color);
+    border: var(--ngx-input-border);
+    border-radius: var(--ngx-input-border-radius);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ngx-select__trigger:hover:not(:disabled):not(:focus) {
+    border-color: #AEAEB2;
+}
+
+.ngx-select__trigger:focus {
+    border-color: var(--ngx-input-focus-color);
+    box-shadow: var(--ngx-input-focus-shadow);
+    outline: none;
+}
+
+.ngx-select__trigger[aria-invalid="true"] {
+    border-color: var(--ngx-error-color);
+}
+
+.ngx-select__trigger[aria-invalid="true"]:focus {
+    box-shadow: var(--ngx-error-focus-shadow);
+}
+
+.ngx-select__trigger:disabled {
+    background: var(--ngx-disabled-bg);
+    border-color: var(--ngx-outline-subtle);
+    color: var(--ngx-disabled-color);
+}
+
+.ngx-select__placeholder {
+    color: var(--ngx-input-placeholder-color);
+}
+
+.ngx-select__arrow {
+    color: var(--ngx-outline);
+}
+
+/* ─── Dropdown — iOS sheet style, rounded corners ─────────────────────────── */
+
+.ngx-select__dropdown {
+    margin-top: 0.375rem;
+    background: #fff;
+}
+
+.ngx-select__search {
+    border-bottom-color: var(--ngx-outline-subtle);
+    font-size: var(--ngx-input-font-size);
+    padding: 0.5rem 0.75rem;
+}
+
+.ngx-select__search:focus {
+    border-bottom-color: var(--ngx-input-focus-color);
+}
+
+.ngx-select__list {
+    padding: 0.375rem 0;
+}
+
+.ngx-select__no-results {
+    color: var(--ngx-outline);
+}
+
+.ngx-select__option {
+    border-radius: 0;
+    transition: background 0.15s ease;
+}
+
+/* ─── Toggle / Switch — iOS UISwitch faithful reproduction ────────────────── */
+
+.ngx-toggle__track {
+    box-sizing: border-box;
+    /* iOS switch has an inner shadow when off */
+    box-shadow: inset 0 0 0 1px rgba(120, 120, 128, 0.16);
+}
+
+.ngx-toggle input:checked+.ngx-toggle__track {
+    box-shadow: none;
+}
+
+.ngx-toggle__thumb {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15),
+        0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+/* Focus ring — iOS accessibility blue ring */
+.ngx-toggle input:focus-visible+.ngx-toggle__track {
+    outline: 3.5px solid rgba(0, 122, 255, 0.4);
+    outline-offset: 2px;
+}
+
+/* ─── Custom Checkbox — iOS circular / rounded ────────────────────────────── */
+
+.ngx-checkbox input[type="checkbox"]:focus-visible+span::before {
+    outline: 3.5px solid rgba(0, 122, 255, 0.4);
+    outline-offset: 2px;
+}
+
+/* ─── Multiselect / Chips — capsule style ─────────────────────────────────── */
+
+.ngx-multiselect__label {
+    color: var(--ngx-on-surface);
+    letter-spacing: -0.01em;
+}
+
+.ngx-multiselect__search-btn {
+    color: var(--ngx-outline);
+}
+
+.ngx-multiselect__search-btn:hover:not(:disabled) {
+    background: rgba(0, 122, 255, 0.08);
+    color: #007AFF;
+}
+
+.ngx-multiselect__options {
+    scrollbar-width: thin;
+    scrollbar-color: #C7C7CC transparent;
+}
+
+.ngx-select__list {
+    scrollbar-width: thin;
+    scrollbar-color: #C7C7CC transparent;
+}
+
+.ngx-multiselect-overlay__grid {
+    scrollbar-width: thin;
+    scrollbar-color: #C7C7CC transparent;
+}
+
+.ngx-chip:hover:not(:disabled):not(.ngx-chip--selected) {
+    background: var(--ngx-chip-hover-bg);
+    border-color: var(--ngx-chip-hover-border);
+    color: var(--ngx-chip-hover-color);
+}
+
+.ngx-chip--selected:hover:not(:disabled):not(.ngx-chip--counter) {
+    background: var(--ngx-chip-selected-hover-bg);
+    color: var(--ngx-chip-selected-hover-color);
+}
+
+.ngx-chip__btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Overlay — iOS sheet-style popup */
+.ngx-multiselect-overlay__panel {
+    background: #fff;
+    border: 1px solid var(--ngx-outline-subtle);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12),
+        0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.ngx-multiselect-overlay__input {
+    border-bottom-color: var(--ngx-outline-subtle);
+}
+
+.ngx-multiselect-overlay__panel--above .ngx-multiselect-overlay__input {
+    border-top-color: var(--ngx-outline-subtle);
+}
+
+.ngx-multiselect-overlay__input:focus {
+    border-color: var(--ngx-input-focus-color);
+}
+
+.ngx-multiselect-overlay__empty {
+    color: var(--ngx-outline);
+}
+
+/* ─── Inline errors — iOS tooltip bubble ──────────────────────────────────── */
+
+.ngx-control__inline-errors-tooltip {
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    letter-spacing: -0.01em;
+}
+
+/* ─── Block errors — spacing consistent with iOS grouped cells ────────────── */
+
+.ngx-renderer:not(.ngx-inline-errors)::after {
+    padding-top: 0.25rem;
+}
+
+.ngx-control__error {
+    letter-spacing: -0.01em;
+    padding-top: 0.25rem;
+}
+
+/* ─── Input-group merging — generic rule for input + trailing icon button ── */
+/* When an input and a button sit inside __input-group, they share a single
+   rounded-rect outline. The input loses its right border/radius and the
+   button loses its left border/radius.  This applies to date-picker,
+   date-range, and any future control that follows the same pattern.         */
+
+.ngx-datepicker__input-group>input,
+.ngx-datepicker__input-group>.ngx-datepicker__input {
+    border-right: none !important;
+    border-radius: var(--ngx-input-border-radius) 0 0 var(--ngx-input-border-radius);
+}
+
+/* Ensure right border is always removed on focus, hover, error */
+.ngx-datepicker__input-group>input:focus,
+.ngx-datepicker__input-group>.ngx-datepicker__input:focus,
+.ngx-datepicker__input-group>input:hover:not(:disabled),
+.ngx-datepicker__input-group>.ngx-datepicker__input:hover:not(:disabled),
+.ngx-datepicker__input-group>input[aria-invalid="true"],
+.ngx-datepicker__input-group>.ngx-datepicker__input[aria-invalid="true"] {
+    border-right: none !important;
+}
+
+.ngx-datepicker__input-group>button:last-child,
+.ngx-datepicker__input-group>.ngx-datepicker__toggle {
+    border-left: none;
+    border-radius: 0 var(--ngx-input-border-radius) var(--ngx-input-border-radius) 0;
+}
+
+/* ─── Date Picker — iOS calendar style ────────────────────────────────────── */
+
+.ngx-datepicker__input {
+    background: #fff;
+    color: var(--ngx-input-color);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ngx-datepicker__input:hover:not(:disabled):not(:focus) {
+    border-color: #AEAEB2;
+}
+
+.ngx-datepicker__input:focus {
+    border-color: var(--ngx-input-focus-color);
+    box-shadow: var(--ngx-input-focus-shadow);
+    outline: none;
+    z-index: 1;
+}
+
+.ngx-datepicker__input[aria-invalid="true"] {
+    border-color: var(--ngx-error-color);
+}
+
+.ngx-datepicker__input[aria-invalid="true"]:focus {
+    box-shadow: var(--ngx-error-focus-shadow);
+}
+
+.ngx-datepicker__input:disabled {
+    background: var(--ngx-disabled-bg);
+    border-color: var(--ngx-outline-subtle);
+    color: var(--ngx-disabled-color);
+}
+
+.ngx-datepicker__toggle {
+    background: #fff;
+    color: var(--ngx-input-focus-color);
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ngx-datepicker__toggle:hover:not(:disabled) {
+    background: rgba(0, 122, 255, 0.06);
+}
+
+.ngx-datepicker__nav-btn {
+    border-radius: 50%;
+}
+
+.ngx-datepicker__nav-btn:hover {
+    background: rgba(0, 122, 255, 0.08);
+    color: #007AFF;
+}
+
+.ngx-datepicker__title {
+    color: var(--ngx-on-surface);
+    letter-spacing: -0.01em;
+    font-weight: 600;
+}
+
+/* Date range — iOS rounded bordered inputs */
+.ngx-daterange__sep {
+    background: #fff;
+    border-top: var(--ngx-input-border);
+    border-bottom: var(--ngx-input-border);
+}
+
+.ngx-daterange__group .ngx-daterange__input:first-of-type {
+    border-right: none;
+    border-radius: var(--ngx-input-border-radius) 0 0 var(--ngx-input-border-radius);
+}
+
+.ngx-daterange__group .ngx-daterange__input:nth-of-type(2) {
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+}
+
+/* Container focus — iOS ring on the whole group */
+.ngx-daterange__group:focus-within {
+    box-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.3);
+    border-color: #007AFF;
+}
+
+/* Kill per-input focus */
+.ngx-daterange__group .ngx-daterange__input:focus {
+    border-color: inherit;
+    box-shadow: none;
+    outline: none;
+}
+
+.ngx-datepicker__weekday {
+    color: var(--ngx-on-surface-variant);
+    font-size: 0.75rem;
+    font-weight: 600;
+}

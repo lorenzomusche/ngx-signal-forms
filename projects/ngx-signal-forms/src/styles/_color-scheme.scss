@@ -218,6 +218,12 @@ $_defaults: (
     --ngx-select-arrow-color: #{$primary-700};
     --ngx-select-border-subtle: #{$primary-300};
     --ngx-select-no-results-color: #{$primary-500};
+
+    // ── Date Range Picker (in-range band) ───────────────────────────────
+    --ngx-daterange-in-range-bg: #{color.mix($primary, transparent, 16%)};
+
+    // ── Date Range Picker (endpoint color) ──────────────────────────────
+    --ngx-daterange-endpoint-color: #{_on-color($primary, $force-light)};
 }
 
 // ── Public: Material-style submit button & extras ──────────────────────────
