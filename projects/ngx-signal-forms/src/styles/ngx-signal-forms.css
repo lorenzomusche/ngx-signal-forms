@@ -1,3 +1,70 @@
+/* ─── Custom Number Spin Buttons ─────────────────────────────────────────── */
+.ngx-spin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75em;
+    height: 1.25em;
+    border-radius: 4px;
+    color: var(--ngx-input-icon-color);
+    background: transparent;
+    border: none;
+    transition: background 0.15s, color 0.15s;
+    font-size: 1em;
+    line-height: 1;
+    box-shadow: none;
+    outline: none;
+}
+
+.ngx-spin-btn-up {
+    margin-bottom: 0.1em;
+}
+
+.ngx-spin-btn-down {
+    margin-top: 0.1em;
+}
+
+.ngx-spin-btn:hover,
+.ngx-spin-btn:focus {
+    background: var(--ngx-surface-container-highest-hover, #d4d4d8);
+    color: var(--ngx-input-focus-color);
+}
+
+.ngx-spin-btn:active {
+    background: var(--ngx-input-focus-color);
+    color: #fff;
+}
+
+.ngx-spin-btn svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+    pointer-events: none;
+}
+
+/* Stile coerente per input[type=number]: nasconde le freccette native */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type="date"] {
+    font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+}
+
+/* Rimuove l'outline di default (highlight blu) sui campi data in focus anche nella libreria */
+input[type="date"]:focus,
+.ngx-datepicker__input:focus,
+.ngx-daterange__input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 /*
  * ngx-signal-forms — Default Theme
  *
@@ -71,6 +138,8 @@
     --ngx-chip-selected-bg: var(--ngx-input-focus-color);
     --ngx-chip-selected-color: #fff;
     --ngx-chip-selected-border: 1px solid var(--ngx-input-focus-color);
+    /* Datepicker selected-bg starts with the same color as chip-selected-bg, but is independent */
+    --ngx-datepicker-selected-bg: var(--ngx-input-focus-color);
     --ngx-chip-max-width: 10rem;
     --ngx-chip-transition: 0.15s ease;
 
@@ -96,7 +165,7 @@
     --ngx-datepicker-cell-border-radius: 50%;
     --ngx-datepicker-cell-font-size: 0.875rem;
     --ngx-datepicker-today-ring: 1px solid currentColor;
-    --ngx-datepicker-selected-bg: var(--ngx-input-focus-color);
+    /* see above: --ngx-datepicker-selected-bg is now set to --ngx-chip-selected-bg */
     --ngx-datepicker-selected-color: #fff;
     --ngx-datepicker-hover-bg: rgba(0, 0, 0, 0.06);
     --ngx-datepicker-outside-opacity: 0.35;
@@ -129,6 +198,18 @@
     --ngx-chip-hover-color: inherit;
     --ngx-chip-selected-hover-bg: #27272a;
     --ngx-chip-selected-hover-color: #fff;
+
+    /* Timepicker — derives entirely from the workspace accent/surface tokens.
+     * Override --ngx-tp-* on :root to customise the timepicker independently. */
+    --ngx-tp-primary:              var(--ngx-input-focus-color);
+    --ngx-tp-on-primary:           #ffffff;
+    /* primary-container ≈ selected-bg used by chips/select — tinted accent bg */
+    --ngx-tp-primary-container:    var(--ngx-select-option-selected-bg);
+    --ngx-tp-on-primary-container: var(--ngx-on-surface);
+    --ngx-tp-surface:              var(--ngx-select-dropdown-bg);
+    --ngx-tp-surface-variant:      var(--ngx-surface-container);
+    --ngx-tp-outline:              var(--ngx-input-border-color);
+    --ngx-tp-separator-color:      var(--ngx-on-surface-variant);
 
     /* Layout */
     --ngx-renderer-gap: 0.25rem;
@@ -219,6 +300,7 @@
     align-items: center;
     cursor: pointer;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .ngx-checkbox>span {
@@ -913,19 +995,54 @@ button.ngx-multiselect-overlay__item:hover {
 .ngx-datepicker__input-group {
     display: flex;
     align-items: stretch;
+    border: none;
+    border-radius: var(--ngx-input-border-radius);
+    background: var(--ngx-surface-container-highest);
+    padding: 0;
+    position: relative;
+}
+
+.ngx-datepicker__input-group input {
+    flex: 1;
+}
+
+/* Bordo inferiore animato per input group datepicker */
+.ngx-datepicker__input-group::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--ngx-on-surface-variant);
+    border-radius: 0 0 var(--ngx-input-border-radius) var(--ngx-input-border-radius);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.ngx-datepicker__input-group:focus-within::after {
+    background: var(--ngx-input-focus-color);
+    height: 3px;
+
+    /* Hover animazione bordo coerente con focus */
+    .ngx-datepicker__input-group:hover::after {
+        background: var(--ngx-input-focus-color);
+        height: 3px;
+    }
 }
 
 .ngx-datepicker__input {
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 0%;
+    min-width: 10.5rem;
+    max-width: 100%;
     padding: var(--ngx-input-padding);
-    border: var(--ngx-input-border);
-    border-right: none;
-    border-radius: var(--ngx-input-border-radius) 0 0 var(--ngx-input-border-radius);
-    font-size: var(--ngx-input-font-size);
+    border: none;
+    border-radius: 0;
+    font-size: clamp(0.9rem, 2.5vw, 1.05rem);
     font-family: inherit;
     color: var(--ngx-input-color);
     outline: none;
+    background: transparent;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -948,9 +1065,8 @@ button.ngx-multiselect-overlay__item:hover {
     align-items: center;
     justify-content: center;
     width: 2.5rem;
-    border: var(--ngx-input-border);
-    border-left: none;
-    border-radius: 0 var(--ngx-input-border-radius) var(--ngx-input-border-radius) 0;
+    border: none;
+    border-radius: 0;
     background: transparent;
     color: var(--ngx-input-icon-color);
     cursor: pointer;
@@ -1109,10 +1225,14 @@ button.ngx-multiselect-overlay__item:hover {
     user-select: none;
     transition: background 0.1s, color 0.1s;
     outline: none;
+    box-shadow: none;
+    border: none;
 }
 
 .ngx-datepicker__cell:hover:not(.ngx-datepicker__cell--disabled):not(.ngx-datepicker__cell--selected) {
-    background: var(--ngx-datepicker-hover-bg);
+    background: none;
+    outline: none;
+    box-shadow: none;
 }
 
 .ngx-datepicker__cell--outside {
@@ -1120,21 +1240,188 @@ button.ngx-multiselect-overlay__item:hover {
 }
 
 .ngx-datepicker__cell--today:not(.ngx-datepicker__cell--selected) {
-    outline: var(--ngx-datepicker-today-ring);
-    outline-offset: -1px;
+    outline: none;
+    box-shadow: none;
 }
 
 .ngx-datepicker__cell--selected {
     background: var(--ngx-datepicker-selected-bg);
     color: var(--ngx-datepicker-selected-color);
     font-weight: 600;
+    box-shadow: none;
+    outline: none;
+    border-radius: 50%;
+    border: none;
 }
 
 .ngx-datepicker__cell--focused:not(.ngx-datepicker__cell--selected) {
-    box-shadow: inset 0 0 0 2px var(--ngx-input-focus-color);
+    box-shadow: none;
+    outline: none;
 }
 
 .ngx-datepicker__cell--disabled {
     opacity: var(--ngx-datepicker-disabled-opacity);
     cursor: not-allowed;
+}
+
+/* ─── Date Range Picker ───────────────────────────────────────────────────── */
+
+:root {
+    /* M3 date-range-picker spec:
+       • Endpoints use primary (= selected-bg/color)
+       • In-range band uses primary-container — approximated as
+         selected-bg at 12 % opacity so it automatically follows
+         whichever theme palette is active.                                   */
+    --ngx-daterange-in-range-bg: var(--ngx-datepicker-selected-bg);
+    --ngx-daterange-endpoint-bg: var(--ngx-datepicker-selected-bg);
+    --ngx-daterange-endpoint-color: var(--ngx-datepicker-selected-color);
+}
+
+/*
+ * Range cells use a two-layer approach:
+ *   • The cell itself shows the connecting band (in-range background).
+ *   • A ::before pseudo-element draws the pill-shaped endpoint circle
+ *     that sits on top of the band, matching the regular datepicker
+ *     selected-cell aesthetic.
+ */
+
+/* ── In-range band (between endpoints) ──────────────────────────────────── */
+.ngx-datepicker__cell--in-range {
+    background: var(--ngx-daterange-in-range-bg);
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* ── Endpoint base: position context for the pill pseudo-element ────────── */
+.ngx-datepicker__cell--range-start,
+.ngx-datepicker__cell--range-end {
+    position: relative;
+    z-index: 1;
+    color: var(--ngx-daterange-endpoint-color);
+    font-weight: 600;
+    background: var(--ngx-daterange-endpoint-bg);
+    border-radius: 50%;
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* Pill circle behind the number */
+.ngx-datepicker__cell--range-start::before,
+.ngx-datepicker__cell--range-end::before {
+    display: none;
+}
+
+/* Connecting band on the trailing side of range-start */
+.ngx-datepicker__cell--range-start:not(.ngx-datepicker__cell--range-end) {
+    background: linear-gradient(to right,
+            var(--ngx-daterange-in-range-bg) 50%);
+    border-radius: 50% 0 0 50%;
+}
+
+/* Connecting band on the leading side of range-end */
+.ngx-datepicker__cell--range-end:not(.ngx-datepicker__cell--range-start) {
+    background: linear-gradient(to left,
+            var(--ngx-daterange-in-range-bg) 50%);
+    border-radius: 0 50% 50% 0;
+}
+
+/* Same-day: no connecting band, full pill */
+.ngx-datepicker__cell--range-start.ngx-datepicker__cell--range-end {
+    background: var(--ngx-daterange-endpoint-bg);
+    border-radius: 50%;
+}
+
+/* Hint text below the calendar grid */
+.ngx-daterange__hint {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--ngx-on-surface-variant, #666);
+    padding-top: 0.375rem;
+    user-select: none;
+}
+
+/* ── Compact two-input layout ───────────────────────────────────────────── */
+
+.ngx-daterange__group {
+    display: flex;
+    align-items: stretch;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Container-level focus ring instead of per-input */
+.ngx-daterange__group:focus-within {
+    border-color: var(--ngx-input-focus-color);
+    box-shadow: var(--ngx-input-focus-shadow);
+    z-index: 1;
+}
+
+/* Compact inputs — sized to ISO date width, pushed left */
+.ngx-daterange__input {
+    flex: 0 0 auto;
+    width: 6.5rem;
+    min-width: 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+}
+
+/* Kill individual input focus — the group handles it */
+.ngx-daterange__group .ngx-daterange__input:focus {
+    border-color: inherit;
+    box-shadow: none;
+    outline: none;
+    z-index: auto;
+}
+
+/* First input: round left, flat right */
+.ngx-daterange__group .ngx-daterange__input:first-of-type {
+    border-right: none;
+    border-radius: var(--ngx-input-border-radius) 0 0 var(--ngx-input-border-radius);
+    box-shadow: none;
+    outline: none;
+}
+
+/* Second input: flat both sides */
+.ngx-daterange__group .ngx-daterange__input:nth-of-type(2) {
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Push the calendar toggle to the far right */
+.ngx-daterange__group .ngx-datepicker__toggle {
+    margin-left: auto;
+}
+
+/* Thin separator between inputs */
+.ngx-daterange__sep {
+    display: flex;
+    align-items: center;
+    padding: 0 0.125rem;
+    font-size: var(--ngx-datepicker-cell-font-size, 0.875rem);
+    color: var(--ngx-on-surface-variant, #666);
+    user-select: none;
+    flex-shrink: 0;
+    /* Inherit the field background so the separator blends in */
+    border-top: var(--ngx-input-border);
+    border-bottom: var(--ngx-input-border);
+    padding: 0 2px;
+}
+
+/* Focus ring for datepicker input group */
+.ngx-datepicker__input-group:focus-within {
+    outline: 2px solid var(--ngx-signal-forms-focus-color, #1976d2);
+    outline-offset: 2px;
+    border-radius: var(--ngx-input-border-radius);
+}
+
+/* Rimuove l'outline di default (highlight blu) sui campi data in focus */
+.ngx-datepicker__input-group {
+    outline: none !important;
+    box-shadow: none !important;
 }
