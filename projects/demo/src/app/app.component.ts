@@ -4,6 +4,8 @@ import {
   createSignalFormAdapter,
   NgxCheckboxComponent,
   NgxDatePickerComponent,
+  NgxDateRange,
+  NgxDateRangePickerComponent,
   NgxFormAdapter,
   NgxFormComponent,
   NgxFormError,
@@ -16,13 +18,14 @@ import {
   NgxSelectOption,
   NgxTextareaComponent,
   NgxTextComponent,
+  NgxTimepickerComponent,
   NgxToggleComponent,
-  schemaEmail,
-  schemaMax,
-  schemaMaxLength,
-  schemaMin,
-  schemaMinLength,
-  schemaRequired,
+  ngxSchemaEmail,
+  ngxSchemaMax,
+  ngxSchemaMaxLength,
+  ngxSchemaMin,
+  ngxSchemaMinLength,
+  ngxSchemaRequired,
 } from "ngx-signal-forms";
 
 interface ContactForm extends Record<string, unknown> {
@@ -31,9 +34,10 @@ interface ContactForm extends Record<string, unknown> {
   email: string;
   age: number | null;
   birthDate: string | null;
-  country: string | null;
+  appointmentTime: string | null;
   bio: string;
   interests: ReadonlyArray<string>;
+  travelDates: NgxDateRange | null;
   newsletter: boolean;
   acceptTerms: boolean;
 }
@@ -50,10 +54,12 @@ interface ContactForm extends Record<string, unknown> {
     NgxCheckboxComponent,
     NgxTextareaComponent,
     NgxDatePickerComponent,
+    NgxDateRangePickerComponent,
     NgxMultiselectComponent,
     NgxInlineErrorsDirective,
     NgxToggleComponent,
     NgxOptionDirective,
+    NgxTimepickerComponent,
     UpperCasePipe,
   ],
   template: `
@@ -63,109 +69,125 @@ interface ContactForm extends Record<string, unknown> {
         A declarative, type-safe, reactive form system built on Angular Signals.
       </p>
 
-      <ngx-form
-        [adapter]="adapter"
-        [action]="submitAction"
-        (submitted)="onSubmitted($event)"
-      >
-        <div class="form-row">
-          <ngx-control-text
-            name="firstName"
-            label="First Name"
-            placeholder="John"
-            [ariaRequired]="true"
-            ngxInlineErrors
-          />
-
-          <ngx-control-text
-            name="lastName"
-            label="Last Name"
-            placeholder="Doe"
-            [ariaRequired]="true"
-            ngxInlineErrors
-          />
-        </div>
-
-        <ngx-control-text
-          name="email"
-          label="Email"
-          placeholder="john.doe&#64;example.com"
-          [ariaRequired]="true"
-          ngxInlineErrors
-        />
-
-        <div class="form-row">
-          <ngx-control-number
-            name="age"
-            label="Age"
-            placeholder="25"
-            [minValue]="0"
-            [maxValue]="120"
-          />
-
-          <ngx-control-datepicker name="birthDate" label="Date of Birth" />
-        </div>
-
-        <ngx-control-multiselect
-          name="interests"
-          label="Interests"
-          [options]="interestOptions"
-          [searchable]="true"
-          mode="multi"
-        />
-
-        <ngx-control-select
-          name="country"
-          label="Country"
-          placeholder="Select a country…"
-          [options]="countries"
-          [searchable]="true"
+      <section style="margin-bottom: 2rem;">
+        <ngx-form
+          [adapter]="adapter"
+          [action]="submitAction"
+          (submitted)="onSubmitted($event)"
         >
-          <ng-template ngxOption let-opt>
-            <span style="margin-right: 0.5rem">{{
-              countryFlags[opt.value]
-            }}</span>
-            <strong>{{ opt.label }}</strong>
-            <small style="margin-left: auto; color: #888">{{
-              opt.value | uppercase
-            }}</small>
-          </ng-template>
-        </ngx-control-select>
+          <div class="form-row">
+            <ngx-control-text
+              name="firstName"
+              label="First Name"
+              placeholder="John"
+              [ariaRequired]="true"
+              ngxInlineErrors
+            />
 
-        <ngx-control-textarea
-          name="bio"
-          label="Bio"
-          placeholder="Tell us about yourself…"
-          [rows]="3"
-        />
+            <ngx-control-text
+              name="lastName"
+              label="Last Name"
+              placeholder="Doe"
+              [ariaRequired]="true"
+              ngxInlineErrors
+            />
+          </div>
 
-        <div class="form-row">
-          <ngx-control-checkbox
-            name="acceptTerms"
-            label="I accept the terms and conditions"
+          <div class="form-row">
+            <ngx-control-text
+              name="email"
+              label="Email"
+              placeholder="john.doe&#64;example.com"
+              [ariaRequired]="true"
+              ngxInlineErrors
+            />
+
+            <ngx-control-number
+              name="age"
+              label="Age"
+              placeholder="25"
+              [minValue]="0"
+              [maxValue]="120"
+            />
+          </div>
+
+          <div class="form-row">
+            <ngx-control-datepicker name="birthDate" label="Date of Birth" />
+
+            <ngx-control-timepicker
+              name="appointmentTime"
+              label="Appointment Time"
+            />
+          </div>
+
+          <ngx-control-daterange
+            name="travelDates"
+            label="Travel Dates"
+            minDate="2026-01-01"
+            maxDate="2027-12-31"
           />
 
-          <ngx-control-toggle
-            name="newsletter"
-            label="Subscribe to newsletter"
+          <ngx-control-multiselect
+            name="interests"
+            label="Interests"
+            [options]="interestOptions"
+            [searchable]="true"
+            mode="multi"
           />
-        </div>
 
-        <button type="submit" [disabled]="!adapter.state.canSubmit()">
-          @if (adapter.state.submitting()) {
-            Submitting…
-          } @else {
-            Submit
-          }
-        </button>
-      </ngx-form>
+          <ngx-control-select
+            name="country"
+            label="Country"
+            placeholder="Select a country…"
+            [options]="countries"
+            [searchable]="true"
+          >
+            <ng-template ngxOption let-opt>
+              <span style="margin-right: 0.5rem">{{
+                countryFlags[opt.value]
+              }}</span>
+              <strong>{{ opt.label }}</strong>
+              <small style="margin-left: auto; color: #888">{{
+                opt.value | uppercase
+              }}</small>
+            </ng-template>
+          </ngx-control-select>
 
-      @if (lastSubmitResult()) {
-        <div class="submit-result">
-          <strong>Submitted successfully!</strong>
-          <pre>{{ lastSubmitResult() }}</pre>
-        </div>
-      }
+          <ngx-control-textarea
+            name="bio"
+            label="Bio"
+            placeholder="Tell us about yourself…"
+            [rows]="3"
+          />
+
+          <div class="form-row">
+            <ngx-control-checkbox
+              name="acceptTerms"
+              label="I accept the terms and conditions"
+            />
+
+            <ngx-control-toggle
+              name="newsletter"
+              label="Subscribe to newsletter"
+            />
+          </div>
+
+          <button type="submit" [disabled]="!adapter.state.canSubmit()">
+            @if (adapter.state.submitting()) {
+              Submitting…
+            } @else {
+              Submit
+            }
+          </button>
+        </ngx-form>
+
+        @if (lastSubmitResult()) {
+          <div class="submit-result">
+            <strong>Submitted successfully!</strong>
+            <pre>{{ lastSubmitResult() }}</pre>
+          </div>
+        }
+      </section>
     </div>
   `,
 })
@@ -179,8 +201,10 @@ export class AppComponent {
     age: null,
     birthDate: null,
     country: null,
+    appointmentTime: null,
     bio: "",
     interests: ["testing"],
+    travelDates: null,
     newsletter: false,
     acceptTerms: false,
   });
@@ -192,29 +216,29 @@ export class AppComponent {
     submitMode: "valid-only",
     schema: (path) => {
       // firstName: required, 2–50 chars
-      schemaRequired(path.firstName);
-      schemaMinLength(path.firstName, 2, {
+      ngxSchemaRequired(path.firstName);
+      ngxSchemaMinLength(path.firstName, 2, {
         message: "First name must be at least 2 characters",
       });
-      schemaMaxLength(path.firstName, 50);
+      ngxSchemaMaxLength(path.firstName, 50);
 
       // lastName: required, 2–50 chars
-      schemaRequired(path.lastName);
-      schemaMinLength(path.lastName, 2, {
+      ngxSchemaRequired(path.lastName);
+      ngxSchemaMinLength(path.lastName, 2, {
         message: "Last name must be at least 2 characters",
       });
-      schemaMaxLength(path.lastName, 50);
+      ngxSchemaMaxLength(path.lastName, 50);
 
       // email: required + email format
-      schemaRequired(path.email);
-      schemaEmail(path.email);
+      ngxSchemaRequired(path.email);
+      ngxSchemaEmail(path.email);
 
       // age: between 0 and 120
-      schemaMin(path.age, 0);
-      schemaMax(path.age, 120);
+      ngxSchemaMin(path.age, 0);
+      ngxSchemaMax(path.age, 120);
 
       // bio: max 500 chars
-      schemaMaxLength(path.bio, 500);
+      ngxSchemaMaxLength(path.bio, 500);
     },
   });
 

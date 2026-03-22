@@ -1,21 +1,32 @@
 {
   // ─── GitHub Copilot ───────────────────────────────────────────────────────────
-
   // Abilita lettura dei file in .github/copilot/*.md e .github/copilot-instructions.md
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": "copilot-commit-message-instructions.md"
+    },
+    {
+      "text": "Use conventional commit message format."
+    }
+  ],
+  "github.copilot.chat.reviewSelection.instructions": [
+    {
+      "file": "copilot-review-selection-instructions.md"
+    },
+    {
+      "text": "Focus on code quality and best practices."
+    }
+  ],
   // ─── TypeScript ───────────────────────────────────────────────────────────────
-
   // Usa il TypeScript del workspace invece di quello bundled con VS Code
   "typescript.tsdk": "node_modules/typescript/lib",
   // Chiede all'utente di usare il TS del workspace al primo avvio
   "typescript.workspaceTrust.useWorkspaceTrust": true,
-
   // Auto-import
   "typescript.preferences.includePackageJsonAutoImports": "on",
   "typescript.suggest.autoImports": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-
   // Inlay hints — tipi inferiti visibili inline senza hover
   "typescript.inlayHints.parameterNames.enabled": "all",
   "typescript.inlayHints.parameterTypes.enabled": true,
@@ -23,9 +34,7 @@
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "typescript.inlayHints.enumMemberValues.enabled": true,
-
   // ─── Editor ───────────────────────────────────────────────────────────────────
-
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
@@ -38,12 +47,9 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-
   // Evidenzia lo stesso simbolo in tutti i file aperti
   "editor.occurrencesHighlight": "multiFile",
-
   // ─── File & Search ───────────────────────────────────────────────────────
-
   "files.associations": {
     "*.ts": "typescript",
     "*.html": "html"

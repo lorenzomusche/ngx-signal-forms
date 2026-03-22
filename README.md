@@ -42,6 +42,8 @@ npm install ngx-signal-forms
 @import "ngx-signal-forms/styles/ngx-signal-forms.css";
 // Optional: Material Design 3 theme
 @import "ngx-signal-forms/styles/ngx-signal-forms-material.css";
+// Optional: iOS theme
+@import "ngx-signal-forms/styles/ngx-signal-forms-ios.css";
 ```
 
 ### 3. Import components
@@ -55,14 +57,15 @@ import {
   NgxMultiselectComponent,
   NgxCheckboxComponent,
   NgxToggleComponent,
+  NgxToggleComponent,
   NgxDatePickerComponent,
   NgxTextareaComponent,
   NgxInlineErrorsDirective,
   NgxOptionDirective,
   createSignalFormAdapter,
-  schemaRequired,
-  schemaEmail,
-  schemaMinLength,
+  ngxSchemaRequired,
+  ngxSchemaEmail,
+  ngxSchemaMinLength,
 } from 'ngx-signal-forms';
 
 @Component({
@@ -105,11 +108,11 @@ export class MyComponent {
     model: this.model,
     submitMode: "valid-only",
     schema: (path) => {
-      schemaRequired(path.firstName);
-      schemaMinLength(path.firstName, 2);
-      schemaRequired(path.lastName);
-      schemaRequired(path.email);
-      schemaEmail(path.email);
+      ngxSchemaRequired(path.firstName);
+      ngxSchemaMinLength(path.firstName, 2);
+      ngxSchemaRequired(path.lastName);
+      ngxSchemaRequired(path.email);
+      ngxSchemaEmail(path.email);
     },
   });
 }
@@ -219,6 +222,24 @@ All sub-components are exported and can be used standalone for custom calendar U
 
 ---
 
+## Multiselect Modes
+
+The `ngx-control-multiselect` component supports two interaction modes via the `mode` input:
+
+- `single` (default): Options can be selected once. Selecting an already selected option removes it.
+- `multi`: Counter-based selection. Options can be selected multiple times. Chips show a counter badge with increment/decrement buttons.
+
+```html
+<ngx-control-multiselect
+  name="tags"
+  label="Tags"
+  [options]="tagOptions"
+  mode="multi"
+/>
+```
+
+---
+
 ## Submit Event
 
 ```ts
@@ -249,10 +270,10 @@ const adapter = createSignalFormAdapter({
   model: this.model,
   submitMode: "valid-only",
   schema: (path) => {
-    schemaRequired(path.name);
-    schemaEmail(path.email);
-    schemaMin(path.age, 0);
-    schemaMax(path.age, 120);
+    ngxSchemaRequired(path.name);
+    ngxSchemaEmail(path.email);
+    ngxSchemaMin(path.age, 0);
+    ngxSchemaMax(path.age, 120);
   },
 });
 ```
@@ -261,21 +282,21 @@ const adapter = createSignalFormAdapter({
 
 ```ts
 import {
-  required,
-  minLength,
-  maxLength,
-  email,
-  pattern,
-  min,
-  max,
-  compose,
-  composeFirst,
+  ngxRequired,
+  ngxMinLength,
+  ngxMaxLength,
+  ngxEmail,
+  ngxPattern,
+  ngxMin,
+  ngxMax,
+  ngxCompose,
+  ngxComposeFirst,
 } from "ngx-signal-forms";
 
-const nameValidators = compose(
-  required("Name is required"),
-  minLength(2),
-  maxLength(50),
+const nameValidators = ngxCompose(
+  ngxRequired("Name is required"),
+  ngxMinLength(2),
+  ngxMaxLength(50),
 );
 ```
 

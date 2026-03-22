@@ -3,6 +3,7 @@
 Generate commit messages following the **Conventional Commits** specification.
 
 ## Format
+
 ```
 <type>(<scope>): <short description>
 
@@ -12,20 +13,23 @@ Generate commit messages following the **Conventional Commits** specification.
 ```
 
 ## Types
-| Type | When to use |
-|------|-------------|
-| `feat` | New feature or exported symbol |
-| `fix` | Bug fix |
-| `chore` | Tooling, config, dependency updates |
-| `refactor` | Code restructure without behavior change |
-| `test` | Adding or fixing tests |
-| `docs` | Documentation only |
-| `perf` | Performance improvement |
-| `build` | Build system changes (ng-packagr, tsconfig) |
-| `ci` | CI/CD pipeline changes |
+
+| Type       | When to use                                 |
+| ---------- | ------------------------------------------- |
+| `feat`     | New feature or exported symbol              |
+| `fix`      | Bug fix                                     |
+| `chore`    | Tooling, config, dependency updates         |
+| `refactor` | Code restructure without behavior change    |
+| `test`     | Adding or fixing tests                      |
+| `docs`     | Documentation only                          |
+| `perf`     | Performance improvement                     |
+| `build`    | Build system changes (ng-packagr, tsconfig) |
+| `ci`       | CI/CD pipeline changes                      |
 
 ## Scopes
+
 Use the library layer or component name:
+
 - `adapter` — SignalFormAdapter changes
 - `core` — types.ts / tokens.ts
 - `control` — ControlComponent
@@ -36,12 +40,14 @@ Use the library layer or component name:
 - `config` — tsconfig, ng-packagr, jest config
 
 ## Rules
+
 - Short description: imperative mood, lowercase, no period, max 72 chars.
-- Body: explain *why*, not *what*. Wrap at 100 chars.
+- Body: explain _why_, not _what_. Wrap at 100 chars.
 - Footer: reference issues as `Closes #123` or `Refs #456`.
 - Breaking changes: add `!` after scope and `BREAKING CHANGE:` in footer.
 
 ## Examples
+
 ```
 feat(adapter): add linkedSignal support for field sync
 fix(renderers): forward aria-invalid to native input element
