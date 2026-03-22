@@ -57,23 +57,22 @@ export function minuteToAngle(minute: number): number {
 
 /**
  * Snap an arbitrary angle to the nearest hour position.
- * Returns hours 1–12.
+ * Returns hours 1–12. Handles 360°/0° wrap gracefully.
  */
 export function angleToHour(angle: number): number {
-  let h = Math.round(angle / 30);
-  if (h === 0 || h === 12) return 12;
-  if (h < 0) h += 12;
-  return h;
+  // Normalise to [0, 360)
+  let a = ((angle % 360) + 360) % 360;
+  let h = Math.round(a / 30) % 12;
+  return h === 0 ? 12 : h;
 }
 
 /**
- * Snap an arbitrary angle to the nearest 5-minute step.
- * Returns minutes 0–55.
+ * Snap an arbitrary angle to the nearest minute.
+ * Returns minutes 0–59. Handles 360°/0° wrap gracefully.
  */
 export function angleToMinute(angle: number): number {
-  let m = Math.round(angle / 6);
-  if (m < 0) m += 60;
-  if (m >= 60) m = 0;
+  let a = ((angle % 360) + 360) % 360;
+  let m = Math.round(a / 6) % 60;
   return m;
 }
 
