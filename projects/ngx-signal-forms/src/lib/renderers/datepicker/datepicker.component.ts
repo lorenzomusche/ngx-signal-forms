@@ -144,8 +144,15 @@ export class NgxDatePickerComponent extends NgxBaseControl<string | null> {
 
   // ── Derived state ───────────────────────────────────────────────────────────
 
-  /** The display value in the text input. */
-  protected readonly displayValue = computed((): string => this.value() ?? "");
+  /**
+   * The display value in the text input: always YYYY-MM-DD.
+   */
+  protected readonly displayValue = computed((): string => {
+    const v = this.value();
+    if (!v) return "";
+    // If it's a full ISO string, extract only the date part for display
+    return v.substring(0, 10);
+  });
 
   /** Parse the current field value into a CalendarDate. */
   protected readonly parsedSelectedDate = computed((): CalendarDate | null =>
@@ -191,7 +198,8 @@ export class NgxDatePickerComponent extends NgxBaseControl<string | null> {
   // ── Date picked from calendar ───────────────────────────────────────────────
 
   protected onDatePicked(date: CalendarDate): void {
-    this.setValue(formatIsoDate(date));
+    const isoString = formatIsoDate(date);
+    this.setValue(isoString);
     this.markAsDirty();
     this.closeCalendar();
   }
@@ -208,7 +216,8 @@ export class NgxDatePickerComponent extends NgxBaseControl<string | null> {
     // Only commit when the input looks like a valid ISO date
     const parsed = parseIsoDate(raw);
     if (parsed) {
-      this.setValue(formatIsoDate(parsed));
+      const isoString = formatIsoDate(parsed);
+      this.setValue(isoString);
       this.markAsDirty();
     }
   }

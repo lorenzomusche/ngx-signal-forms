@@ -165,8 +165,8 @@ import { NgxSelectOption } from "../../core/types";
             {{ placeholder() }}
           </option>
         }
-        @for (opt of options(); track opt.value) {
-          <option [value]="opt.value" [selected]="opt.value === value()">
+        @for (opt of options(); track opt.value; let i = $index) {
+          <option [value]="i" [selected]="opt.value === value()">
             {{ opt.label }}
           </option>
         }
@@ -332,9 +332,8 @@ export class NgxSelectComponent<
 
   protected onNativeChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    const matched = this.options().find(
-      (o: NgxSelectOption<TValue>) => String(o.value) === target.value,
-    );
+    const index = Number(target.value);
+    const matched = this.options()[index];
     this.setValue(matched?.value ?? null);
     this.markAsDirty();
   }

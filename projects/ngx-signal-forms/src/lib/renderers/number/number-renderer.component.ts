@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
+import { NgxNumberSpinButtonsDirective } from "./number-spin-buttons.directive";
 
 /**
  * Number input renderer component.
@@ -13,7 +14,11 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
 @Component({
   selector: "ngx-control-number",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
+  imports: [
+    NgxInlineErrorIconComponent,
+    NgxErrorListComponent,
+    NgxNumberSpinButtonsDirective,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-renderer ngx-renderer--number" },
   template: `
@@ -41,6 +46,7 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
       [attr.aria-required]="ariaRequired()"
       [attr.aria-disabled]="effectiveAriaDisabled()"
       [attr.aria-label]="label() || null"
+      [ngxNumberSpinButtons]="showSpinButtons()"
     />
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
@@ -53,6 +59,11 @@ export class NgxNumberComponent extends NgxBaseControl<number | null> {
   readonly minValue = input<number | null>(null);
   readonly maxValue = input<number | null>(null);
   readonly step = input<number>(1);
+
+  /**
+   * If true, enables custom spin buttons via directive.
+   */
+  readonly showSpinButtons = input<boolean>(false);
 
   protected readonly fieldId = `ngx-control-number-${NgxBaseControl.nextId()}`;
 

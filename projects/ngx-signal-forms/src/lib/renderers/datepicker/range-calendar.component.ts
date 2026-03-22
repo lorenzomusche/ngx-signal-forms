@@ -1,0 +1,248 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+  signal,
+} from "@angular/core";
+import {
+  addDays,
+  addMonths,
+  CalendarDate,
+  compareDates,
+  daysInMonth,
+  today,
+} from "../../core/date-utils";
+import { NgxCalendarHeaderComponent } from "./calendar-header.component";
+import { NgxRangeCalendarGridComponent } from "./range-calendar-grid.component";
+
+/** Selection phase for range picking. */
+type RangePhase = "pick-start" | "pick-end";
+
+/**
+ * Range calendar container — orchestrates header navigation, grid rendering,
+ * keyboard navigation, and two-step date range selection.
+ *
+ * Selection flow:
+ *   1. First click sets `rangeStart` (phase → `pick-end`).
+ *   2. Second click sets `rangeEnd` and emits `rangePicked`.
+ *   3. If the user clicks before the start, it restarts selection.
+ *
+ * ```html
+ * <ngx-range-calendar
+ *   [rangeStart]="start"
+ *   [rangeEnd]="end"
+ *   [minDate]="min"
+ *   [maxDate]="max"
+ *   (rangePicked)="onRange($event)"
+ *   (closed)="close()"
+ * />
+ * ```
+ */
+@Component({
+  selector: "ngx-range-calendar",
+  standalone: true,
+  imports: [NgxCalendarHeaderComponent, NgxRangeCalendarGridComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: "ngx-datepicker__calendar",
+    role: "dialog",
+    "aria-modal": "true",
+    "[attr.aria-label]": "ariaLabel()",
+    "(keydown)": "onKeydown($event)",
+  },
+  template: `
+    <ngx-calendar-header
+      [year]="viewYear()"
+      [month]="viewMonth()"
+      (previousMonth)="goToPreviousMonth()"
+      (nextMonth)="goToNextMonth()"
+    />
+    <ngx-range-calendar-grid
+      [year]="viewYear()"
+      [month]="viewMonth()"
+      [rangeStart]="pendingStart()"
+      [rangeEnd]="pendingEnd()"
+      [hoverDate]="hoverDate()"
+      [focusedDate]="focusedDate()"
+      [minDate]="minDate()"
+      [maxDate]="maxDate()"
+      (datePicked)="onDatePicked($event)"
+      (dateHovered)="onDateHovered($event)"
+    />
+    <div class="ngx-daterange__hint" aria-live="polite">
+      {{ phaseHint() }}
+    </div>
+  `,
+})
+export class NgxRangeCalendarComponent {
+  /** Initial start date (from existing value). */
+  readonly rangeStart = input<CalendarDate | null>(null);
+  /** Initial end date (from existing value). */
+  readonly rangeEnd = input<CalendarDate | null>(null);
+  readonly minDate = input<CalendarDate | null>(null);
+  readonly maxDate = input<CalendarDate | null>(null);
+  /** Accessible label for the dialog. */
+  readonly ariaLabel = input<string>("Choose date range");
+
+  /** Emits when the user has completed a range. */
+  readonly rangePicked = output<{
+    readonly start: CalendarDate;
+    readonly end: CalendarDate;
+  }>();
+  /** Emits on Escape — parent must close the popup. */
+  readonly closed = output<void>();
+
+  // ── View state ───────────────────────────────────────────────────────────────
+
+  protected readonly viewYear = signal(today().year);
+  protected readonly viewMonth = signal(today().month);
+  protected readonly focusedDate = signal<CalendarDate>(today());
+  protected readonly hoverDate = signal<CalendarDate | null>(null);
+
+  /** Current selection phase. */
+  private readonly phase = signal<RangePhase>("pick-start");
+  /** The provisional start while the user picks the end. */
+  protected readonly pendingStart = signal<CalendarDate | null>(null);
+  /** The provisional end (set on second click). */
+  protected readonly pendingEnd = signal<CalendarDate | null>(null);
+
+  /** Hint text shown below the grid. */
+  protected readonly phaseHint = computed((): string =>
+    this.phase() === "pick-start"
+      ? "Click to set the start date"
+      : "Click to set the end date",
+  );
+
+  /**
+   * Sync the view when the popup opens.
+   * Called by the parent renderer after opening.
+   */
+  syncView(start: CalendarDate | null, end: CalendarDate | null): void {
+    const d = start ?? today();
+    this.viewYear.set(d.year);
+    this.viewMonth.set(d.month);
+    this.focusedDate.set(d);
+    this.pendingStart.set(start);
+    this.pendingEnd.set(end);
+    this.phase.set(start && !end ? "pick-end" : "pick-start");
+  }
+
+  // ── Navigation ───────────────────────────────────────────────────────────────
+
+  protected goToPreviousMonth(): void {
+    this.navigateMonth(-1);
+  }
+
+  protected goToNextMonth(): void {
+    this.navigateMonth(1);
+  }
+
+  private navigateMonth(delta: number): void {
+    const moved = addMonths(
+      { year: this.viewYear(), month: this.viewMonth(), day: 1 },
+      delta,
+    );
+    this.viewYear.set(moved.year);
+    this.viewMonth.set(moved.month);
+    const newFocused = addMonths(this.focusedDate(), delta);
+    this.focusedDate.set(newFocused);
+  }
+
+  // ── Date interaction ─────────────────────────────────────────────────────────
+
+  protected onDatePicked(date: CalendarDate): void {
+    this.focusedDate.set(date);
+
+    if (this.phase() === "pick-start") {
+      this.pendingStart.set(date);
+      this.pendingEnd.set(null);
+      this.phase.set("pick-end");
+    } else {
+      const start = this.pendingStart();
+      if (!start) {
+        // Shouldn't happen but recover gracefully
+        this.pendingStart.set(date);
+        this.phase.set("pick-end");
+        return;
+      }
+      // Normalise so start <= end
+      const [s, e] =
+        compareDates(start, date) <= 0 ? [start, date] : [date, start];
+      this.pendingStart.set(s);
+      this.pendingEnd.set(e);
+      this.rangePicked.emit({ start: s, end: e });
+    }
+  }
+
+  protected onDateHovered(date: CalendarDate): void {
+    if (this.phase() === "pick-end") {
+      this.hoverDate.set(date);
+    }
+  }
+
+  // ── Keyboard navigation ──────────────────────────────────────────────────────
+
+  protected onKeydown(event: KeyboardEvent): void {
+    const focused = this.focusedDate();
+    let next: CalendarDate | null = null;
+
+    switch (event.key) {
+      case "ArrowLeft":
+        next = addDays(focused, -1);
+        break;
+      case "ArrowRight":
+        next = addDays(focused, 1);
+        break;
+      case "ArrowUp":
+        next = addDays(focused, -7);
+        break;
+      case "ArrowDown":
+        next = addDays(focused, 7);
+        break;
+      case "PageUp":
+        next = event.shiftKey
+          ? { year: focused.year - 1, month: focused.month, day: focused.day }
+          : addMonths(focused, -1);
+        break;
+      case "PageDown":
+        next = event.shiftKey
+          ? { year: focused.year + 1, month: focused.month, day: focused.day }
+          : addMonths(focused, 1);
+        break;
+      case "Home":
+        next = { year: focused.year, month: focused.month, day: 1 };
+        break;
+      case "End": {
+        const lastDay = daysInMonth(focused.year, focused.month);
+        next = { year: focused.year, month: focused.month, day: lastDay };
+        break;
+      }
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        this.onDatePicked(focused);
+        return;
+      case "Escape":
+        event.preventDefault();
+        this.closed.emit();
+        return;
+      default:
+        return;
+    }
+
+    if (next) {
+      event.preventDefault();
+      this.focusedDate.set(next);
+      if (next.year !== this.viewYear() || next.month !== this.viewMonth()) {
+        this.viewYear.set(next.year);
+        this.viewMonth.set(next.month);
+      }
+      // Update hover preview when navigating during pick-end phase
+      if (this.phase() === "pick-end") {
+        this.hoverDate.set(next);
+      }
+    }
+  }
+}
