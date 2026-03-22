@@ -178,3 +178,30 @@ export function buildMonthGrid(
 
   return cells;
 }
+
+// ── Range Helpers ─────────────────────────────────────────────────────────────
+
+/**
+ * Check if a date falls strictly between two dates (exclusive of endpoints).
+ * Returns `false` when either bound is `null`.
+ */
+export function isDateBetween(
+  date: CalendarDate,
+  start: CalendarDate | null,
+  end: CalendarDate | null,
+): boolean {
+  if (!start || !end) return false;
+  return compareDates(date, start) > 0 && compareDates(date, end) < 0;
+}
+
+/**
+ * Normalise a pair of dates so that `start <= end`.
+ * Returns `[earlier, later]`. If either is `null` the pair is returned as-is.
+ */
+export function orderDates(
+  a: CalendarDate | null,
+  b: CalendarDate | null,
+): readonly [CalendarDate | null, CalendarDate | null] {
+  if (!a || !b) return [a, b] as const;
+  return compareDates(a, b) <= 0 ? ([a, b] as const) : ([b, a] as const);
+}
