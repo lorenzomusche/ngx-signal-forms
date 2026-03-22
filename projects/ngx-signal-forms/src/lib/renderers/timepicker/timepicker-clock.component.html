@@ -1,98 +1,24 @@
 <div class="ngx-timepicker-container" [class.ngx-timepicker--dial]="viewMode() === 'dial'">
   <div class="ngx-timepicker-content">
-    @if (viewMode() === 'input') {
-      <!-- M3 Input Variant -->
-      <div class="ngx-timepicker-input-variant">
-        <div class="ngx-timepicker-fields">
-          <div class="ngx-timepicker-field" [class.ngx-timepicker-field--active]="focusedField() === 'hour'">
-            <input
-              type="number"
-              min="1"
-              max="12"
-              [value]="hourDisplay()"
-              [disabled]="disabled()"
-              (input)="onHourInput($event)"
-              (focus)="focusedField.set('hour')"
-              aria-label="Hour"
-            />
-            <span class="ngx-timepicker-field__label">Hour</span>
-          </div>
+    
+    <!-- Unified M3 Header (Used by both Input and Dial variants) -->
+    <ngx-timepicker-header
+      [hour]="hourDisplay()"
+      [minute]="minuteDisplay()"
+      [period]="periodDisplay()"
+      [focusedField]="focusedField()"
+      [viewMode]="viewMode()"
+      [disabled]="disabled()"
+      (hourInput)="onHourInput($event)"
+      (minuteInput)="onMinuteInput($event)"
+      (fieldFocus)="focusedField.set($event)"
+      (fieldClick)="focusedField.set($event)"
+      (periodChange)="togglePeriod($event)"
+    />
 
-          <span class="ngx-timepicker-separator">:</span>
-
-          <div class="ngx-timepicker-field" [class.ngx-timepicker-field--active]="focusedField() === 'minute'">
-            <input
-              type="number"
-              min="0"
-              max="59"
-              [value]="minuteDisplay()"
-              [disabled]="disabled()"
-              (input)="onMinuteInput($event)"
-              (focus)="focusedField.set('minute')"
-              aria-label="Minute"
-            />
-            <span class="ngx-timepicker-field__label">Minute</span>
-          </div>
-        </div>
-
-        <div class="ngx-timepicker-period-toggle">
-          <button
-            type="button"
-            class="ngx-timepicker-period-btn"
-            [class.ngx-timepicker-period-btn--selected]="periodDisplay() === 'AM'"
-            (click)="togglePeriod('AM')"
-            [disabled]="disabled()"
-          >
-            AM
-          </button>
-          <button
-            type="button"
-            class="ngx-timepicker-period-btn"
-            [class.ngx-timepicker-period-btn--selected]="periodDisplay() === 'PM'"
-            (click)="togglePeriod('PM')"
-            [disabled]="disabled()"
-          >
-            PM
-          </button>
-        </div>
-      </div>
-    } @else {
-      <!-- M3 Dial Variant -->
+    @if (viewMode() === 'dial') {
+      <!-- M3 Dial Variant (Only shows the clock below the header) -->
       <div class="ngx-timepicker-dial-variant">
-        <!-- Time display header above dial -->
-        <div class="ngx-timepicker-dial-header">
-          <button
-            type="button"
-            class="ngx-timepicker-dial-header__segment"
-            [class.ngx-timepicker-dial-header__segment--active]="focusedField() === 'hour'"
-            (click)="focusedField.set('hour')"
-          >{{ hourDisplay() }}</button>
-          <span class="ngx-timepicker-dial-header__sep">:</span>
-          <button
-            type="button"
-            class="ngx-timepicker-dial-header__segment"
-            [class.ngx-timepicker-dial-header__segment--active]="focusedField() === 'minute'"
-            (click)="focusedField.set('minute')"
-          >{{ minuteDisplay() }}</button>
-          <div class="ngx-timepicker-period-toggle ngx-timepicker-period-toggle--compact">
-            <button
-              type="button"
-              class="ngx-timepicker-period-btn"
-              [class.ngx-timepicker-period-btn--selected]="periodDisplay() === 'AM'"
-              (click)="togglePeriod('AM')"
-              [disabled]="disabled()"
-            >AM</button>
-            <button
-              type="button"
-              class="ngx-timepicker-period-btn"
-              [class.ngx-timepicker-period-btn--selected]="periodDisplay() === 'PM'"
-              (click)="togglePeriod('PM')"
-              [disabled]="disabled()"
-            >PM</button>
-          </div>
-        </div>
-
-        <!-- Clock dial -->
         <div class="ngx-timepicker-dial">
           <div
             #dialFace
@@ -112,7 +38,7 @@
             } @else {
               @for (m of [0,5,10,15,20,25,30,35,40,45,50,55]; track m; let i = $index) {
                 <div class="ngx-timepicker-dial__number"
-                     [class.ngx-timepicker-dial__number--selected]="m === numericMinute()"
+                     [class.ngx-timepicker-dial__number--selected]="m === (Math.round(numericMinute() / 5) * 5) % 60"
                      [style.--index]="i === 0 ? 12 : i">
                   {{m < 10 ? '0' + m : m}}
                 </div>

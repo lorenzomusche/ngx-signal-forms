@@ -109,63 +109,72 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }
   `,
-  styles: [`
-    :host { display: block; }
-    .ngx-timepicker { position: relative; }
-    .ngx-timepicker__input-group {
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-    .ngx-timepicker__input {
-      flex: 1;
-      width: 100%;
-    }
-    .ngx-timepicker__toggle {
-      position: absolute;
-      right: 0.5rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0.25rem;
-      display: flex;
-      color: var(--ngx-input-icon-color);
-      border-radius: 4px;
-    }
-    .ngx-timepicker__toggle:hover:not(:disabled) {
-      background: var(--ngx-surface-container-highest-hover, rgba(0,0,0,0.06));
-    }
-    .ngx-timepicker__icon {
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-    .ngx-timepicker__popup {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 1000;
-      margin-top: 0.25rem;
-    }
-    .ngx-timepicker__popup--above {
-      top: auto;
-      bottom: 100%;
-      margin-top: 0;
-      margin-bottom: 0.25rem;
-    }
-    .ngx-timepicker__popup--overlay {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      margin: 0;
-    }
-    .ngx-timepicker__backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      background: rgba(0,0,0,0.1);
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+      .ngx-timepicker {
+        position: relative;
+      }
+      .ngx-timepicker__input-group {
+        display: flex;
+        align-items: center;
+        position: relative;
+      }
+      .ngx-timepicker__input {
+        flex: 1;
+        width: 100%;
+      }
+      .ngx-timepicker__toggle {
+        position: absolute;
+        right: 0.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+        display: flex;
+        color: var(--ngx-input-icon-color);
+        border-radius: 4px;
+      }
+      .ngx-timepicker__toggle:hover:not(:disabled) {
+        background: var(
+          --ngx-surface-container-highest-hover,
+          rgba(0, 0, 0, 0.06)
+        );
+      }
+      .ngx-timepicker__icon {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+      .ngx-timepicker__popup {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        margin-top: 0.25rem;
+      }
+      .ngx-timepicker__popup--above {
+        top: auto;
+        bottom: 100%;
+        margin-top: 0;
+        margin-bottom: 0.25rem;
+      }
+      .ngx-timepicker__popup--overlay {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+      }
+      .ngx-timepicker__backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.1);
+      }
+    `,
+  ],
 })
 export class NgxTimepickerComponent extends NgxBaseControl<string | null> {
   readonly label = input<string>("");
@@ -208,7 +217,6 @@ export class NgxTimepickerComponent extends NgxBaseControl<string | null> {
     this.closePicker();
   }
 
-
   protected onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     let raw = input.value.trim().toUpperCase();
@@ -237,7 +245,11 @@ export class NgxTimepickerComponent extends NgxBaseControl<string | null> {
   // UX: seleziona tutto il testo se il valore è 00 o vuoto quando si mette focus
   protected onInputFocus(event: FocusEvent): void {
     const input = event.target as HTMLInputElement;
-    if (!input.value || input.value === "00:00 AM" || input.value === "00:00 PM") {
+    if (
+      !input.value ||
+      input.value === "00:00 AM" ||
+      input.value === "00:00 PM"
+    ) {
       setTimeout(() => input.select(), 0);
     }
   }

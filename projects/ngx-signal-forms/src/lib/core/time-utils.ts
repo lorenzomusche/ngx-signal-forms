@@ -23,7 +23,7 @@ export function parseTime(value: string | null | undefined): ParsedTime | null {
   const hour   = Number(m[1]);
   const minute = Number(m[2]);
   const period = m[3]!.toUpperCase() as 'AM' | 'PM';
-  if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return null;
+  if (hour < 0 || hour > 12 || minute < 0 || minute > 59) return null;
   return { hour, minute, period };
 }
 

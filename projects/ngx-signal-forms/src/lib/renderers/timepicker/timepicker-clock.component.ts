@@ -8,6 +8,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { NgxTimepickerHeaderComponent } from "./timepicker-header.component";
 import {
   angleToHour,
   angleToMinute,
@@ -28,6 +29,7 @@ import {
 @Component({
   selector: "ngx-timepicker-clock",
   standalone: true,
+  imports: [NgxTimepickerHeaderComponent],
   templateUrl: "./timepicker-clock.component.html",
   styleUrls: ["./timepicker-renderer.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,13 +41,14 @@ import {
   },
 })
 export class NgxTimepickerClockComponent {
+  protected readonly Math = Math;
   readonly value        = input<string | null>(null);
   readonly disabled     = input<boolean>(false);
   readonly timePicked   = output<string>();
   readonly cancelClicked  = output<void>();
   readonly confirmClicked = output<void>();
 
-  protected readonly viewMode    = signal<"input" | "dial">("dial");
+  protected readonly viewMode    = signal<"input" | "dial">("input");
   protected readonly focusedField = signal<"hour" | "minute">("hour");
   protected readonly isDragging   = signal(false);
   protected readonly dragAngle    = signal<number | null>(null);
@@ -104,18 +107,35 @@ export class NgxTimepickerClockComponent {
   // ── Input variant handlers ─────────────────────────────────────────────────
 
   protected onHourInput(event: Event): void {
-    const raw = (event.target as HTMLInputElement).value;
-    const h = parseInt(raw, 10);
-    if (isNaN(h) || h < 1 || h > 12) return;
+    const target = event.target as HTMLInputElement;
+    const raw = target.value;
+    
+    // Treat empty as 0
+    const h = raw === "" ? 0 : parseInt(raw, 10);
+    
+    // Valid hours are 1-12 or 0 (which we'll treat as a "reset" state that buildTimeString/formatTime handles)
+    if (isNaN(h) || h < 0 || h > 12) {
+      target.value = this.hourDisplay();
+      return;
+    }
+
     this.focusedField.set("hour");
     const p = this.parsed();
     this.timePicked.emit(buildTimeString(h, p?.minute ?? 0, p?.period ?? "AM"));
   }
 
   protected onMinuteInput(event: Event): void {
-    const raw = (event.target as HTMLInputElement).value;
-    const m = parseInt(raw, 10);
-    if (isNaN(m) || m < 0 || m > 59) return;
+    const target = event.target as HTMLInputElement;
+    const raw = target.value;
+
+    // Treat empty as 0
+    const m = raw === "" ? 0 : parseInt(raw, 10);
+
+    if (isNaN(m) || m < 0 || m > 59) {
+      target.value = this.minuteDisplay();
+      return;
+    }
+
     this.focusedField.set("minute");
     const p = this.parsed();
     this.timePicked.emit(buildTimeString(p?.hour ?? 12, m, p?.period ?? "AM"));
