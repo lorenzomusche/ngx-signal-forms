@@ -1,5 +1,6 @@
 import { InjectionToken } from "@angular/core";
 import { NgxFormAdapter } from "./types";
+import { NgxOptionsControl } from "./types";
 
 /**
  * Scoped to NgxFormComponent via providers[].
@@ -21,6 +22,6 @@ export const NGX_INLINE_ERRORS = new InjectionToken<boolean>(
  * Provided by select/multiselect renderers to allow conditional directives
  * to push filtered options back into the component.
  */
-export const NGX_OPTIONS_CONTROL = new InjectionToken<any>(
+export const NGX_OPTIONS_CONTROL = new InjectionToken<NgxOptionsControl<unknown>>(
   "NGX_OPTIONS_CONTROL",
 );

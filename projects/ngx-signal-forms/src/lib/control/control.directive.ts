@@ -24,6 +24,9 @@ export abstract class NgxBaseControl<TValue = unknown> {
   /** Concrete renderers must declare: `readonly name = input.required<string>();` */
   public readonly name: InputSignal<string> = input.required<string>();
 
+  /** The label text for the form control. */
+  public readonly label = input<string>("");
+
   private readonly adapter: NgxFormAdapter<Record<string, unknown>> =
     inject<NgxFormAdapter<Record<string, unknown>>>(NGX_FORM_ADAPTER);
 

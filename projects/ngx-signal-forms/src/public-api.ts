@@ -79,6 +79,9 @@ export { NgxFormComponent } from "./lib/form/ngx-form.component";
 // ─── Control base class & optional wrapper ───────────────────────────────────
 export { NgxControlComponent } from "./lib/control/control.component";
 export { NgxBaseControl } from "./lib/control/control.directive";
+export { NgxOverlayControl } from "./lib/core/overlay-control.directive";
+export { NgxOptionsOverlayControl } from "./lib/core/options-overlay-control.directive";
+export { NgxControlLabelComponent } from "./lib/control/ngx-control-label.component";
 export { NgxErrorListComponent } from "./lib/control/error-list.component";
 export { NgxInlineErrorIconComponent } from "./lib/control/inline-error-icon.component";
 export { NgxInlineErrorsDirective } from "./lib/control/inline-errors.directive";
@@ -112,6 +115,7 @@ export { NgxTimepickerComponent } from "./lib/renderers/timepicker";
 
 // Utilities
 export { ngxFormSerialize } from "./lib/core/utils";
+export { filterOptionsByQuery } from "./lib/core/options-utils";
 
 // ─── Built-in validators (pure functions) ────────────────────────────────────
 export {
