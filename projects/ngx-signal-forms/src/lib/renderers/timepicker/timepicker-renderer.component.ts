@@ -1,19 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  inject,
   input,
   signal,
-  viewChild,
 } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
-import {
-  computeOverlayPosition,
-  OverlayPosition,
-} from "../../core/overlay-position";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
+import { NgxOverlayControl } from "../../core/overlay-control.directive";
 import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
 
 /**
@@ -23,24 +17,24 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
   selector: "ngx-control-timepicker",
   standalone: true,
   imports: [
-    NgxInlineErrorIconComponent,
+    NgxControlLabelComponent,
     NgxErrorListComponent,
     NgxTimepickerClockComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './timepicker-renderer.component.scss',
   host: {
     class: "ngx-renderer ngx-renderer--timepicker",
+    "[class.ngx-inline-errors]": "inlineErrors",
     "(document:click)": "onDocumentClick($event)",
   },
   template: `
-    @if (label()) {
-      <label [for]="fieldId">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
 
     <div class="ngx-timepicker" #wrapper>
       <div class="ngx-timepicker__input-group">
@@ -53,8 +47,9 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
           [disabled]="isDisabled()"
           [placeholder]="placeholder()"
           (input)="onInputChange($event)"
+          (focus)="onInputFocus($event)"
           (blur)="onInputBlur()"
-          (keydown.arrowdown)="openPicker(); $event.preventDefault()"
+          (keydown.arrowdown)="openOverlay(); $event.preventDefault()"
           [attr.aria-invalid]="hasErrors()"
           [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
           [attr.aria-required]="ariaRequired()"
@@ -70,7 +65,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
           [disabled]="isDisabled()"
           aria-label="Open time picker"
           tabindex="-1"
-          (click)="togglePicker()"
+          (click)="toggleOverlay()"
         >
           <svg
             class="ngx-timepicker__icon"
@@ -87,7 +82,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
 
       @if (open()) {
         @if (position() === "overlay") {
-          <div class="ngx-timepicker__backdrop" (click)="closePicker()"></div>
+          <div class="ngx-timepicker__backdrop" (click)="closeOverlay()"></div>
         }
         <div
           class="ngx-timepicker__popup"
@@ -98,7 +93,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
             [value]="draftValue()"
             [disabled]="isDisabled()"
             (timePicked)="onTimePicked($event)"
-            (cancelClicked)="closePicker()"
+            (cancelClicked)="closeOverlay()"
             (confirmClicked)="confirmPicker()"
           />
         </div>
@@ -109,99 +104,15 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-      .ngx-timepicker {
-        position: relative;
-      }
-      .ngx-timepicker__input-group {
-        display: flex;
-        align-items: center;
-        position: relative;
-      }
-      .ngx-timepicker__input {
-        flex: 1;
-        width: 100%;
-      }
-      .ngx-timepicker__toggle {
-        position: absolute;
-        right: 0.5rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0.25rem;
-        display: flex;
-        color: var(--ngx-input-icon-color);
-        border-radius: 4px;
-      }
-      .ngx-timepicker__toggle:hover:not(:disabled) {
-        background: var(
-          --ngx-surface-container-highest-hover,
-          rgba(0, 0, 0, 0.06)
-        );
-      }
-      .ngx-timepicker__icon {
-        width: 1.25rem;
-        height: 1.25rem;
-      }
-      .ngx-timepicker__popup {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-        margin-top: 0.25rem;
-      }
-      .ngx-timepicker__popup--above {
-        top: auto;
-        bottom: 100%;
-        margin-top: 0;
-        margin-bottom: 0.25rem;
-      }
-      .ngx-timepicker__popup--overlay {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        margin: 0;
-      }
-      .ngx-timepicker__backdrop {
-        position: fixed;
-        inset: 0;
-        z-index: 999;
-        background: rgba(0, 0, 0, 0.1);
-      }
-    `,
-  ],
 })
-export class NgxTimepickerComponent extends NgxBaseControl<string | null> {
-  readonly label = input<string>("");
+export class NgxTimepickerComponent extends NgxOverlayControl<string | null> {
   readonly placeholder = input<string>("hh:mm AM/PM");
 
   protected readonly fieldId = `ngx-control-timepicker-${NgxBaseControl.nextId()}`;
-  protected readonly open = signal(false);
-  protected readonly position = signal<OverlayPosition>("below");
   protected readonly draftValue = signal<string | null>(null);
 
-  private readonly wrapperRef = viewChild<ElementRef<HTMLElement>>("wrapper");
-  private readonly hostRef = inject(ElementRef);
-
-  protected togglePicker(): void {
-    if (this.isDisabled()) return;
-    this.open() ? this.closePicker() : this.openPicker();
-  }
-
-  protected openPicker(): void {
-    if (this.isDisabled() || this.open()) return;
+  protected override onBeforeOpen(): void {
     this.draftValue.set(this.value());
-    this.open.set(true);
-    this.position.set(computeOverlayPosition(this.hostRef.nativeElement));
-  }
-
-  protected closePicker(): void {
-    this.open.set(false);
   }
 
   protected onTimePicked(time: string): void {
@@ -214,35 +125,36 @@ export class NgxTimepickerComponent extends NgxBaseControl<string | null> {
       this.setValue(draft);
       this.markAsDirty();
     }
-    this.closePicker();
+    this.closeOverlay();
   }
 
   protected onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     let raw = input.value.trim().toUpperCase();
-    // Se vuoto, resetta
     if (!raw) {
       this.setValue(null);
       this.markAsDirty();
       return;
     }
-    // Regex: ora 1-12, minuti 0-59, AM/PM obbligatorio
     const match = /^(0?[1-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/.exec(raw);
     if (match) {
-      // Normalizza formato: HH:MM AM/PM
       const hour = match[1]!.padStart(2, "0");
       const minute = match[2]!;
       const ampm = match[3]!;
-      this.setValue(`${hour}:${minute} ${ampm}`);
-      this.markAsDirty();
+      const formatted = `${hour}:${minute} ${ampm}`;
+      if (this.value() !== formatted) {
+        this.setValue(formatted);
+        this.markAsDirty();
+      }
     } else {
-      // Se input non valido, resetta
-      this.setValue(null);
-      input.value = "";
+      // Don't clear the input while typing!
+      // Only reset the underlying value if it's invalid
+      if (this.value() !== null) {
+        this.setValue(null);
+      }
     }
   }
 
-  // UX: seleziona tutto il testo se il valore è 00 o vuoto quando si mette focus
   protected onInputFocus(event: FocusEvent): void {
     const input = event.target as HTMLInputElement;
     if (
@@ -256,12 +168,5 @@ export class NgxTimepickerComponent extends NgxBaseControl<string | null> {
 
   protected onInputBlur(): void {
     this.markAsTouched();
-  }
-
-  protected onDocumentClick(event: Event): void {
-    const el = this.wrapperRef()?.nativeElement;
-    if (el && !el.contains(event.target as Node)) {
-      this.closePicker();
-    }
   }
 }

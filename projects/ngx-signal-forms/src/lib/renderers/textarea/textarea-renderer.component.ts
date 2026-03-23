@@ -1,33 +1,32 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 
 /**
  * Textarea renderer component.
- *
- * ```html
- * <ngx-control-textarea name="bio" label="Biography" [rows]="6" />
- * ```
  */
 @Component({
   selector: "ngx-control-textarea",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
+  imports: [NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--textarea" },
+  host: {
+    class: "ngx-renderer ngx-renderer--textarea",
+    "[class.ngx-inline-errors]": "inlineErrors",
+  },
   template: `
-    @if (label()) {
-      <label [for]="fieldId">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
     <textarea
       [id]="fieldId"
+      class="ngx-textarea"
       [placeholder]="placeholder()"
+      [value]="value() || ''"
       [disabled]="isDisabled()"
       [rows]="rows()"
       (input)="onInput($event)"
@@ -37,22 +36,21 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
       [attr.aria-required]="ariaRequired()"
       [attr.aria-disabled]="effectiveAriaDisabled()"
       [attr.aria-label]="label() || null"
-      >{{ value() }}</textarea
-    >
+    ></textarea>
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }
   `,
 })
-export class NgxTextareaComponent extends NgxBaseControl<string> {
-  readonly label = input<string>("");
+export class NgxTextareaComponent extends NgxBaseControl<string | null> {
   readonly placeholder = input<string>("");
-  readonly rows = input<number>(4);
+  readonly rows = input<number>(3);
 
   protected readonly fieldId = `ngx-control-textarea-${NgxBaseControl.nextId()}`;
 
   protected onInput(event: Event): void {
-    this.setValue((event.target as HTMLTextAreaElement).value);
+    const target = event.target as HTMLTextAreaElement;
+    this.setValue(target.value);
     this.markAsDirty();
   }
 }

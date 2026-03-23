@@ -1,16 +1,10 @@
-import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 
 /**
  * Toggle (switch) renderer component.
- *
- * Renders a styled on/off switch bound to a boolean field.
- *
- * ```html
- * <ngx-control-toggle name="darkMode" label="Dark Mode" />
- * ```
  */
 @Component({
   selector: "ngx-control-toggle",
@@ -53,8 +47,6 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
   `,
 })
 export class NgxToggleComponent extends NgxBaseControl<boolean> {
-  readonly label = input<string>("");
-
   protected readonly fieldId = `ngx-control-toggle-${NgxBaseControl.nextId()}`;
 
   protected onChange(event: Event): void {

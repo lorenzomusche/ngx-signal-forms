@@ -2,8 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  ElementRef,
-  inject,
   input,
   signal,
   viewChild,
@@ -17,33 +15,13 @@ import {
   formatIsoDate,
   parseIsoDate,
 } from "../../core/date-utils";
-import {
-  computeOverlayPosition,
-  OverlayPosition,
-} from "../../core/overlay-position";
+import { NgxOverlayControl } from "../../core/overlay-control.directive";
 import { NgxDateRange } from "../../core/types";
 import { NgxRangeCalendarComponent } from "./range-calendar.component";
 
 /**
  * Date range picker renderer — compact two-input calendar picker
- * for selecting a start and end date.
- *
- * Two narrow inputs are placed side-by-side with a thin separator,
- * keeping the overall footprint close to a regular datepicker.
- * Each input is independently editable; the end date is automatically
- * clamped so it can never be before the start date.
- *
- * The field value is an `NgxDateRange` object with `start` and `end`
- * ISO `YYYY-MM-DD` strings (both nullable while the user is mid-selection).
- *
- * ```html
- * <ngx-control-daterange
- *   name="travelDates"
- *   label="Travel dates"
- *   minDate="2026-01-01"
- *   maxDate="2027-12-31"
- * />
- * ```
+ * for selecting a start and end date. Integrated with NgxControlLabelComponent.
  */
 @Component({
   selector: "ngx-control-daterange",
@@ -56,11 +34,12 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-renderer ngx-renderer--datepicker ngx-renderer--daterange",
+    "[class.ngx-inline-errors]": "inlineErrors",
     "(document:click)": "onDocumentClick($event)",
   },
   template: `
     @if (label()) {
-      <label [for]="fieldId + '-start'">
+      <label [for]="fieldId + '-start'" class="ngx-label">
         {{ label() }}
         @if (inlineErrors && touched() && hasErrors()) {
           <ngx-inline-error-icon [errorText]="inlineErrorText()" />
@@ -81,7 +60,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
           (input)="onStartInput($event)"
           (blur)="onStartBlur($event)"
           (focus)="lastFocused.set('start')"
-          (keydown.arrowdown)="openCalendar(); $event.preventDefault()"
+          (keydown.arrowdown)="openOverlay(); $event.preventDefault()"
           [attr.aria-invalid]="hasErrors()"
           [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
           [attr.aria-required]="ariaRequired()"
@@ -103,7 +82,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
           (input)="onEndInput($event)"
           (blur)="onEndBlur($event)"
           (focus)="lastFocused.set('end')"
-          (keydown.arrowdown)="openCalendar(); $event.preventDefault()"
+          (keydown.arrowdown)="openOverlay(); $event.preventDefault()"
           [attr.aria-invalid]="hasErrors()"
           [attr.aria-disabled]="effectiveAriaDisabled()"
           [attr.aria-label]="(label() || 'Date range') + ' end'"
@@ -118,7 +97,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
           [disabled]="isDisabled()"
           aria-label="Open calendar"
           tabindex="-1"
-          (click)="toggleCalendar()"
+          (click)="toggleOverlay()"
         >
           <svg
             class="ngx-datepicker__icon"
@@ -134,7 +113,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
 
       @if (open()) {
         @if (position() === "overlay") {
-          <div class="ngx-datepicker__backdrop" (click)="closeCalendar()"></div>
+          <div class="ngx-datepicker__backdrop" (click)="closeOverlay()"></div>
         }
         <div
           class="ngx-datepicker__popup"
@@ -149,7 +128,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
             [maxDate]="parsedMaxDate()"
             [ariaLabel]="label() ? 'Choose ' + label() : 'Choose date range'"
             (rangePicked)="onRangePicked($event)"
-            (closed)="closeCalendar()"
+            (closed)="closeOverlay()"
           />
         </div>
       }
@@ -160,8 +139,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
     }
   `,
 })
-export class NgxDateRangePickerComponent extends NgxBaseControl<NgxDateRange | null> {
-  readonly label = input<string>("");
+export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange | null> {
   readonly startPlaceholder = input<string>("Start");
   readonly endPlaceholder = input<string>("End");
   readonly minDate = input<string | null>(null);
@@ -169,17 +147,11 @@ export class NgxDateRangePickerComponent extends NgxBaseControl<NgxDateRange | n
 
   protected readonly fieldId = `ngx-daterange-${NgxBaseControl.nextId()}`;
 
-  /** Whether the calendar popup is open. */
-  protected readonly open = signal(false);
-  /** Computed popup position. */
-  protected readonly position = signal<OverlayPosition>("below");
   /** Which input was last focused — drives calendar sync. */
   protected readonly lastFocused = signal<"start" | "end">("start");
 
-  private readonly wrapperRef = viewChild<ElementRef<HTMLElement>>("wrapper");
   private readonly calendarRef =
     viewChild<NgxRangeCalendarComponent>("calendar");
-  private readonly hostRef = inject(ElementRef);
 
   // ── Derived state ─────────────────────────────────────────────────────────────
 
@@ -209,31 +181,12 @@ export class NgxDateRangePickerComponent extends NgxBaseControl<NgxDateRange | n
     parseIsoDate(this.maxDate()),
   );
 
-  // ── Calendar open/close ──────────────────────────────────────────────────────
-
-  protected toggleCalendar(): void {
-    if (this.isDisabled()) return;
-    if (this.open()) {
-      this.closeCalendar();
-    } else {
-      this.openCalendar();
-    }
-  }
-
-  protected openCalendar(): void {
-    if (this.isDisabled() || this.open()) return;
-    this.open.set(true);
-    this.position.set(
-      computeOverlayPosition(this.hostRef.nativeElement as HTMLElement),
-    );
+  /** Sync calendar view to current value after DOM renders. */
+  protected override onBeforeOpen(): void {
     setTimeout(
       () => this.calendarRef()?.syncView(this.parsedStart(), this.parsedEnd()),
       0,
     );
-  }
-
-  protected closeCalendar(): void {
-    this.open.set(false);
   }
 
   // ── Range picked from calendar ───────────────────────────────────────────────
@@ -247,7 +200,7 @@ export class NgxDateRangePickerComponent extends NgxBaseControl<NgxDateRange | n
       end: formatIsoDate(range.end),
     });
     this.markAsDirty();
-    this.closeCalendar();
+    this.closeOverlay();
   }
 
   // ── Start input handling ─────────────────────────────────────────────────────
@@ -267,7 +220,6 @@ export class NgxDateRangePickerComponent extends NgxBaseControl<NgxDateRange | n
 
   protected onStartBlur(event: FocusEvent): void {
     this.markAsTouched();
-    // Re-display the canonical value (clamp visual)
     const el = event.target as HTMLInputElement;
     el.value = this.displayStart();
   }
@@ -305,21 +257,11 @@ export class NgxDateRangePickerComponent extends NgxBaseControl<NgxDateRange | n
     let finalStart = start;
     let finalEnd = end;
 
-    // Clamp: if both are set and end < start → set end = start
     if (s && e && compareDates(e, s) < 0) {
       finalEnd = finalStart;
     }
 
     this.setValue({ start: finalStart, end: finalEnd });
     this.markAsDirty();
-  }
-
-  // ── Click outside ────────────────────────────────────────────────────────────
-
-  protected onDocumentClick(event: Event): void {
-    const el = this.wrapperRef()?.nativeElement;
-    if (el && !el.contains(event.target as Node)) {
-      this.closeCalendar();
-    }
   }
 }

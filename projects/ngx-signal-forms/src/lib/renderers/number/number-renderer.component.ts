@@ -1,35 +1,32 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 import { NgxNumberSpinButtonsDirective } from "./number-spin-buttons.directive";
 
 /**
  * Number input renderer component.
- *
- * ```html
- * <ngx-control-number name="age" label="Age" [min]="0" [max]="120" />
- * ```
  */
 @Component({
   selector: "ngx-control-number",
   standalone: true,
   imports: [
-    NgxInlineErrorIconComponent,
+    NgxControlLabelComponent,
     NgxErrorListComponent,
     NgxNumberSpinButtonsDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--number" },
+  host: {
+    class: "ngx-renderer ngx-renderer--number",
+    "[class.ngx-inline-errors]": "inlineErrors",
+  },
   template: `
-    @if (label()) {
-      <label [for]="fieldId">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
     <input
       [id]="fieldId"
       type="number"
@@ -54,15 +51,10 @@ import { NgxNumberSpinButtonsDirective } from "./number-spin-buttons.directive";
   `,
 })
 export class NgxNumberComponent extends NgxBaseControl<number | null> {
-  readonly label = input<string>("");
   readonly placeholder = input<string>("");
   readonly minValue = input<number | null>(null);
   readonly maxValue = input<number | null>(null);
   readonly step = input<number>(1);
-
-  /**
-   * If true, enables custom spin buttons via directive.
-   */
   readonly showSpinButtons = input<boolean>(false);
 
   protected readonly fieldId = `ngx-control-number-${NgxBaseControl.nextId()}`;

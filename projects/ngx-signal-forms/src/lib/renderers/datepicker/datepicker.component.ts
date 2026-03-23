@@ -2,36 +2,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  ElementRef,
-  inject,
   input,
-  signal,
   viewChild,
 } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 import { CalendarDate, formatIsoDate, parseIsoDate } from "../../core/date-utils";
-import {
-  computeOverlayPosition,
-  OverlayPosition,
-} from "../../core/overlay-position";
+import { NgxOverlayControl } from "../../core/overlay-control.directive";
 import { NgxCalendarComponent } from "./calendar.component";
 
 /**
  * Date picker renderer — M3-style docked calendar picker.
- *
- * Replaces the native `<input type="date">` with a text input + calendar
- * popup. Works exclusively with ISO `YYYY-MM-DD` strings.
- *
- * ```html
- * <ngx-control-datepicker
- *   name="birthDate"
- *   label="Date of Birth"
- *   minDate="1900-01-01"
- *   maxDate="2026-12-31"
- * />
- * ```
+ * Integrated with NgxControlLabelComponent.
  */
 @Component({
   selector: "ngx-control-datepicker",
@@ -44,11 +27,12 @@ import { NgxCalendarComponent } from "./calendar.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-renderer ngx-renderer--datepicker",
+    "[class.ngx-inline-errors]": "inlineErrors",
     "(document:click)": "onDocumentClick($event)",
   },
   template: `
     @if (label()) {
-      <label [for]="fieldId">
+      <label [for]="fieldId" class="ngx-label">
         {{ label() }}
         @if (inlineErrors && touched() && hasErrors()) {
           <ngx-inline-error-icon [errorText]="inlineErrorText()" />
@@ -68,7 +52,7 @@ import { NgxCalendarComponent } from "./calendar.component";
           [placeholder]="placeholder()"
           (input)="onInputChange($event)"
           (blur)="onInputBlur()"
-          (keydown.arrowdown)="openCalendar(); $event.preventDefault()"
+          (keydown.arrowdown)="openOverlay(); $event.preventDefault()"
           [attr.aria-invalid]="hasErrors()"
           [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
           [attr.aria-required]="ariaRequired()"
@@ -84,7 +68,7 @@ import { NgxCalendarComponent } from "./calendar.component";
           [disabled]="isDisabled()"
           aria-label="Open calendar"
           tabindex="-1"
-          (click)="toggleCalendar()"
+          (click)="toggleOverlay()"
         >
           <svg
             class="ngx-datepicker__icon"
@@ -100,7 +84,7 @@ import { NgxCalendarComponent } from "./calendar.component";
 
       @if (open()) {
         @if (position() === "overlay") {
-          <div class="ngx-datepicker__backdrop" (click)="closeCalendar()"></div>
+          <div class="ngx-datepicker__backdrop" (click)="closeOverlay()"></div>
         }
         <div
           class="ngx-datepicker__popup"
@@ -114,7 +98,7 @@ import { NgxCalendarComponent } from "./calendar.component";
             [maxDate]="parsedMaxDate()"
             [ariaLabel]="label() ? 'Choose ' + label() : 'Choose date'"
             (datePicked)="onDatePicked($event)"
-            (closed)="closeCalendar()"
+            (closed)="closeOverlay()"
           />
         </div>
       }
@@ -125,36 +109,23 @@ import { NgxCalendarComponent } from "./calendar.component";
     }
   `,
 })
-export class NgxDatePickerComponent extends NgxBaseControl<string | null> {
-  readonly label = input<string>("");
+export class NgxDatePickerComponent extends NgxOverlayControl<string | null> {
   readonly placeholder = input<string>("YYYY-MM-DD");
   readonly minDate = input<string | null>(null);
   readonly maxDate = input<string | null>(null);
 
   protected readonly fieldId = `ngx-control-datepicker-${NgxBaseControl.nextId()}`;
 
-  /** Whether the calendar popup is open. */
-  protected readonly open = signal(false);
-  /** Computed popup position. */
-  protected readonly position = signal<OverlayPosition>("below");
-
-  private readonly wrapperRef = viewChild<ElementRef<HTMLElement>>("wrapper");
   private readonly calendarRef = viewChild<NgxCalendarComponent>("calendar");
-  private readonly hostRef = inject(ElementRef);
 
   // ── Derived state ───────────────────────────────────────────────────────────
 
-  /**
-   * The display value in the text input: always YYYY-MM-DD.
-   */
   protected readonly displayValue = computed((): string => {
     const v = this.value();
     if (!v) return "";
-    // If it's a full ISO string, extract only the date part for display
     return v.substring(0, 10);
   });
 
-  /** Parse the current field value into a CalendarDate. */
   protected readonly parsedSelectedDate = computed((): CalendarDate | null =>
     parseIsoDate(this.value()),
   );
@@ -167,44 +138,19 @@ export class NgxDatePickerComponent extends NgxBaseControl<string | null> {
     parseIsoDate(this.maxDate()),
   );
 
-  // ── Calendar open/close ─────────────────────────────────────────────────────
-
-  protected toggleCalendar(): void {
-    if (this.isDisabled()) return;
-    if (this.open()) {
-      this.closeCalendar();
-    } else {
-      this.openCalendar();
-    }
-  }
-
-  protected openCalendar(): void {
-    if (this.isDisabled() || this.open()) return;
-    this.open.set(true);
-    this.position.set(
-      computeOverlayPosition(this.hostRef.nativeElement as HTMLElement),
-    );
-    // Sync calendar view to current value after DOM renders
+  protected override onBeforeOpen(): void {
     setTimeout(
       () => this.calendarRef()?.syncView(this.parsedSelectedDate()),
       0,
     );
   }
 
-  protected closeCalendar(): void {
-    this.open.set(false);
-  }
-
-  // ── Date picked from calendar ───────────────────────────────────────────────
-
   protected onDatePicked(date: CalendarDate): void {
     const isoString = formatIsoDate(date);
     this.setValue(isoString);
     this.markAsDirty();
-    this.closeCalendar();
+    this.closeOverlay();
   }
-
-  // ── Text input handling ─────────────────────────────────────────────────────
 
   protected onInputChange(event: Event): void {
     const raw = (event.target as HTMLInputElement).value.trim();
@@ -213,7 +159,6 @@ export class NgxDatePickerComponent extends NgxBaseControl<string | null> {
       this.markAsDirty();
       return;
     }
-    // Only commit when the input looks like a valid ISO date
     const parsed = parseIsoDate(raw);
     if (parsed) {
       const isoString = formatIsoDate(parsed);
@@ -224,19 +169,5 @@ export class NgxDatePickerComponent extends NgxBaseControl<string | null> {
 
   protected onInputBlur(): void {
     this.markAsTouched();
-    // If the popup isn't open, validate the raw input
-    const el = this.wrapperRef()?.nativeElement;
-    if (el && !el.contains(document.activeElement)) {
-      // Let the field value stand as-is; validation will catch bad input
-    }
-  }
-
-  // ── Click outside ───────────────────────────────────────────────────────────
-
-  protected onDocumentClick(event: Event): void {
-    const el = this.wrapperRef()?.nativeElement;
-    if (el && !el.contains(event.target as Node)) {
-      this.closeCalendar();
-    }
   }
 }

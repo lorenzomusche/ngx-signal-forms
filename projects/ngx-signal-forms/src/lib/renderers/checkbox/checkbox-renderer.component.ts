@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
@@ -46,8 +46,6 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
   `,
 })
 export class NgxCheckboxComponent extends NgxBaseControl<boolean> {
-  readonly label = input<string>("");
-
   protected readonly fieldId = `ngx-control-checkbox-${NgxBaseControl.nextId()}`;
 
   protected onChange(event: Event): void {

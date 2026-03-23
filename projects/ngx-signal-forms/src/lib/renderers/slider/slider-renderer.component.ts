@@ -1,35 +1,27 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 
 /**
  * Slider renderer component.
- *
- * ```html
- * <ngx-control-slider 
- *   name="volume" 
- *   label="Volume" 
- *   [min]="0" 
- *   [max]="100" 
- * />
- * ```
  */
 @Component({
   selector: "ngx-control-slider",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
+  imports: [NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--slider" },
+  host: {
+    class: "ngx-renderer ngx-renderer--slider",
+    "[class.ngx-inline-errors]": "inlineErrors",
+  },
   template: `
-    @if (label()) {
-      <label [for]="fieldId">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
 
     <div class="ngx-slider-container">
       <input
@@ -60,7 +52,6 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
   `,
 })
 export class NgxSliderComponent extends NgxBaseControl<number> {
-  readonly label     = input<string>("");
   readonly min       = input<number>(0);
   readonly max       = input<number>(100);
   readonly step      = input<number>(1);

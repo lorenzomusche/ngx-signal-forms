@@ -1,38 +1,28 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxSelectOption } from "../../core/types";
 
 /**
  * Segmented Button renderer component.
- *
- * ```html
- * <ngx-control-segmented 
- *   name="viewMode" 
- *   label="View Mode" 
- *   [options]="viewOptions" 
- * />
- * ```
  */
 @Component({
   selector: "ngx-control-segmented",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
+  imports: [NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-renderer ngx-renderer--segmented" },
   template: `
-    @if (label()) {
-      <label class="ngx-segmented-label" [id]="fieldId + '-label'">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId + '-label'"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
 
-    <div 
-      class="ngx-segmented" 
+    <div
+      class="ngx-segmented"
       role="radiogroup"
       [attr.aria-labelledby]="label() ? fieldId + '-label' : null"
     >
@@ -66,7 +56,6 @@ import { NgxSelectOption } from "../../core/types";
   `,
 })
 export class NgxSegmentedButtonComponent<TValue = any> extends NgxBaseControl<TValue | null> {
-  readonly label   = input<string>("");
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
 
   protected readonly fieldId = `ngx-control-segmented-${NgxBaseControl.nextId()}`;

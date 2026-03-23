@@ -1,53 +1,36 @@
+import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  contentChild,
   ElementRef,
-  inject,
+  forwardRef,
   input,
   signal,
-  viewChild,
-  contentChild,
-  forwardRef,
   TemplateRef,
+  viewChild,
 } from "@angular/core";
-import { NgTemplateOutlet } from "@angular/common";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxOptionDirective } from "../../control/option.directive";
-import {
-  computeOverlayPosition,
-  OverlayPosition,
-} from "../../core/overlay-position";
+import { NgxOptionsOverlayControl } from "../../core/options-overlay-control.directive";
+import { filterOptionsByQuery } from "../../core/options-utils";
 import { NGX_OPTIONS_CONTROL } from "../../core/tokens";
-import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
+import { NgxOptionsControl } from "../../core/types";
 
 /**
  * Multiselect renderer component.
  * Renders selectable filter chips and delivers ReadonlyArray<TValue>.
- *
- * Supports two modes:
- * - `'single'` (default): each option selected at most once.
- * - `'multi'`: counter-based — options can be selected multiple times;
- *   chips show a count badge with increment / decrement controls.
- *
- * When `searchable` is true, a search icon opens a full-screen overlay
- * where options float around a centered search input.
- *
- * ```html
- * <ngx-control-multiselect name="tags" label="Tags"
- *   [options]="tagOptions" [searchable]="true" mode="multi" />
- * ```
  */
 @Component({
   selector: "ngx-control-multiselect",
   standalone: true,
   imports: [
-    NgxInlineErrorIconComponent,
+    NgxControlLabelComponent,
     NgxErrorListComponent,
     NgTemplateOutlet,
-    NgxOptionDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -58,25 +41,27 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
   ],
   host: {
     class: "ngx-renderer ngx-renderer--multiselect",
-    "(document:keydown.escape)": "searchOpen() && closeSearch()",
+    "[class.ngx-inline-errors]": "inlineErrors",
+    "(document:keydown.escape)": "open() && closeOverlay()",
+    "(document:click)": "onDocumentClick($event)",
   },
   template: `
+  <div class="ngx-multiselect__label">
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
+
     @if (label() || searchable()) {
-      <div class="ngx-multiselect__header">
-        @if (label()) {
-          <label class="ngx-multiselect__label">
-            {{ label() }}
-            @if (inlineErrors && touched() && hasErrors()) {
-              <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-            }
-          </label>
-        }
+      <div class="ngx-multiselect__header" #wrapper>
         @if (searchable()) {
           <button
             type="button"
             class="ngx-multiselect__search-btn"
             [disabled]="isDisabled()"
-            (click)="openSearch()"
+            (click)="openOverlay()"
             aria-label="Search options"
           >
             <svg viewBox="0 0 20 20" aria-hidden="true">
@@ -87,6 +72,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
         }
       </div>
     }
+  </div>
 
     <div
       class="ngx-multiselect__options"
@@ -170,13 +156,13 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
       }
     </div>
 
-    @if (searchOpen()) {
-      <div class="ngx-multiselect-overlay" (click)="closeSearch()"></div>
+    @if (open()) {
+      <div class="ngx-multiselect-overlay" (click)="closeOverlay()"></div>
       <div
         class="ngx-multiselect-overlay__panel"
-        [class.ngx-multiselect-overlay__panel--above]="dropUp()"
-        [class.ngx-multiselect-overlay__panel--overlay]="overlayMode()"
-        [style.top.px]="dropUp() || overlayMode() ? null : panelTop()"
+        [class.ngx-multiselect-overlay__panel--above]="position() === 'above'"
+        [class.ngx-multiselect-overlay__panel--overlay]="position() === 'overlay'"
+        [style.top.px]="position() === 'above' || position() === 'overlay' ? null : panelTop()"
         (click)="$event.stopPropagation()"
         role="dialog"
         aria-modal="true"
@@ -190,7 +176,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
           autocomplete="off"
           [value]="searchQuery()"
           (input)="onSearchInput($event)"
-          (keydown.escape)="closeSearch()"
+          (keydown.escape)="closeOverlay()"
         />
         <div class="ngx-multiselect__options ngx-multiselect-overlay__grid">
           @for (opt of searchResults(); track opt.value; let i = $index) {
@@ -260,12 +246,8 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
   `,
 })
 export class NgxMultiselectComponent<TValue = string>
-  extends NgxBaseControl<ReadonlyArray<TValue>>
-  implements NgxOptionsControl<TValue>
-{
-  readonly label = input<string>("");
-  readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
-  readonly searchable = input<boolean>(false);
+  extends NgxOptionsOverlayControl<ReadonlyArray<TValue>, TValue>
+  implements NgxOptionsControl<TValue> {
   readonly mode = input<"single" | "multi">("single");
 
   /** Custom option template provided via `<ng-template ngxOption>`. */
@@ -275,51 +257,23 @@ export class NgxMultiselectComponent<TValue = string>
 
   protected readonly fieldId = `ngx-control-multiselect-${NgxBaseControl.nextId()}`;
 
-  /** Whether the search overlay is open. */
-  protected readonly searchOpen = signal(false);
-
-  /** Current search query in the overlay. */
-  protected readonly searchQuery = signal("");
-
-  /** Internal options override (used by conditional directives). */
-  public readonly overrideOptions =
-    signal<readonly NgxSelectOption<TValue>[] | null>(null);
-
-  /** Effective options: uses override if present, otherwise fallback to input. */
-  protected readonly effectiveOptions = computed(
-    () => this.overrideOptions() ?? this.options(),
-  );
-
   /** Options available in the search overlay (filtered by query + mode). */
   protected readonly searchResults = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
     let opts = this.effectiveOptions();
     if (this.mode() === "single") {
       const selected = this.selectedSet();
       opts = opts.filter((o) => !selected.has(o.value));
     }
-    if (!query) return opts;
-    return opts.filter((o) => o.label.toLowerCase().includes(query));
+    return filterOptionsByQuery(opts, this.searchQuery());
   });
 
   private readonly overlayInputRef =
     viewChild<ElementRef<HTMLInputElement>>("overlayInput");
 
-  private readonly hostRef = inject(ElementRef);
-
-  /** Whether the panel should open above the controller. */
-  protected readonly dropUp = signal(false);
-
-  /** Whether the panel renders as a centered overlay (no space above or below). */
-  protected readonly overlayMode = signal(false);
-
-  /** Resolved overlay position. */
-  private readonly overlayPosition = signal<OverlayPosition>("below");
-
   /** Top offset in pixels — top edge of .ngx-multiselect__options relative to host. */
   protected readonly panelTop = signal(0);
 
-  /** Pre-computed count map for multi-mode (avoids O(n\u00d7m) in template). */
+  /** Pre-computed count map for multi-mode. */
   protected readonly counts = computed(() => {
     const map = new Map<TValue, number>();
     for (const v of this.value()) {
@@ -328,12 +282,27 @@ export class NgxMultiselectComponent<TValue = string>
     return map;
   });
 
-  /** Pre-computed selection set for single-mode (avoids O(n) per chip). */
+  /** Pre-computed selection set for single-mode. */
   protected readonly selectedSet = computed(() => new Set(this.value()));
+
+  // ── Overlay hooks ───────────────────────────────────────────────────────────
+
+  protected override onBeforeOpen(): void {
+    this.searchQuery.set("");
+    const host = this.hostRef.nativeElement as HTMLElement;
+    const optionsEl = host.querySelector(".ngx-multiselect__options");
+
+    if (optionsEl) {
+      const hostRect = host.getBoundingClientRect();
+      const optionsRect = optionsEl.getBoundingClientRect();
+      this.panelTop.set(optionsRect.top - hostRect.top);
+    }
+
+    setTimeout(() => this.overlayInputRef()?.nativeElement.focus(), 0);
+  }
 
   // ── Single-mode helpers ─────────────────────────────────────────────────────
 
-  /** Check whether a given option value is currently selected. */
   protected isSelected(optValue: TValue): boolean {
     return this.selectedSet().has(optValue);
   }
@@ -349,7 +318,6 @@ export class NgxMultiselectComponent<TValue = string>
 
   // ── Multi-mode (counter) helpers ────────────────────────────────────────────
 
-  /** Count how many times a value appears in the current selection. */
   protected countOf(optValue: TValue): number {
     return this.counts().get(optValue) ?? 0;
   }
@@ -371,35 +339,7 @@ export class NgxMultiselectComponent<TValue = string>
 
   // ── Search overlay ──────────────────────────────────────────────────────────
 
-  protected openSearch(): void {
-    this.searchQuery.set("");
-    const host = this.hostRef.nativeElement as HTMLElement;
-    const optionsEl = host.querySelector(".ngx-multiselect__options");
-    const spaceAnchor = (optionsEl ?? host) as HTMLElement;
-    const pos = computeOverlayPosition(spaceAnchor);
-    this.overlayPosition.set(pos);
-    this.dropUp.set(pos === "above");
-    this.overlayMode.set(pos === "overlay");
-    // Measure the top of the options container relative to the host
-    if (optionsEl) {
-      const hostRect = host.getBoundingClientRect();
-      const optionsRect = optionsEl.getBoundingClientRect();
-      this.panelTop.set(optionsRect.top - hostRect.top);
-    }
-    this.searchOpen.set(true);
-    setTimeout(() => this.overlayInputRef()?.nativeElement.focus(), 0);
-  }
-
-  protected closeSearch(): void {
-    this.searchOpen.set(false);
-  }
-
-  protected onSearchInput(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
-  }
-
-  resetSelection(): void {
+  public resetSelection(): void {
     this.setValue([]);
     this.markAsDirty();
   }
@@ -410,9 +350,8 @@ export class NgxMultiselectComponent<TValue = string>
         this.setValue([...this.value(), optValue]);
         this.markAsDirty();
       }
-      // Close only when no more options are available
       if (this.searchResults().length === 0) {
-        this.searchOpen.set(false);
+        this.closeOverlay();
       }
     } else {
       this.increment(optValue);

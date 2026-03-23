@@ -1,5 +1,5 @@
 :host {
-    display: block;
+    // Inherit display: flex from .ngx-renderer class
 }
 
 // ── Container ────────────────────────────────────────────────────────────────
@@ -22,11 +22,11 @@
     --tp-dial-size: 256px;
     --tp-num-size: 40px;
     --tp-hand-length: calc(var(--tp-dial-size) / 2 - (var(--tp-num-size) / 2) - 8px);
-    
+
     // ── Segment / Box Dimensions (Shared between Input/Dial) ──────────────
     --tp-seg-width: 96px;
     --tp-seg-height: 72px;
-    --tp-header-seg-width: var(--tp-seg-width); 
+    --tp-header-seg-width: var(--tp-seg-width);
 
     background-color: var(--tp-surface);
     border: 1px solid var(--tp-outline);
@@ -88,7 +88,7 @@
     justify-content: center;
     cursor: text;
     padding: 0 !important;
-    
+
     &--readonly {
         cursor: pointer !important;
     }
@@ -318,4 +318,80 @@
     &--confirm {
         font-weight: 700;
     }
+}
+
+// ── Input Renderer Styles (NgxTimepickerComponent) ───────────────────────────
+
+.ngx-timepicker {
+    position: relative;
+    width: 100%;
+}
+
+.ngx-timepicker__input-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ngx-timepicker__input {
+    flex: 1;
+    width: 0; // Force flex to control width, preventing grow
+    min-width: 100%;
+    padding-right: 48px !important;
+    box-sizing: border-box;
+}
+
+.ngx-timepicker__toggle {
+    position: absolute;
+    right: 12px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    color: var(--ngx-on-surface-variant);
+    border-radius: 50%;
+    transition: background-color 0.2s;
+
+    &:hover:not(:disabled) {
+        background-color: var(--ngx-surface-container-highest);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--ngx-primary);
+    }
+}
+
+.ngx-timepicker__icon {
+    width: 24px;
+    height: 24px;
+}
+
+// ── Popup Overlay ─────────────────────────────────────────────────────────────
+
+.ngx-timepicker__popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    margin-top: 4px;
+
+    &--above {
+        top: auto;
+        bottom: 100%;
+        margin-top: 0;
+        margin-bottom: 4px;
+    }
+}
+
+.ngx-timepicker__backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    background: transparent;
 }

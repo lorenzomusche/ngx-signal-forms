@@ -6,7 +6,6 @@ import {
   contentChild,
   ElementRef,
   forwardRef,
-  inject,
   input,
   signal,
   TemplateRef,
@@ -14,13 +13,11 @@ import {
 } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxOptionDirective } from "../../control/option.directive";
+import { NgxOptionsOverlayControl } from "../../core/options-overlay-control.directive";
+import { filterOptionsByQuery } from "../../core/options-utils";
 import { NGX_OPTIONS_CONTROL } from "../../core/tokens";
-import {
-  computeOverlayPosition,
-  OverlayPosition,
-} from "../../core/overlay-position";
 import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
 
 /**
@@ -29,23 +26,14 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
  * When a custom `<ng-template ngxOption>` is provided, renders a fully custom
  * dropdown with HTML content in options. Otherwise falls back to a native
  * `<select>` element.
- *
- * ```html
- * <ngx-control-select name="country" [options]="countries">
- *   <ng-template ngxOption let-opt>
- *     <span class="flag">{{ flags[opt.value] }}</span> {{ opt.label }}
- *   </ng-template>
- * </ngx-control-select>
- * ```
  */
 @Component({
   selector: "ngx-control-select",
   standalone: true,
   imports: [
     NgTemplateOutlet,
-    NgxInlineErrorIconComponent,
+    NgxControlLabelComponent,
     NgxErrorListComponent,
-    NgxOptionDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -56,18 +44,17 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
   ],
   host: {
     class: "ngx-renderer ngx-renderer--select",
+    "[class.ngx-inline-errors]": "inlineErrors",
     "(document:click)": "onDocumentClick($event)",
     "(keydown)": "onKeydown($event)",
   },
   template: `
-    @if (label()) {
-      <label [for]="fieldId">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
 
     @if (optionTpl(); as tpl) {
       <!-- Custom dropdown -->
@@ -87,7 +74,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
           [attr.aria-required]="ariaRequired()"
           [attr.aria-disabled]="effectiveAriaDisabled()"
           [attr.aria-label]="label() || null"
-          (click)="toggleOpen()"
+          (click)="toggleOverlay()"
           (blur)="onBlur()"
         >
           @if (selectedOption(); as sel) {
@@ -107,7 +94,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
           @if (overlayMode()) {
             <div
               class="ngx-select__overlay-backdrop"
-              (click)="open.set(false)"
+              (click)="closeOverlay()"
             ></div>
           }
           <div
@@ -191,13 +178,9 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
   `,
 })
 export class NgxSelectComponent<TValue = string>
-  extends NgxBaseControl<TValue | null>
-  implements NgxOptionsControl<TValue>
-{
-  readonly label = input<string>("");
+  extends NgxOptionsOverlayControl<TValue | null, TValue>
+  implements NgxOptionsControl<TValue> {
   readonly placeholder = input<string>("");
-  readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
-  readonly searchable = input<boolean>(false);
 
   /** Custom option template provided via `<ng-template ngxOption>`. */
   protected readonly optionTpl = contentChild(NgxOptionDirective, {
@@ -205,12 +188,6 @@ export class NgxSelectComponent<TValue = string>
   });
 
   protected readonly fieldId = `ngx-control-select-${NgxBaseControl.nextId()}`;
-
-  /** Whether the custom dropdown is open. */
-  protected readonly open = signal(false);
-
-  /** Resolved position for the dropdown popup. */
-  protected readonly position = signal<OverlayPosition>("below");
 
   /** Whether the dropdown opens above the trigger. */
   protected readonly dropUp = computed(() => this.position() === "above");
@@ -236,82 +213,44 @@ export class NgxSelectComponent<TValue = string>
     },
   );
 
-  /** Search query for filtering options. */
-  protected readonly searchQuery = signal("");
-
-  /** Internal options override (used by conditional directives). */
-  public readonly overrideOptions =
-    signal<readonly NgxSelectOption<TValue>[] | null>(null);
-
-  /** Effective options: uses override if present, otherwise fallback to input. */
-  protected readonly effectiveOptions = computed(
-    () => this.overrideOptions() ?? this.options(),
+  /** Options filtered by the current search query. */
+  protected readonly filteredOptions = computed(() =>
+    filterOptionsByQuery(this.effectiveOptions(), this.searchQuery()),
   );
 
-  /** Options filtered by the current search query. */
-  protected readonly filteredOptions = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    if (!query) return this.effectiveOptions();
-    return this.effectiveOptions().filter((o) =>
-      o.label.toLowerCase().includes(query),
-    );
-  });
-
-  private readonly wrapperRef = viewChild<ElementRef<HTMLElement>>("wrapper");
   private readonly searchInputRef =
     viewChild<ElementRef<HTMLInputElement>>("searchInput");
-  private readonly hostRef = inject(ElementRef);
 
   // ── Custom dropdown interactions ────────────────────────────────────────────
 
-  protected toggleOpen(): void {
-    if (this.isDisabled()) return;
-    const next = !this.open();
-    this.open.set(next);
-    if (next) {
-      this.searchQuery.set("");
-      const filtered = this.filteredOptions();
-      const idx = filtered.findIndex(
-        (o: NgxSelectOption<TValue>) => o.value === this.value(),
-      );
-      this.activeIndex.set(idx >= 0 ? idx : 0);
-      this.position.set(
-        computeOverlayPosition(this.hostRef.nativeElement as HTMLElement),
-      );
-      // Focus search input after DOM renders
-      if (this.searchable()) {
-        setTimeout(() => this.searchInputRef()?.nativeElement.focus(), 0);
-      }
+  protected override onBeforeOpen(): void {
+    this.searchQuery.set("");
+    const filtered = this.filteredOptions();
+    const idx = filtered.findIndex(
+      (o: NgxSelectOption<TValue>) => o.value === this.value(),
+    );
+    this.activeIndex.set(idx >= 0 ? idx : 0);
+
+    // Focus search input after DOM renders
+    if (this.searchable()) {
+      setTimeout(() => this.searchInputRef()?.nativeElement.focus(), 0);
     }
   }
 
   protected selectOption(opt: NgxSelectOption<TValue>): void {
     this.setValue(opt.value);
     this.markAsDirty();
-    this.open.set(false);
-  }
-
-  protected onSearchInput(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
-    this.activeIndex.set(0);
+    this.closeOverlay();
   }
 
   protected onBlur(): void {
     // Delay to allow click on option to register before closing
     setTimeout(() => {
       if (!this.wrapperRef()?.nativeElement.contains(document.activeElement)) {
-        this.open.set(false);
+        this.closeOverlay();
         this.markAsTouched();
       }
     }, 150);
-  }
-
-  protected onDocumentClick(event: Event): void {
-    const el = this.wrapperRef()?.nativeElement;
-    if (el && !el.contains(event.target as Node)) {
-      this.open.set(false);
-    }
   }
 
   protected onKeydown(event: KeyboardEvent): void {
@@ -348,14 +287,14 @@ export class NgxSelectComponent<TValue = string>
         break;
       case "Escape":
         event.preventDefault();
-        this.open.set(false);
+        this.closeOverlay();
         break;
     }
   }
 
   // ── Native select fallback ──────────────────────────────────────────────────
 
-  resetSelection(): void {
+  public resetSelection(): void {
     this.setValue(null);
     this.markAsDirty();
   }

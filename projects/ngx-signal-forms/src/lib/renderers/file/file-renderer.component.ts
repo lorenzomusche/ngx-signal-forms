@@ -1,36 +1,29 @@
 import { ChangeDetectionStrategy, Component, computed, input, viewChild, ElementRef, signal, output } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 
 /**
  * File Upload renderer component.
- *
- * ```html
- * <ngx-control-file 
- *   name="resume" 
- *   label="Upload Resume" 
- *   accept=".pdf,.doc" 
- * />
- * ```
  */
 @Component({
   selector: "ngx-control-file",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
+  imports: [NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--file" },
+  host: {
+    class: "ngx-renderer ngx-renderer--file",
+    "[class.ngx-inline-errors]": "inlineErrors",
+  },
   template: `
-    @if (label()) {
-      <label [for]="fieldId">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
 
-    <div 
+    <div
       class="ngx-file-container"
       [class.ngx-file-container--dragover]="dragOver()"
       (dragover)="onDragOver($event)"
@@ -53,9 +46,9 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
       />
 
       <div class="ngx-file-content">
-        <button 
-          type="button" 
-          class="ngx-file-button" 
+        <button
+          type="button"
+          class="ngx-file-button"
           (click)="fileInput.click()"
           [disabled]="isDisabled()"
         >
@@ -64,7 +57,7 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
           </svg>
           {{ multiple() ? 'Select Files' : 'Select File' }}
         </button>
-        
+
         <div class="ngx-file-info">
           @if (fileNames().length > 0) {
             <ul class="ngx-file-list">
@@ -74,9 +67,9 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
                 </li>
               }
             </ul>
-            <button 
-              type="button" 
-              class="ngx-file-clear" 
+            <button
+              type="button"
+              class="ngx-file-clear"
               (click)="clear()"
               [disabled]="isDisabled()"
               aria-label="Clear selection"
@@ -96,7 +89,6 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
   `,
 })
 export class NgxFileComponent extends NgxBaseControl<File | File[] | null> {
-  readonly label    = input<string>("");
   readonly accept   = input<string>("");
   readonly multiple = input<boolean>(false);
   readonly fileSelected = output<File | File[] | null>();
@@ -122,6 +114,10 @@ export class NgxFileComponent extends NgxBaseControl<File | File[] | null> {
     event.preventDefault();
     if (this.isDisabled()) return;
     this.dragOver.set(true);
+  }
+
+  protected onDragLeave(): void {
+    this.dragOver.set(false);
   }
 
   protected onDrop(event: DragEvent): void {

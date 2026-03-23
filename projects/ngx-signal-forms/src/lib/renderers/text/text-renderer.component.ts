@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 
 /**
  * Text input renderer component.
@@ -13,18 +13,19 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
 @Component({
   selector: "ngx-control-text",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
+  imports: [NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--text" },
+  host: {
+    class: "ngx-renderer ngx-renderer--text",
+    "[class.ngx-inline-errors]": "inlineErrors",
+  },
   template: `
-    @if (label()) {
-      <label [for]="fieldId">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
     <input
       [id]="fieldId"
       type="text"
@@ -45,7 +46,6 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
   `,
 })
 export class NgxTextComponent extends NgxBaseControl<string> {
-  readonly label = input<string>("");
   readonly placeholder = input<string>("");
 
   protected readonly fieldId = `ngx-control-text-${NgxBaseControl.nextId()}`;
