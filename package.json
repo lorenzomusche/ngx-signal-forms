@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve demo",
-    "build:lib": "ng build ngx-signals-forms && sed -i '' 's/ngx-signal-forms/ngx-signals-forms/g' projects/ngx-signal-forms/dist/package.json && cp README.md LICENSE projects/ngx-signal-forms/dist/",
+    "build:lib": "ng build ngx-signal-forms && sed -i '' 's/ngx-signal-forms/ngx-signals-forms/g' projects/ngx-signal-forms/dist/package.json && cp README.md LICENSE projects/ngx-signal-forms/dist/",
     "build:demo": "ng build demo",
     "watch:lib": "ng build ngx-signal-forms --watch",
     "lint": "ng lint"
