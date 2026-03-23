@@ -16,3 +16,11 @@ export const NGX_FORM_ADAPTER = new InjectionToken<
 export const NGX_INLINE_ERRORS = new InjectionToken<boolean>(
   "NGX_INLINE_ERRORS",
 );
+
+/**
+ * Provided by select/multiselect renderers to allow conditional directives
+ * to push filtered options back into the component.
+ */
+export const NGX_OPTIONS_CONTROL = new InjectionToken<any>(
+  "NGX_OPTIONS_CONTROL",
+);

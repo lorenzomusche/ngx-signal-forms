@@ -5,6 +5,7 @@ import {
   computed,
   contentChild,
   ElementRef,
+  forwardRef,
   inject,
   input,
   signal,
@@ -15,11 +16,12 @@ import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 import { NgxOptionDirective } from "../../control/option.directive";
+import { NGX_OPTIONS_CONTROL } from "../../core/tokens";
 import {
   computeOverlayPosition,
   OverlayPosition,
 } from "../../core/overlay-position";
-import { NgxSelectOption } from "../../core/types";
+import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
 
 /**
  * Select renderer component.
@@ -46,6 +48,12 @@ import { NgxSelectOption } from "../../core/types";
     NgxOptionDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NGX_OPTIONS_CONTROL,
+      useExisting: forwardRef(() => NgxSelectComponent),
+    },
+  ],
   host: {
     class: "ngx-renderer ngx-renderer--select",
     "(document:click)": "onDocumentClick($event)",
@@ -169,7 +177,7 @@ import { NgxSelectOption } from "../../core/types";
             {{ placeholder() }}
           </option>
         }
-        @for (opt of options(); track opt.value; let i = $index) {
+        @for (opt of effectiveOptions(); track opt.value; let i = $index) {
           <option [value]="i" [selected]="opt.value === value()">
             {{ opt.label }}
           </option>
@@ -182,9 +190,10 @@ import { NgxSelectOption } from "../../core/types";
     }
   `,
 })
-export class NgxSelectComponent<
-  TValue = string,
-> extends NgxBaseControl<TValue | null> {
+export class NgxSelectComponent<TValue = string>
+  extends NgxBaseControl<TValue | null>
+  implements NgxOptionsControl<TValue>
+{
   readonly label = input<string>("");
   readonly placeholder = input<string>("");
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
@@ -220,8 +229,9 @@ export class NgxSelectComponent<
       const v = this.value();
       if (v === null) return null;
       return (
-        this.options().find((o: NgxSelectOption<TValue>) => o.value === v) ??
-        null
+        this.effectiveOptions().find(
+          (o: NgxSelectOption<TValue>) => o.value === v,
+        ) ?? null
       );
     },
   );
@@ -229,11 +239,22 @@ export class NgxSelectComponent<
   /** Search query for filtering options. */
   protected readonly searchQuery = signal("");
 
+  /** Internal options override (used by conditional directives). */
+  public readonly overrideOptions =
+    signal<readonly NgxSelectOption<TValue>[] | null>(null);
+
+  /** Effective options: uses override if present, otherwise fallback to input. */
+  protected readonly effectiveOptions = computed(
+    () => this.overrideOptions() ?? this.options(),
+  );
+
   /** Options filtered by the current search query. */
   protected readonly filteredOptions = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
-    if (!query) return this.options();
-    return this.options().filter((o) => o.label.toLowerCase().includes(query));
+    if (!query) return this.effectiveOptions();
+    return this.effectiveOptions().filter((o) =>
+      o.label.toLowerCase().includes(query),
+    );
   });
 
   private readonly wrapperRef = viewChild<ElementRef<HTMLElement>>("wrapper");
@@ -334,10 +355,15 @@ export class NgxSelectComponent<
 
   // ── Native select fallback ──────────────────────────────────────────────────
 
+  resetSelection(): void {
+    this.setValue(null);
+    this.markAsDirty();
+  }
+
   protected onNativeChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const index = Number(target.value);
-    const matched = this.options()[index];
+    const matched = this.effectiveOptions()[index];
     this.setValue(matched?.value ?? null);
     this.markAsDirty();
   }

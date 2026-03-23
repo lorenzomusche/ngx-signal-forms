@@ -330,6 +330,36 @@ Use the `ngxChips` directive inside your custom template to render items as inte
 
 ---
 
+## Conditional Options
+
+The `[ngxDependsOn]` directive allows you to create dependent form controls (like a Province select that filters based on a Country select) with minimal boilerplate. It works automatically with `ngx-control-select` and `ngx-control-multiselect`.
+
+```html
+<ngx-control-select name="country" [options]="countries" />
+
+<ngx-control-select
+  name="province"
+  label="Province / State"
+  [ngxDependsOn]="'country'"
+  [ngxOptionsMap]="provincesByCountry"
+/>
+```
+
+The options map can be a static record or a function:
+```ts
+// Static record
+readonly provincesByCountry: Record<string, NgxSelectOption[]> = {
+  it: [{ value: "RM", label: "Roma" }, /* ... */],
+  us: [{ value: "CA", label: "California" }, /* ... */],
+};
+
+// Or a dynamic function
+readonly getProvinces = (country: string) => fetchProvincesFor(country);
+```
+When the parent field changes, the dependent control automatically updates its options and safely clears its existing selection to prevent data mismatch.
+
+---
+
 ## Submit Event
 
 ```ts

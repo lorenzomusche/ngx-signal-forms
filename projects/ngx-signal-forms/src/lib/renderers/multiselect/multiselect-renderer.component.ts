@@ -8,6 +8,7 @@ import {
   signal,
   viewChild,
   contentChild,
+  forwardRef,
   TemplateRef,
 } from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
@@ -19,7 +20,8 @@ import {
   computeOverlayPosition,
   OverlayPosition,
 } from "../../core/overlay-position";
-import { NgxSelectOption } from "../../core/types";
+import { NGX_OPTIONS_CONTROL } from "../../core/tokens";
+import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
 
 /**
  * Multiselect renderer component.
@@ -48,6 +50,12 @@ import { NgxSelectOption } from "../../core/types";
     NgxOptionDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NGX_OPTIONS_CONTROL,
+      useExisting: forwardRef(() => NgxMultiselectComponent),
+    },
+  ],
   host: {
     class: "ngx-renderer ngx-renderer--multiselect",
     "(document:keydown.escape)": "searchOpen() && closeSearch()",
@@ -89,7 +97,7 @@ import { NgxSelectOption } from "../../core/types";
       [attr.aria-required]="ariaRequired()"
       [attr.aria-disabled]="effectiveAriaDisabled()"
     >
-      @for (opt of options(); track opt.value) {
+      @for (opt of effectiveOptions(); track opt.value) {
         @if (optionTpl(); as tpl) {
            <button
             type="button"
@@ -251,9 +259,10 @@ import { NgxSelectOption } from "../../core/types";
     }
   `,
 })
-export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
-  ReadonlyArray<TValue>
-> {
+export class NgxMultiselectComponent<TValue = string>
+  extends NgxBaseControl<ReadonlyArray<TValue>>
+  implements NgxOptionsControl<TValue>
+{
   readonly label = input<string>("");
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
   readonly searchable = input<boolean>(false);
@@ -272,10 +281,19 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
   /** Current search query in the overlay. */
   protected readonly searchQuery = signal("");
 
+  /** Internal options override (used by conditional directives). */
+  public readonly overrideOptions =
+    signal<readonly NgxSelectOption<TValue>[] | null>(null);
+
+  /** Effective options: uses override if present, otherwise fallback to input. */
+  protected readonly effectiveOptions = computed(
+    () => this.overrideOptions() ?? this.options(),
+  );
+
   /** Options available in the search overlay (filtered by query + mode). */
   protected readonly searchResults = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
-    let opts = this.options();
+    let opts = this.effectiveOptions();
     if (this.mode() === "single") {
       const selected = this.selectedSet();
       opts = opts.filter((o) => !selected.has(o.value));
@@ -379,6 +397,11 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
   protected onSearchInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.searchQuery.set(value);
+  }
+
+  resetSelection(): void {
+    this.setValue([]);
+    this.markAsDirty();
   }
 
   protected onOverlaySelect(optValue: TValue): void {

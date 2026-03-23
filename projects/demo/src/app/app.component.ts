@@ -12,6 +12,7 @@ import {
   NgxFormError,
   ngxFormSerialize,
   NgxFormSubmitEvent,
+  NgxConditionalOptionsDirective,
   NgxInlineErrorsDirective,
   NgxMultiselectComponent,
   NgxNumberComponent,
@@ -38,6 +39,9 @@ interface ContactForm extends Record<string, unknown> {
   lastName: string;
   email: string;
   age: number | null;
+  country: string | null;
+  province: string | null;
+  visitedProvinces: ReadonlyArray<string>;
   birthDate: string | null;
   appointmentTime: string | null;
   bio: string;
@@ -74,6 +78,7 @@ interface ContactForm extends Record<string, unknown> {
     NgxFileComponent,
     NgxSegmentedButtonComponent,
     NgxChipsDirective,
+    NgxConditionalOptionsDirective,
   ],
   template: `
     <div class="demo-card">
@@ -163,6 +168,23 @@ interface ContactForm extends Record<string, unknown> {
             </ng-template>
           </ngx-control-select>
 
+          <ngx-control-select
+            name="province"
+            label="Province / State"
+            placeholder="Select a province…"
+            [ngxDependsOn]="'country'"
+            [ngxOptionsMap]="provincesByCountry"
+          />
+
+          <ngx-control-multiselect
+            name="visitedProvinces"
+            label="Visited Provinces"
+            [ngxDependsOn]="'country'"
+            [ngxOptionsMap]="provincesByCountry"
+            [searchable]="true"
+            mode="multi"
+          />
+
           <ngx-control-textarea
             name="bio"
             label="Bio"
@@ -238,7 +260,9 @@ export class AppComponent {
     email: "lorenzo.muschera@sonounamailinesistente.it",
     age: null,
     birthDate: null,
-    country: null,
+    country: "it",
+    province: "RM",
+    visitedProvinces: [],
     appointmentTime: null,
     bio: "",
     interests: ["testing"],
@@ -307,6 +331,26 @@ export class AppComponent {
     fr: "🇫🇷",
     es: "🇪🇸",
     jp: "🇯🇵",
+  };
+
+  readonly provincesByCountry: Record<string, NgxSelectOption[]> = {
+    it: [
+      { value: "RM", label: "Roma" },
+      { value: "MI", label: "Milano" },
+      { value: "NA", label: "Napoli" },
+      { value: "TO", label: "Torino" },
+    ],
+    us: [
+      { value: "CA", label: "California" },
+      { value: "NY", label: "New York" },
+      { value: "TX", label: "Texas" },
+      { value: "FL", label: "Florida" },
+    ],
+    uk: [
+      { value: "LDN", label: "London" },
+      { value: "MAN", label: "Manchester" },
+      { value: "BIR", label: "Birmingham" },
+    ],
   };
 
   readonly interestOptions: readonly NgxSelectOption[] = [

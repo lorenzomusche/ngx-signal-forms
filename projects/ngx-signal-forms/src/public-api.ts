@@ -27,6 +27,7 @@ export type {
   NgxFormError,
   NgxFormState,
   NgxFormSubmitEvent,
+  NgxOptionsControl,
   NgxSelectOption,
   NgxSubmitMode,
   // Validator
@@ -81,6 +82,7 @@ export { NgxBaseControl } from "./lib/control/control.directive";
 export { NgxErrorListComponent } from "./lib/control/error-list.component";
 export { NgxInlineErrorIconComponent } from "./lib/control/inline-error-icon.component";
 export { NgxInlineErrorsDirective } from "./lib/control/inline-errors.directive";
+export { NgxConditionalOptionsDirective } from "./lib/control/conditional-options.directive";
 export { NgxOptionDirective } from "./lib/control/option.directive";
 export { NgxChipsDirective } from "./lib/control/chips.directive";
 

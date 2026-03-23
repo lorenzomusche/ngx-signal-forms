@@ -86,6 +86,17 @@ export interface NgxControlOption<TValue = string> {
 /** Alias for NgxControlOption — used by select/multiselect renderers. */
 export type NgxSelectOption<TValue = string> = NgxControlOption<TValue>;
 
+/**
+ * Interface for components that support options override (e.g. Select, Multiselect).
+ * Used by conditional directives to avoid circular dependencies.
+ */
+export interface NgxOptionsControl<TValue = unknown> {
+  readonly overrideOptions: WritableSignal<
+    readonly NgxSelectOption<TValue>[] | null
+  >;
+  resetSelection(): void;
+}
+
 // ─── Renderer Config ─────────────────────────────────────────────────────────
 export interface NgxControlRendererConfig {
   readonly label?: string;
