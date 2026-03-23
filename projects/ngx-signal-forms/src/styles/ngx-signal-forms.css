@@ -201,19 +201,19 @@ input[type="date"]:focus,
 
     /* Timepicker — derives entirely from the workspace accent/surface tokens.
      * Override --ngx-tp-* on :root to customise the timepicker independently. */
-    --ngx-tp-primary:              var(--ngx-input-focus-color);
-    --ngx-tp-on-primary:           #ffffff;
+    --ngx-tp-primary: var(--ngx-input-focus-color);
+    --ngx-tp-on-primary: #ffffff;
     /* primary-container ≈ selected-bg used by chips/select — tinted accent bg */
-    --ngx-tp-primary-container:    var(--ngx-select-option-selected-bg);
+    --ngx-tp-primary-container: var(--ngx-select-option-selected-bg);
     --ngx-tp-on-primary-container: var(--ngx-on-surface);
-    --ngx-tp-surface:              var(--ngx-select-dropdown-bg);
-    --ngx-tp-surface-variant:      var(--ngx-surface-container);
-    --ngx-tp-outline:              var(--ngx-input-border-color);
-    --ngx-tp-separator-color:      var(--ngx-on-surface-variant);
+    --ngx-tp-surface: var(--ngx-select-dropdown-bg);
+    --ngx-tp-surface-variant: var(--ngx-surface-container);
+    --ngx-tp-outline: var(--ngx-input-border-color);
+    --ngx-tp-separator-color: var(--ngx-on-surface-variant);
 
-    /* Layout */
-    --ngx-renderer-gap: 0.25rem;
-    --ngx-renderer-margin-bottom: 0.5rem;
+    --ngx-renderer-gap: 0.375rem;
+    --ngx-renderer-margin-bottom: 1rem;
+    --ngx-input-height: 2.5rem;
 }
 
 /* ─── Renderer Layout ─────────────────────────────────────────────────────── */
@@ -242,9 +242,12 @@ input[type="date"]:focus,
 
 /* ─── Labels ──────────────────────────────────────────────────────────────── */
 
-.ngx-renderer label {
+.ngx-renderer .ngx-label {
+    display: block;
     font-weight: var(--ngx-label-font-weight);
     font-size: var(--ngx-label-font-size);
+    color: var(--ngx-on-surface-variant);
+    margin-bottom: 0;
 }
 
 /* ─── Inputs ──────────────────────────────────────────────────────────────── */
@@ -443,10 +446,7 @@ input[type="date"]:focus,
 /* ─── Custom Radio Group ──────────────────────────────────────────────────── */
 
 .ngx-radio-group-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: var(--ngx-label-font-weight);
-    font-size: var(--ngx-label-font-size);
+    display: none;
 }
 
 .ngx-radio-group {
@@ -510,25 +510,25 @@ input[type="date"]:focus,
     transition: transform 0.15s;
 }
 
-.ngx-radio-item input[type="radio"]:checked + .ngx-radio-circle {
+.ngx-radio-item input[type="radio"]:checked+.ngx-radio-circle {
     border-color: var(--ngx-input-focus-color);
     background: var(--ngx-input-focus-color);
 }
 
-.ngx-radio-item input[type="radio"]:checked + .ngx-radio-circle::after {
+.ngx-radio-item input[type="radio"]:checked+.ngx-radio-circle::after {
     transform: translate(-50%, -50%) scale(1);
 }
 
-.ngx-radio-item input[type="radio"]:focus-visible + .ngx-radio-circle {
+.ngx-radio-item input[type="radio"]:focus-visible+.ngx-radio-circle {
     outline: 2px solid var(--ngx-input-focus-color);
     outline-offset: 2px;
 }
 
-.ngx-radio-item input[type="radio"]:disabled + .ngx-radio-circle {
+.ngx-radio-item input[type="radio"]:disabled+.ngx-radio-circle {
     opacity: 0.4;
 }
 
-.ngx-control__error + .ngx-radio-group {
+.ngx-control__error+.ngx-radio-group {
     margin-top: 0.25rem;
 }
 
@@ -686,10 +686,7 @@ input[type="date"]:focus,
 /* ─── Custom Segmented Button ─────────────────────────────────────────────── */
 
 .ngx-segmented-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: var(--ngx-label-font-weight);
-    font-size: var(--ngx-label-font-size);
+    display: none;
 }
 
 .ngx-segmented {
@@ -907,6 +904,12 @@ button.ngx-chip:hover {
 
 .ngx-renderer--multiselect {
     position: relative;
+}
+
+.ngx-multiselect__label {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .ngx-multiselect-overlay {
