@@ -12,15 +12,16 @@
 
 - **Declarative syntax** — `<ngx-control-text name="firstName" label="First Name" />`
 - **Signal-first** — all state exposed as `Signal<T>`, no `Observable` boilerplate
-- **8 built-in renderers** — text, number, datepicker (M3 calendar), select, multiselect, checkbox, toggle, textarea
+- **12 built-in renderers** — text, number, datepicker (M3), select, multiselect, checkbox, toggle, textarea, radio, slider, file, segmented
 - **Custom renderers** — extend `NgxBaseControl<T>` and register in your module
 - **Schema validators** — `schemaRequired`, `schemaEmail`, `schemaMin`, `schemaMax`, `schemaMinLength`, `schemaMaxLength`, `schemaPattern`
 - **Pure validators** — `required`, `minLength`, `email`, `pattern`, `min`, `max`, `compose`, `composeFirst`
 - **Rich submit event** — `{ value, valid, errors, [RAW_FIELD_TREE_SYMBOL] }`
 - **Adapter encapsulation** — `@angular/forms/signals` API never leaks to consumers
 - **Inline errors** — `ngxInlineErrors` directive displays errors next to labels
-- **Searchable select & multiselect** — built-in search with dropdown positioning (below → above → overlay)
-- **Date picker** — M3 calendar popup, ISO 8601 (`YYYY-MM-DD`) only, full keyboard nav, i18n via `Intl.DateTimeFormat`
+- **Searchable select & multiselect** — built-in search with dropdown positioning
+- **Chips & Custom Templates** — use `ngxOption` for custom items and `ngxChips` for visual selection
+- **Date picker** — M3 calendar popup, ISO 8601 (`YYYY-MM-DD`) only, full keyboard nav
 - **Date locale (i18n)** — `NGX_DATE_LOCALE` DI token with auto-detected browser locale and `buildDateLocale()` factory
 - **Overlay positioning** — shared `computeOverlayPosition()` utility used by select, multiselect, and datepicker
 - **Theming** — CSS custom properties with base and Material Design 3 themes
@@ -57,11 +58,15 @@ import {
   NgxMultiselectComponent,
   NgxCheckboxComponent,
   NgxToggleComponent,
-  NgxToggleComponent,
   NgxDatePickerComponent,
   NgxTextareaComponent,
+  NgxRadioGroupComponent,
+  NgxSliderComponent,
+  NgxFileComponent,
+  NgxSegmentedComponent,
   NgxInlineErrorsDirective,
   NgxOptionDirective,
+  NgxChipsDirective,
   createSignalFormAdapter,
   ngxSchemaRequired,
   ngxSchemaEmail,
@@ -80,8 +85,13 @@ import {
     NgxToggleComponent,
     NgxDatePickerComponent,
     NgxTextareaComponent,
+    NgxRadioGroupComponent,
+    NgxSliderComponent,
+    NgxFileComponent,
+    NgxSegmentedComponent,
     NgxInlineErrorsDirective,
     NgxOptionDirective,
+    NgxChipsDirective,
   ],
 })
 ```
@@ -160,6 +170,10 @@ export class MyComponent {
 | `ngx-control-checkbox`    | `NgxCheckboxComponent`    | `boolean`               |
 | `ngx-control-toggle`      | `NgxToggleComponent`      | `boolean`               |
 | `ngx-control-textarea`    | `NgxTextareaComponent`    | `string`                |
+| `ngx-control-radio`       | `NgxRadioGroupComponent`  | `TValue \| null`        |
+| `ngx-control-slider`      | `NgxSliderComponent`      | `number`                |
+| `ngx-control-file`        | `NgxFileComponent`        | `File \| null`          |
+| `ngx-control-segmented`   | `NgxSegmentedComponent`   | `TValue \| null`        |
 
 ---
 
@@ -236,6 +250,65 @@ The `ngx-control-multiselect` component supports two interaction modes via the `
   [options]="tagOptions"
   mode="multi"
 />
+```
+
+---
+
+## Segmented Button
+
+A modern alternative to radio buttons for small sets of options.
+
+```html
+<ngx-control-segmented
+  name="frequency"
+  label="Contact Frequency"
+  [options]="frequencyOptions"
+/>
+```
+
+---
+
+## Radio Group
+
+Standard selection from a list of mutual-exclusive options.
+
+```html
+<ngx-control-radio
+  name="preferredContact"
+  label="Preferred Contact"
+  [options]="contactOptions"
+  layout="horizontal"
+/>
+```
+
+---
+
+## Chips & Custom Templates
+
+Enhance `ngx-control-select` and `ngx-control-multiselect` with custom templates and chip-based selection.
+
+### Custom Option Template
+Use the `ngxOption` directive to customize how items look in the dropdown.
+
+```html
+<ngx-control-select name="country" label="Country" [options]="countries" [searchable]="true">
+  <ng-template ngxOption let-opt>
+    <span class="flag">{{ countryFlags[opt.value] }}</span> {{ opt.label }}
+  </ng-template>
+</ngx-control-select>
+```
+
+### Visual Chips
+Use the `ngxChips` directive inside your custom template to render items as interactive chips.
+
+```html
+<ngx-control-multiselect name="interests" label="Interests" [options]="interestOptions">
+  <ng-template ngxOption let-opt let-selected="selected">
+    <span ngxChips [selected]="selected" [removable]="false">
+      {{ opt.label }}
+    </span>
+  </ng-template>
+</ngx-control-multiselect>
 ```
 
 ---
