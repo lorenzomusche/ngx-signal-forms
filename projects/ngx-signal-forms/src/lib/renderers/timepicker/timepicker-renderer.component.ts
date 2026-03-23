@@ -32,6 +32,8 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
     <ngx-control-label
       [label]="label()"
       [forId]="fieldId"
+      [required]="isRequired()"
+      [filled]="value() !== null"
       [showInlineError]="inlineErrors && touched() && hasErrors()"
       [errorText]="inlineErrorText()"
     />

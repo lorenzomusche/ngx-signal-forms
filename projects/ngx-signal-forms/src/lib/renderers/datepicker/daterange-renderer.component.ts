@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,8 +8,8 @@ import {
   viewChild,
 } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 import {
   CalendarDate,
   compareDates,
@@ -27,8 +28,9 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
   selector: "ngx-control-daterange",
   standalone: true,
   imports: [
+    NgTemplateOutlet,
     NgxRangeCalendarComponent,
-    NgxInlineErrorIconComponent,
+    NgxControlLabelComponent,
     NgxErrorListComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,12 +41,14 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
   },
   template: `
     @if (label()) {
-      <label [for]="fieldId + '-start'" class="ngx-label">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
+      <ngx-control-label
+        [label]="label()"
+        [forId]="fieldId + '-start'"
+        [required]="isRequired()"
+        [filled]="!!value()?.start || !!value()?.end"
+        [showInlineError]="inlineErrors && touched() && hasErrors()"
+        [errorText]="inlineErrorText()"
+      />
     }
 
     <div class="ngx-datepicker" #wrapper>

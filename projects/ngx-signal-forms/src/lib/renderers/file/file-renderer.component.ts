@@ -19,6 +19,8 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
     <ngx-control-label
       [label]="label()"
       [forId]="fieldId"
+      [required]="isRequired()"
+      [filled]="fileNames().length > 0"
       [showInlineError]="inlineErrors && touched() && hasErrors()"
       [errorText]="inlineErrorText()"
     />

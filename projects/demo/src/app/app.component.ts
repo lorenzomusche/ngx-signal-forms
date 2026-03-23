@@ -16,6 +16,7 @@ import {
   NgxMultiselectComponent,
   NgxNumberComponent,
   NgxOptionDirective,
+  NgxPrefixDirective,
   NgxRadioGroupComponent,
   ngxSchemaEmail,
   ngxSchemaMax,
@@ -27,6 +28,8 @@ import {
   NgxSelectComponent,
   NgxSelectOption,
   NgxSliderComponent,
+  NgxSuffixDirective,
+  NgxSupportingTextDirective,
   NgxTextareaComponent,
   NgxTextComponent,
   NgxTimepickerComponent,
@@ -76,6 +79,9 @@ interface ContactForm extends Record<string, unknown> {
     NgxSliderComponent,
     NgxFileComponent,
     NgxSegmentedButtonComponent,
+    NgxPrefixDirective,
+    NgxSuffixDirective,
+    NgxSupportingTextDirective,
     NgxConditionalOptionsDirective,
   ],
   template: `
@@ -96,7 +102,6 @@ interface ContactForm extends Record<string, unknown> {
               name="firstName"
               label="First Name"
               placeholder="John"
-              [ariaRequired]="true"
               ngxInlineErrors
             />
 
@@ -104,9 +109,12 @@ interface ContactForm extends Record<string, unknown> {
               name="lastName"
               label="Last Name"
               placeholder="Doe"
-              [ariaRequired]="true"
               ngxInlineErrors
-            />
+            >
+              <ng-template ngxPrefix>👤</ng-template>
+              <div *ngxSupportingText>Full name as per ID</div>
+            </ngx-control-text>
+
           </div>
 
           <div class="form-row">
@@ -114,9 +122,11 @@ interface ContactForm extends Record<string, unknown> {
               name="email"
               label="Email"
               placeholder="john.doe&#64;example.com"
-              [ariaRequired]="true"
               ngxInlineErrors
-            />
+            >
+              <button *ngxSuffix type="button" (click)="0" style="background:none; border:none; cursor:pointer;">📧</button>
+            </ngx-control-text>
+
 
             <ngx-control-number
               name="age"

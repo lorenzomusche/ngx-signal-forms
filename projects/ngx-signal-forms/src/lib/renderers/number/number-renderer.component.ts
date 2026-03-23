@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
@@ -11,6 +12,7 @@ import { NgxNumberSpinButtonsDirective } from "./number-spin-buttons.directive";
   selector: "ngx-control-number",
   standalone: true,
   imports: [
+    NgTemplateOutlet,
     NgxControlLabelComponent,
     NgxErrorListComponent,
     NgxNumberSpinButtonsDirective,
@@ -24,27 +26,47 @@ import { NgxNumberSpinButtonsDirective } from "./number-spin-buttons.directive";
     <ngx-control-label
       [label]="label()"
       [forId]="fieldId"
+      [required]="isRequired()"
+      [filled]="value() !== null"
       [showInlineError]="inlineErrors && touched() && hasErrors()"
       [errorText]="inlineErrorText()"
     />
-    <input
-      [id]="fieldId"
-      type="number"
-      [placeholder]="placeholder()"
-      [value]="value() ?? ''"
-      [disabled]="isDisabled()"
-      [min]="minValue()"
-      [max]="maxValue()"
-      [step]="step()"
-      (input)="onInput($event)"
-      (blur)="markAsTouched()"
-      [attr.aria-invalid]="hasErrors()"
-      [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
-      [attr.aria-required]="ariaRequired()"
-      [attr.aria-disabled]="effectiveAriaDisabled()"
-      [attr.aria-label]="label() || null"
-      [ngxNumberSpinButtons]="showSpinButtons()"
-    />
+    <div class="ngx-input-wrapper" [class.ngx-input-wrapper--disabled]="isDisabled()">
+      @if (prefix(); as p) {
+        <div class="ngx-input-prefix">
+          <ng-container [ngTemplateOutlet]="p.template" />
+        </div>
+      }
+      <input
+        [id]="fieldId"
+        type="number"
+        [step]="step()"
+        [min]="minValue()"
+        [max]="maxValue()"
+        [placeholder]="placeholder()"
+        [value]="value() ?? ''"
+        [disabled]="isDisabled()"
+        (input)="onInput($event)"
+        (blur)="markAsTouched()"
+        [attr.aria-invalid]="hasErrors()"
+        [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+        [attr.aria-required]="ariaRequired() || isRequired()"
+        [attr.aria-disabled]="effectiveAriaDisabled()"
+        [attr.aria-label]="label() || null"
+        [ngxNumberSpinButtons]="showSpinButtons()"
+      />
+      @if (suffix(); as s) {
+        <div class="ngx-input-suffix">
+          <ng-container [ngTemplateOutlet]="s.template" />
+        </div>
+      }
+    </div>
+
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }

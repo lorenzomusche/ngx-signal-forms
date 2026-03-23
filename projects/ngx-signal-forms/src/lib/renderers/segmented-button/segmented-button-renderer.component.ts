@@ -16,7 +16,9 @@ import { NgxSelectOption } from "../../core/types";
   template: `
     <ngx-control-label
       [label]="label()"
-      [forId]="fieldId + '-label'"
+      [forId]="fieldId"
+      [required]="isRequired()"
+      [filled]="value() !== null"
       [showInlineError]="inlineErrors && touched() && hasErrors()"
       [errorText]="inlineErrorText()"
     />

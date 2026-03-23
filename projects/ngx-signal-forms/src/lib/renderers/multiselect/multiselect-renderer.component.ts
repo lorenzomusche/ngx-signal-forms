@@ -50,6 +50,8 @@ import { NgxOptionsControl } from "../../core/types";
     <ngx-control-label
       [label]="label()"
       [forId]="fieldId"
+      [required]="isRequired()"
+      [filled]="!!value() && value()!.length > 0"
       [showInlineError]="inlineErrors && touched() && hasErrors()"
       [errorText]="inlineErrorText()"
     />

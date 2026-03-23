@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
@@ -9,7 +10,7 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
 @Component({
   selector: "ngx-control-textarea",
   standalone: true,
-  imports: [NgxControlLabelComponent, NgxErrorListComponent],
+  imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-renderer ngx-renderer--textarea",
@@ -19,24 +20,32 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
     <ngx-control-label
       [label]="label()"
       [forId]="fieldId"
+      [required]="isRequired()"
+      [filled]="!!value()"
       [showInlineError]="inlineErrors && touched() && hasErrors()"
       [errorText]="inlineErrorText()"
     />
     <textarea
       [id]="fieldId"
-      class="ngx-textarea"
       [placeholder]="placeholder()"
-      [value]="value() || ''"
+      [value]="value()"
       [disabled]="isDisabled()"
       [rows]="rows()"
       (input)="onInput($event)"
       (blur)="markAsTouched()"
       [attr.aria-invalid]="hasErrors()"
       [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
-      [attr.aria-required]="ariaRequired()"
+      [attr.aria-required]="ariaRequired() || isRequired()"
       [attr.aria-disabled]="effectiveAriaDisabled()"
       [attr.aria-label]="label() || null"
     ></textarea>
+    
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
+
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }

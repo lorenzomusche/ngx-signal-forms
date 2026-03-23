@@ -26,6 +26,14 @@ import { NgxInlineErrorIconComponent } from "./inline-error-icon.component";
     @if (label()) {
       <label [for]="forId()" class="ngx-label">
         {{ label() }}
+        @if (required()) {
+          <span
+            class="ngx-label__required"
+            [class.ngx-label__required--filled]="filled()"
+            aria-hidden="true"
+            >*</span
+          >
+        }
         @if (showInlineError()) {
           <ngx-inline-error-icon [errorText]="errorText()" />
         }
@@ -45,4 +53,10 @@ export class NgxControlLabelComponent {
 
   /** Error text passed to the inline error icon tooltip. */
   readonly errorText = input<string>("");
+
+  /** Whether to show a required asterisk. */
+  readonly required = input<boolean>(false);
+
+  /** Whether the field is filled (has a value). */
+  readonly filled = input<boolean>(false);
 }
