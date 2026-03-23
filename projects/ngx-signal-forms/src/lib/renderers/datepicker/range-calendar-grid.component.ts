@@ -2,9 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
   inject,
   input,
   output,
+  viewChildren,
 } from "@angular/core";
 import { NGX_DATE_LOCALE } from "../../core/date-locale";
 import {
@@ -62,6 +64,7 @@ import {
       <div class="ngx-datepicker__row" role="row">
         @for (cell of row; track cell.iso) {
           <button
+            #cellBtn
             type="button"
             class="ngx-datepicker__cell"
             [class.ngx-datepicker__cell--outside]="!cell.inMonth"
@@ -105,6 +108,18 @@ export class NgxRangeCalendarGridComponent {
   readonly datePicked = output<CalendarDate>();
   /** Emits when the user hovers over a cell. */
   readonly dateHovered = output<CalendarDate>();
+
+  private readonly cellBtns = viewChildren("cellBtn", { read: ElementRef });
+
+  /** Focuses the grid cell corresponding to the given date. */
+  focusDate(date: CalendarDate): void {
+    const allCells = this.cells();
+    const index = allCells.findIndex((c) => isSameDay(c.date, date));
+    if (index >= 0) {
+      const btns = this.cellBtns() as readonly ElementRef<HTMLElement>[];
+      btns[index]?.nativeElement.focus();
+    }
+  }
 
   private readonly locale = inject(NGX_DATE_LOCALE);
   private readonly todayDate = today();

@@ -183,10 +183,12 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
 
   /** Sync calendar view to current value after DOM renders. */
   protected override onBeforeOpen(): void {
-    setTimeout(
-      () => this.calendarRef()?.syncView(this.parsedStart(), this.parsedEnd()),
-      0,
-    );
+    setTimeout(() => {
+      const cal = this.calendarRef();
+      if (!cal) return;
+      cal.syncView(this.parsedStart(), this.parsedEnd());
+      cal.focusFocusedDate();
+    }, 0);
   }
 
   // ── Range picked from calendar ───────────────────────────────────────────────

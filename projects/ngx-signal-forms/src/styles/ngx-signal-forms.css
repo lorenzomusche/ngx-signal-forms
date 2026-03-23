@@ -1451,9 +1451,7 @@ button.ngx-chip:hover {
 }
 
 .ngx-datepicker__cell:hover:not(.ngx-datepicker__cell--disabled):not(.ngx-datepicker__cell--selected) {
-    background: none;
-    outline: none;
-    box-shadow: none;
+    background: var(--ngx-datepicker-hover-bg);
 }
 
 .ngx-datepicker__cell--outside {
@@ -1476,8 +1474,9 @@ button.ngx-chip:hover {
 }
 
 .ngx-datepicker__cell--focused:not(.ngx-datepicker__cell--selected) {
-    box-shadow: none;
-    outline: none;
+    background: var(--ngx-datepicker-hover-bg);
+    outline: 2px solid var(--ngx-datepicker-selected-bg);
+    outline-offset: -2px;
 }
 
 .ngx-datepicker__cell--disabled {

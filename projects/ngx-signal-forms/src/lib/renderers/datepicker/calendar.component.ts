@@ -4,12 +4,15 @@ import {
   input,
   output,
   signal,
+  viewChild,
+  effect,
 } from "@angular/core";
 import {
   addDays,
   addMonths,
   CalendarDate,
   daysInMonth,
+  isDateInRange,
   today,
 } from "../../core/date-utils";
 import { NgxCalendarGridComponent } from "./calendar-grid.component";
@@ -66,6 +69,23 @@ export class NgxCalendarComponent {
   readonly selectedDate = input<CalendarDate | null>(null);
   readonly minDate = input<CalendarDate | null>(null);
   readonly maxDate = input<CalendarDate | null>(null);
+
+  private readonly grid = viewChild(NgxCalendarGridComponent);
+
+  constructor() {
+    effect(() => {
+      const date = this.focusedDate();
+      // We use a small timeout to ensure the grid has rendered the new date
+      // before we try to focus it.
+      setTimeout(() => this.grid()?.focusDate(date), 0);
+    });
+  }
+
+  /** Manually focuses the currently focused date cell. */
+  focusFocusedDate(): void {
+    const focused = this.focusedDate();
+    this.grid()?.focusDate(focused);
+  }
   /** Accessible label for the dialog. */
   readonly ariaLabel = input<string>("Choose date");
 
@@ -143,6 +163,13 @@ export class NgxCalendarComponent {
       case "ArrowDown":
         next = addDays(focused, 7);
         break;
+      case "Enter":
+      case " ":
+        if (isDateInRange(focused, this.minDate(), this.maxDate())) {
+          event.preventDefault();
+          this.onDatePicked(focused);
+        }
+        return;
       case "PageUp":
         next = event.shiftKey
           ? { year: focused.year - 1, month: focused.month, day: focused.day }

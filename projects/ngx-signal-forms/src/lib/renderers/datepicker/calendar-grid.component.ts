@@ -5,6 +5,7 @@ import {
   inject,
   input,
   output,
+  viewChildren,
 } from "@angular/core";
 import { NGX_DATE_LOCALE } from "../../core/date-locale";
 import {
@@ -80,6 +81,14 @@ export class NgxCalendarGridComponent {
 
   /** Emits the date the user picked (clicked or pressed Enter/Space). */
   readonly datePicked = output<CalendarDate>();
+
+  private readonly cellsRef = viewChildren(NgxCalendarCellComponent);
+
+  /** Focuses the cell corresponding to the given date. */
+  focusDate(date: CalendarDate): void {
+    const cell = this.cellsRef().find((c) => isSameDay(c.cell().date, date));
+    cell?.focus();
+  }
 
   private readonly locale = inject(NGX_DATE_LOCALE);
 

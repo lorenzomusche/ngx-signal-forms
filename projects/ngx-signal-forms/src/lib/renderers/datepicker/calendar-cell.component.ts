@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  inject,
   input,
   output,
 } from "@angular/core";
@@ -54,6 +56,13 @@ export class NgxCalendarCellComponent {
 
   /** Emits the picked date when the cell is activated. */
   readonly picked = output<CalendarDate>();
+
+  private readonly elementRef = inject(ElementRef);
+
+  /** Focuses the host element of this cell. */
+  focus(): void {
+    this.elementRef.nativeElement.focus();
+  }
 
   protected onSelect(): void {
     if (!this.isDisabled()) {

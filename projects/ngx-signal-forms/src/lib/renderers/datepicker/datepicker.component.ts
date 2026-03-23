@@ -139,10 +139,12 @@ export class NgxDatePickerComponent extends NgxOverlayControl<string | null> {
   );
 
   protected override onBeforeOpen(): void {
-    setTimeout(
-      () => this.calendarRef()?.syncView(this.parsedSelectedDate()),
-      0,
-    );
+    setTimeout(() => {
+      const cal = this.calendarRef();
+      if (!cal) return;
+      cal.syncView(this.parsedSelectedDate());
+      cal.focusFocusedDate();
+    }, 0);
   }
 
   protected onDatePicked(date: CalendarDate): void {

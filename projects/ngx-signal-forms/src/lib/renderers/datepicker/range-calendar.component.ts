@@ -2,9 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   input,
   output,
   signal,
+  viewChild,
 } from "@angular/core";
 import {
   addDays,
@@ -93,6 +95,23 @@ export class NgxRangeCalendarComponent {
   }>();
   /** Emits on Escape — parent must close the popup. */
   readonly closed = output<void>();
+
+  private readonly grid = viewChild(NgxRangeCalendarGridComponent);
+
+  constructor() {
+    effect(() => {
+      const date = this.focusedDate();
+      // We use a small timeout to ensure the grid has rendered the new date
+      // before we try to focus it.
+      setTimeout(() => this.grid()?.focusDate(date), 0);
+    });
+  }
+
+  /** Manually focuses the currently focused date cell. */
+  focusFocusedDate(): void {
+    const focused = this.focusedDate();
+    this.grid()?.focusDate(focused);
+  }
 
   // ── View state ───────────────────────────────────────────────────────────────
 
