@@ -30,11 +30,39 @@ import {
   RAW_FIELD_TREE_SYMBOL,
 } from "../core/types";
 
+// Module-level registry and key tracker for required-field detection.
+// We use a stack so nested forms still work correctly.
+const _requiredRegistryStack: Array<Set<string>> = [];
+
+function _getActiveRequiredRegistry(): Set<string> | undefined {
+  return _requiredRegistryStack[_requiredRegistryStack.length - 1];
+}
+
+// Tracks the last property name accessed on our schema proxy.
+// Set by the `pathTree` Proxy's `get` trap, consumed by `ngxSchemaRequired`.
+let _lastAccessedKey: string | undefined;
+
 // ─── Validator re-exports ────────────────────────────────────────────────────────────
 // Consumers import validators from us, never from @angular/forms/signals
 
-// Re-export Angular validators with schema prefix to avoid confusion with pure ones
-export const ngxSchemaRequired = ngRequired;
+/**
+ * Drop-in replacement for Angular's `required` schema validator.
+ * When used with `ngx-signal-forms`, the label asterisk will always be
+ * visible — even after the user fills the field.
+ *
+ * Usage:
+ *   ngxSchemaRequired(schema.firstName)
+ */
+export const ngxSchemaRequired = (path: any) => {
+  // The pathTree Proxy records the last property name accessed
+  // (e.g. 'firstName') immediately before this call. We consume it here.
+  const registry = _getActiveRequiredRegistry();
+  if (registry && _lastAccessedKey) {
+    registry.add(_lastAccessedKey);
+    _lastAccessedKey = undefined; // Consume so it doesn't bleed into the next call
+  }
+  return ngRequired(path); // Pass the REAL Angular path node — unmodified
+};
 export const ngxSchemaEmail = ngEmail;
 export const ngxSchemaMin = ngMin;
 export const ngxSchemaMax = ngMax;
@@ -42,6 +70,7 @@ export const ngxSchemaMinLength = ngMinLength;
 export const ngxSchemaMaxLength = ngMaxLength;
 export const ngxSchemaPattern = ngPattern;
 export const ngxSchemaDebounce = ngDebounce;
+
 
 // ─── Internal type for raw Angular field state ───────────────────────────────────
 
@@ -75,12 +104,41 @@ export function createSignalFormAdapter<T extends object>(
 ): NgxFormAdapter<T> {
   const { model, schema, submitMode } = options;
 
-  // ① Create FieldTree via Angular's form() — isolated here
+  const requiredFields = new Set<string>();
+
+  // ① Create FieldTree via Angular's form() — isolated here.
+  // We pass the REAL pathTree untouched to schema (so Angular validators work),
+  // but we pre-build a Map<pathObject, fieldKey> so ngxSchemaRequired can
+  // identify which field was marked required by comparing object identity.
   const rawFieldTree = (schema
-    ? form(model, schema)
+    ? form(model, (pathTree: any) => {
+        // Wrap pathTree in a thin Proxy that records which property is accessed.
+        // The Proxy does NOT modify the returned value — it returns the REAL
+        // Angular FieldPathNode so all validators work without modification.
+        // ngxSchemaRequired reads `_lastAccessedKey` to identify the field name.
+        const tracked = new Proxy(pathTree, {
+          get(target, prop, receiver) {
+            if (typeof prop === "string") {
+              _lastAccessedKey = prop; // Record property name (e.g. 'firstName')
+            }
+            return Reflect.get(target, prop, receiver); // REAL value — unmodified
+          },
+        });
+
+        const registry = new Set<string>();
+        _requiredRegistryStack.push(registry);
+        try {
+          schema(tracked); // user accesses tracked.firstName → key recorded
+        } finally {
+          _requiredRegistryStack.pop();
+          _lastAccessedKey = undefined; // Clean up
+        }
+
+        // Merge into outer requiredFields
+        registry.forEach(k => requiredFields.add(k));
+      })
     : form(model)) as unknown as Record<string, () => RawAngularFieldState>;
 
-  const fieldKeys = Object.keys(rawFieldTree) as Array<keyof T & string>;
 
   // ② Internal writable signals
   const _submitting = signal(false);
@@ -88,14 +146,15 @@ export function createSignalFormAdapter<T extends object>(
   const _lastSubmitErrors = signal<ReadonlyArray<NgxFormError>>([]);
 
   // ③ Derived signals from all fields
+  // Note: we use Object.keys(rawFieldTree) directly in computations to avoid circular init issues
   const _valid = computed(() =>
-    fieldKeys.every((k) => {
+    Object.keys(rawFieldTree).every((k) => {
       const ref = rawFieldTree[k];
       return ref !== undefined ? ref().valid() : true;
     }),
   );
   const _pending = computed(() =>
-    fieldKeys.some((k) => {
+    Object.keys(rawFieldTree).some((k) => {
       const ref = rawFieldTree[k];
       return ref !== undefined ? ref().pending() : false;
     }),
@@ -145,9 +204,12 @@ export function createSignalFormAdapter<T extends object>(
   const fieldCache = new Map<string, NgxFieldRef<unknown>>();
 
   function wrapFieldRef<TValue>(
+    name: string,
     angularRef: () => RawAngularFieldState,
   ): NgxFieldRef<TValue> {
     const rawState = angularRef();
+    const _touched = signal(rawState.touched());
+    const _dirty = signal(rawState.dirty());
 
     const wrappedErrors = computed<ReadonlyArray<NgxFieldError>>(() => {
       const raw = rawState.errors() ?? [];
@@ -158,9 +220,14 @@ export function createSignalFormAdapter<T extends object>(
       }));
     });
 
-    // Bridge touched/dirty: start from Angular's value, allow local override
-    const _touched = signal(rawState.touched());
-    const _dirty = signal(rawState.dirty());
+    // We deduce 'required' by checking the marked set OR if it currently has a required error
+    const isRequired = computed(() => {
+      if (requiredFields.has(name)) return true;
+      const errs = wrappedErrors();
+      return errs.some(e => e.kind === "required");
+    });
+
+
 
     const fieldState: NgxFieldState<TValue> = {
       value: rawState.value as WritableSignal<TValue>,
@@ -170,6 +237,7 @@ export function createSignalFormAdapter<T extends object>(
       disabled: rawState.disabled,
       readonly: rawState.readonly,
       pending: rawState.pending,
+      required: isRequired,
       errors: wrappedErrors,
     };
 
@@ -177,16 +245,15 @@ export function createSignalFormAdapter<T extends object>(
   }
 
   function getField<K extends keyof T>(name: K): NgxFieldRef<T[K]> | null {
-    const key = name as string;
-    const cached = fieldCache.get(key);
-    if (cached) return cached as NgxFieldRef<T[K]>;
+    const rawRef = rawFieldTree[name as string];
+    if (!rawRef) return null;
 
-    const ref = rawFieldTree[key];
-    if (!ref) return null;
-
-    const wrapped = wrapFieldRef<T[K]>(ref);
-    fieldCache.set(key, wrapped as NgxFieldRef<unknown>);
-    return wrapped;
+    let memo = fieldCache.get(name as string);
+    if (!memo) {
+      memo = wrapFieldRef(name as string, rawRef);
+      fieldCache.set(name as string, memo);
+    }
+    return memo as NgxFieldRef<T[K]>;
   }
 
   function getValue(): T {
@@ -216,13 +283,15 @@ export function createSignalFormAdapter<T extends object>(
   }
 
   function markAllTouched(): void {
-    for (const k of fieldKeys) {
+    const keys = Object.keys(rawFieldTree);
+    for (const k of keys) {
       const ref = getField(k as keyof T);
       if (ref) {
         ref().touched.set(true);
       }
     }
   }
+
 
   async function submit(
     action: (

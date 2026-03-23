@@ -26,6 +26,7 @@ export interface NgxFieldState<TValue> {
   readonly disabled: Signal<boolean>;
   readonly readonly: Signal<boolean>;
   readonly pending: Signal<boolean>;
+  readonly required: Signal<boolean>;
   readonly errors: Signal<ReadonlyArray<NgxFieldError>>;
 }
 
