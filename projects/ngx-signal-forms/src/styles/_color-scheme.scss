@@ -224,6 +224,13 @@ $_defaults: (
 
     // ── Date Range Picker (endpoint color) ──────────────────────────────
     --ngx-daterange-endpoint-color: #{_on-color($primary, $force-light)};
+
+    // ── Segmented Button ──────────────────────────────────────────────────
+    --ngx-segmented-border: #{$primary-400};
+    --ngx-segmented-btn-bg-selected: #{$primary};
+    --ngx-segmented-btn-color-selected: #{$on-primary};
+    --ngx-segmented-btn-bg-hover: #{$primary-200};
+    --ngx-segmented-btn-bg-selected-hover: #{$primary-hover};
 }
 
 // ── Public: Material-style submit button & extras ──────────────────────────
@@ -399,6 +406,13 @@ $_defaults: (
     --ngx-select-arrow-color: #{$text-200};
     --ngx-select-border-subtle: #{$surface-600};
     --ngx-select-no-results-color: #{$text-400};
+
+    // ── Segmented Button (Dark) ──────────────────────────────────────────
+    --ngx-segmented-border: #{$text-500};
+    --ngx-segmented-btn-bg-selected: #{$primary-light};
+    --ngx-segmented-btn-color-selected: #{$on-primary-light};
+    --ngx-segmented-btn-bg-hover: #{$surface-700-hover};
+    --ngx-segmented-btn-bg-selected-hover: #{$primary-hover};
 }
 
 // ── Dark: Material-style class overrides ───────────────────────────────────
