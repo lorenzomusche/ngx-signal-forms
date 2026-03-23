@@ -108,6 +108,9 @@ export { NgxSegmentedButtonComponent } from "./lib/renderers/segmented-button/se
 // Timepicker (Material 3)
 export { NgxTimepickerComponent } from "./lib/renderers/timepicker";
 
+// Utilities
+export { ngxFormSerialize } from "./lib/core/utils";
+
 // ─── Built-in validators (pure functions) ────────────────────────────────────
 export {
   compose as ngxCompose,

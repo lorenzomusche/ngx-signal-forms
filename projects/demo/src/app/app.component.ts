@@ -22,6 +22,7 @@ import {
   ngxSchemaMin,
   ngxSchemaMinLength,
   ngxSchemaRequired,
+  ngxFormSerialize,
   NgxSegmentedButtonComponent,
   NgxSelectComponent,
   NgxSelectOption,
@@ -343,8 +344,9 @@ export class AppComponent {
   readonly submitAction = async (
     value: ContactForm,
   ): Promise<NgxFormError[] | void> => {
-    // Simulate async server call
-    this.lastSubmitResult.set(JSON.stringify(value, null, 2));
+    // Ported serialization logic to lib/core/utils.ts as ngxFormSerialize
+    this.lastSubmitResult.set(JSON.stringify(ngxFormSerialize(value), null, 2));
+    console.log("Form submitted with value:", value);
   };
 
   onSubmitted(_event: NgxFormSubmitEvent<ContactForm>): void {
