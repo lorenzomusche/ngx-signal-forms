@@ -52,6 +52,8 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
     <ngx-control-label
       [label]="label()"
       [forId]="fieldId"
+      [required]="isRequired()"
+      [filled]="value() !== null"
       [showInlineError]="inlineErrors && touched() && hasErrors()"
       [errorText]="inlineErrorText()"
     />
@@ -59,36 +61,49 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
     @if (optionTpl(); as tpl) {
       <!-- Custom dropdown -->
       <div class="ngx-select" #wrapper>
-        <button
-          type="button"
-          class="ngx-select__trigger"
-          [id]="fieldId"
-          [disabled]="isDisabled()"
-          [attr.aria-expanded]="open()"
-          [attr.aria-haspopup]="'listbox'"
-          [attr.aria-activedescendant]="
-            activeIndex() >= 0 ? fieldId + '-opt-' + activeIndex() : null
-          "
-          [attr.aria-invalid]="hasErrors()"
-          [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
-          [attr.aria-required]="ariaRequired()"
-          [attr.aria-disabled]="effectiveAriaDisabled()"
-          [attr.aria-label]="label() || null"
-          (click)="toggleOverlay()"
-          (blur)="onBlur()"
-        >
-          @if (selectedOption(); as sel) {
-            <span class="ngx-select__value">
-              <ng-container
-                [ngTemplateOutlet]="tpl"
-                [ngTemplateOutletContext]="{ $implicit: sel, selected: true }"
-              />
-            </span>
-          } @else {
-            <span class="ngx-select__placeholder">{{ placeholder() }}</span>
+        <div class="ngx-input-wrapper" [class.ngx-input-wrapper--disabled]="isDisabled()">
+          @if (prefix(); as p) {
+            <div class="ngx-input-prefix">
+              <ng-container [ngTemplateOutlet]="p.template" />
+            </div>
           }
-          <span class="ngx-select__arrow" aria-hidden="true">▾</span>
-        </button>
+          <button
+            type="button"
+            class="ngx-select__trigger"
+            [id]="fieldId"
+            [disabled]="isDisabled()"
+            [attr.aria-expanded]="open()"
+            [attr.aria-haspopup]="'listbox'"
+            [attr.aria-activedescendant]="
+              activeIndex() >= 0 ? fieldId + '-opt-' + activeIndex() : null
+            "
+            [attr.aria-invalid]="hasErrors()"
+            [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+            [attr.aria-required]="ariaRequired() || isRequired()"
+            [attr.aria-disabled]="effectiveAriaDisabled()"
+            [attr.aria-label]="label() || null"
+            (click)="toggleOverlay()"
+            (blur)="onBlur()"
+          >
+            @if (selectedOption(); as sel) {
+              <span class="ngx-select__value">
+                <ng-container
+                  [ngTemplateOutlet]="tpl"
+                  [ngTemplateOutletContext]="{ $implicit: sel, selected: true }"
+                />
+              </span>
+            } @else {
+              <span class="ngx-select__placeholder">{{ placeholder() }}</span>
+            }
+            <span class="ngx-select__arrow" aria-hidden="true">▾</span>
+          </button>
+          @if (suffix(); as s) {
+            <div class="ngx-input-suffix">
+              <ng-container [ngTemplateOutlet]="s.template" />
+            </div>
+          }
+        </div>
+
 
         @if (open()) {
           @if (overlayMode()) {
@@ -148,29 +163,48 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
       </div>
     } @else {
       <!-- Native select fallback -->
-      <select
-        [id]="fieldId"
-        [disabled]="isDisabled()"
-        (change)="onNativeChange($event)"
-        (blur)="markAsTouched()"
-        [attr.aria-invalid]="hasErrors()"
-        [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
-        [attr.aria-required]="ariaRequired()"
-        [attr.aria-disabled]="effectiveAriaDisabled()"
-        [attr.aria-label]="label() || null"
-      >
-        @if (placeholder()) {
-          <option value="" disabled [selected]="value() === null">
-            {{ placeholder() }}
-          </option>
-        }
-        @for (opt of effectiveOptions(); track opt.value; let i = $index) {
-          <option [value]="i" [selected]="opt.value === value()">
-            {{ opt.label }}
-          </option>
-        }
-      </select>
+      <div class="ngx-input-wrapper" [class.ngx-input-wrapper--disabled]="isDisabled()">
+         @if (prefix(); as p) {
+            <div class="ngx-input-prefix">
+              <ng-container [ngTemplateOutlet]="p.template" />
+            </div>
+          }
+          <select
+            [id]="fieldId"
+            [disabled]="isDisabled()"
+            (change)="onNativeChange($event)"
+            (blur)="markAsTouched()"
+            [attr.aria-invalid]="hasErrors()"
+            [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+            [attr.aria-required]="ariaRequired() || isRequired()"
+            [attr.aria-disabled]="effectiveAriaDisabled()"
+            [attr.aria-label]="label() || null"
+          >
+            @if (placeholder()) {
+              <option value="" disabled [selected]="value() === null">
+                {{ placeholder() }}
+              </option>
+            }
+            @for (opt of effectiveOptions(); track opt.value; let i = $index) {
+              <option [value]="i" [selected]="opt.value === value()">
+                {{ opt.label }}
+              </option>
+            }
+          </select>
+          @if (suffix(); as s) {
+            <div class="ngx-input-suffix">
+              <ng-container [ngTemplateOutlet]="s.template" />
+            </div>
+          }
+      </div>
     }
+
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
+
 
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />

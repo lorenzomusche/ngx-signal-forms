@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,8 +7,8 @@ import {
   viewChild,
 } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
 import { CalendarDate, formatIsoDate, parseIsoDate } from "../../core/date-utils";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
 import { NgxCalendarComponent } from "./calendar.component";
@@ -20,8 +21,9 @@ import { NgxCalendarComponent } from "./calendar.component";
   selector: "ngx-control-datepicker",
   standalone: true,
   imports: [
+    NgTemplateOutlet,
     NgxCalendarComponent,
-    NgxInlineErrorIconComponent,
+    NgxControlLabelComponent,
     NgxErrorListComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,55 +33,57 @@ import { NgxCalendarComponent } from "./calendar.component";
     "(document:click)": "onDocumentClick($event)",
   },
   template: `
-    @if (label()) {
-      <label [for]="fieldId" class="ngx-label">
-        {{ label() }}
-        @if (inlineErrors && touched() && hasErrors()) {
-          <ngx-inline-error-icon [errorText]="inlineErrorText()" />
-        }
-      </label>
-    }
+    <ngx-control-label
+      [label]="label()"
+      [forId]="fieldId"
+      [required]="isRequired()"
+      [filled]="value() !== null"
+      [showInlineError]="inlineErrors && touched() && hasErrors()"
+      [errorText]="inlineErrorText()"
+    />
 
     <div class="ngx-datepicker" #wrapper>
-      <div class="ngx-datepicker__input-group">
+      <div class="ngx-input-wrapper" [class.ngx-input-wrapper--disabled]="isDisabled()">
+        @if (prefix(); as p) {
+           <div class="ngx-input-prefix">
+             <ng-container [ngTemplateOutlet]="p.template" />
+           </div>
+        }
         <input
-          #inputEl
-          type="text"
           [id]="fieldId"
+          type="text"
           class="ngx-datepicker__input"
+          [placeholder]="placeholder()"
           [value]="displayValue()"
           [disabled]="isDisabled()"
-          [placeholder]="placeholder()"
-          (input)="onInputChange($event)"
-          (blur)="onInputBlur()"
-          (keydown.arrowdown)="openOverlay(); $event.preventDefault()"
-          [attr.aria-invalid]="hasErrors()"
-          [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
-          [attr.aria-required]="ariaRequired()"
-          [attr.aria-disabled]="effectiveAriaDisabled()"
-          [attr.aria-label]="label() || null"
+          readonly
+          (click)="toggleOverlay()"
+          (blur)="markAsTouched()"
           [attr.aria-expanded]="open()"
           [attr.aria-haspopup]="'dialog'"
-          autocomplete="off"
+          [attr.aria-invalid]="hasErrors()"
+          [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+          [attr.aria-required]="ariaRequired() || isRequired()"
+          [attr.aria-disabled]="effectiveAriaDisabled()"
+          [attr.aria-label]="label() || null"
         />
-        <button
-          type="button"
-          class="ngx-datepicker__toggle"
-          [disabled]="isDisabled()"
-          aria-label="Open calendar"
-          tabindex="-1"
-          (click)="toggleOverlay()"
-        >
-          <svg
-            class="ngx-datepicker__icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"
-            />
-          </svg>
-        </button>
+        <div class="ngx-input-suffix">
+           @if (suffix(); as s) {
+             <ng-container [ngTemplateOutlet]="s.template" />
+           } @else {
+             <button
+                type="button"
+                class="ngx-datepicker__toggle"
+                [disabled]="isDisabled()"
+                (click)="toggleOverlay()"
+                aria-label="Toggle calendar"
+              >
+<svg viewBox="0 0 24 24" fill="currentColor">
+  <path d="M7 11h2v2H7v-2zm14-5v14c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V6c0-1.1.89-2 2-2h1V2h2v2h8V2h2v2h1c1.1 0 2 .9 2 2zM5 8h14V6H5v2zm14 12V10H5v10h14zm-4-7h2v-2h-2v2zm-4 0h2v-2h-2v2z"/>
+</svg>
+              </button>
+           }
+        </div>
       </div>
 
       @if (open()) {

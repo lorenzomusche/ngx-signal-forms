@@ -82,23 +82,27 @@ input[type="date"]:focus,
     --ngx-label-font-weight: 600;
     --ngx-label-font-size: 0.875rem;
 
-    /* Inputs */
-    --ngx-input-padding: 0.5rem 0.75rem;
-    --ngx-input-border: 1.5px solid var(--ngx-input-border-color);
-    --ngx-input-border-color: #ccc;
-    --ngx-input-border-radius: 6px;
+    /* Inputs — M3 Filled style */
+    --ngx-input-padding: 0.625rem 0.75rem;
+    --ngx-input-bg: var(--ngx-surface-container-highest);
+    --ngx-input-bg-hover: var(--ngx-surface-container-highest-hover);
+    --ngx-input-border: none;
+    --ngx-input-border-color: var(--ngx-outline-variant);
+    --ngx-input-border-radius: 4px 4px 0 0;
     --ngx-input-font-size: 0.95rem;
-    --ngx-input-color: inherit;
-    --ngx-input-placeholder-color: #999;
-    --ngx-input-icon-color: currentColor;
+    --ngx-input-color: var(--ngx-on-surface);
+    --ngx-input-placeholder-color: var(--ngx-on-surface-variant);
+    --ngx-input-icon-color: var(--ngx-on-surface-variant);
     --ngx-input-focus-color: #4361ee;
-    --ngx-input-focus-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    /* Shadow-based focus indicator — no layout shift */
+    --ngx-input-focus-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
 
     /* Errors */
     --ngx-error-color: #e63946;
     --ngx-error-font-size: 0.8rem;
     --ngx-error-line-height: inherit;
-    --ngx-error-focus-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
+    /* Error focus uses an inset shadow for consistency with M3 */
+    --ngx-error-focus-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 
     /* Checkbox */
     --ngx-checkbox-size: 1.125rem;
@@ -240,6 +244,84 @@ input[type="date"]:focus,
     display: none;
 }
 
+/* ─── Generic Input Wrapper (for prefix/suffix) ─────────────────────────── */
+
+.ngx-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: var(--ngx-input-bg);
+    border-radius: var(--ngx-input-border-radius);
+    /* Bottom indicator via box-shadow — never causes layout shift */
+    box-shadow: inset 0 -1px 0 0 var(--ngx-outline-variant);
+    transition: background-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+
+.ngx-input-wrapper:hover:not(:focus-within) {
+    background-color: var(--ngx-input-bg-hover);
+}
+
+.ngx-input-wrapper:focus-within {
+    background-color: var(--ngx-input-bg-hover);
+    box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
+}
+
+.ngx-input-wrapper--error {
+    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color) !important;
+}
+
+.ngx-input-wrapper--disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.ngx-input-wrapper input,
+.ngx-input-wrapper textarea {
+    flex: 1;
+    border: none !important;
+    box-shadow: none !important;
+    padding: var(--ngx-input-padding);
+    background: transparent;
+    outline: none;
+    color: var(--ngx-input-color);
+    font-size: var(--ngx-input-font-size);
+    width: 100%;
+    min-width: 0;
+}
+
+.ngx-input-prefix,
+.ngx-input-suffix {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ngx-input-icon-color);
+    flex-shrink: 0;
+    background: transparent;
+    padding: 0 0.375rem;
+}
+
+.ngx-input-prefix {
+    padding-left: 0.75rem;
+    padding-right: 0.25rem;
+}
+
+.ngx-input-suffix {
+    padding-right: 0.75rem;
+    padding-left: 0.25rem;
+}
+
+.ngx-supporting-text {
+    font-size: 0.75rem;
+    color: var(--ngx-on-surface-variant);
+    line-height: 1.25rem;
+    padding-top: 0.25rem;
+}
+
+
+
 /* ─── Labels ──────────────────────────────────────────────────────────────── */
 
 .ngx-renderer .ngx-label {
@@ -250,7 +332,7 @@ input[type="date"]:focus,
     margin-bottom: 0;
 }
 
-/* ─── Inputs ──────────────────────────────────────────────────────────────── */
+/* ─── Standalone Inputs (M3 Filled — no wrapper) ─────────────────────────── */
 
 .ngx-renderer input[type="text"],
 .ngx-renderer input[type="number"],
@@ -259,12 +341,22 @@ input[type="date"]:focus,
 .ngx-renderer textarea,
 .ngx-renderer select {
     padding: var(--ngx-input-padding);
-    border: var(--ngx-input-border);
+    background-color: var(--ngx-input-bg);
+    border: none;
     border-radius: var(--ngx-input-border-radius);
+    /* inset bottom indicator */
+    box-shadow: inset 0 -1px 0 0 var(--ngx-outline-variant);
     font-size: var(--ngx-input-font-size);
     color: var(--ngx-input-color);
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: background-color 0.2s, box-shadow 0.2s;
     outline: none;
+    width: 100%;
+}
+
+.ngx-renderer input:hover:not(:focus):not(:disabled),
+.ngx-renderer textarea:hover:not(:focus):not(:disabled),
+.ngx-renderer select:hover:not(:focus):not(:disabled) {
+    background-color: var(--ngx-input-bg-hover);
 }
 
 .ngx-renderer input::placeholder,
@@ -279,19 +371,45 @@ input[type="date"]:focus,
 .ngx-renderer input:focus,
 .ngx-renderer textarea:focus,
 .ngx-renderer select:focus {
-    border-color: var(--ngx-input-focus-color);
+    background-color: var(--ngx-input-bg-hover);
     box-shadow: var(--ngx-input-focus-shadow);
 }
 
 .ngx-renderer input[aria-invalid="true"],
 .ngx-renderer textarea[aria-invalid="true"],
 .ngx-renderer select[aria-invalid="true"] {
-    border-color: var(--ngx-error-color);
+    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 }
 
 .ngx-renderer input[aria-invalid="true"]:focus,
 .ngx-renderer textarea[aria-invalid="true"]:focus {
     box-shadow: var(--ngx-error-focus-shadow);
+}
+
+/* ─── Inputs INSIDE ngx-input-wrapper ─────────────────────────────────────────────────── */
+/* The wrapper itself provides the M3 bg and border indicator.
+   Elements inside must be transparent and have no box-shadow. */
+
+.ngx-input-wrapper input,
+.ngx-input-wrapper textarea,
+.ngx-input-wrapper select {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    flex: 1;
+    min-width: 0;
+    padding: var(--ngx-input-padding);
+    width: 100%;
+    outline: none;
+    color: var(--ngx-input-color);
+    font-size: var(--ngx-input-font-size);
+}
+
+.ngx-input-wrapper:has(input[aria-invalid="true"]),
+.ngx-input-wrapper:has(select[aria-invalid="true"]),
+.ngx-input-wrapper:has([aria-invalid="true"]) {
+    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 }
 
 /* ─── Custom Checkbox (standalone) ─────────────────────────────────────────── */
@@ -570,6 +688,19 @@ input[type="date"]:focus,
     border-radius: 50%;
     cursor: pointer;
     border: none;
+}
+
+.ngx-label__required {
+    color: #b3261e;
+    /* M3 Error color */
+    margin-left: 0.125rem;
+}
+
+.ngx-label__required--filled {
+    color: currentColor;
+    /* Inherit from label (on-surface-variant) */
+    opacity: 0.7;
+    /* Subtler when filled */
 }
 
 .ngx-slider-value {
@@ -1030,29 +1161,30 @@ button.ngx-chip:hover {
     justify-content: space-between;
     width: 100%;
     padding: var(--ngx-input-padding);
-    border: var(--ngx-input-border);
-    border-radius: var(--ngx-input-border-radius);
+    border: none;
+    background: transparent;
     font-size: var(--ngx-input-font-size);
-    background: var(--ngx-select-dropdown-bg);
+    color: var(--ngx-input-color);
     cursor: pointer;
     text-align: left;
-    transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
 }
 
+/* Focus ring delegate to wrapper via :focus-within — no extra styles needed here */
 .ngx-select__trigger:focus {
-    border-color: var(--ngx-input-focus-color);
-    box-shadow: var(--ngx-input-focus-shadow);
+    outline: none;
 }
 
-.ngx-select__trigger[aria-invalid="true"] {
-    border-color: var(--ngx-error-color);
+/* Error state: applied on the wrapper, not the trigger */
+.ngx-input-wrapper:has(.ngx-select__trigger[aria-invalid="true"]) {
+    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 }
 
 .ngx-select__trigger:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
 
 .ngx-select__value {
     display: flex;
@@ -1282,27 +1414,50 @@ button.ngx-chip:hover {
 }
 
 .ngx-datepicker__toggle {
-    display: inline-flex;
+    /* Exactly mirrors .ngx-timepicker__toggle */
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    color: var(--ngx-input-icon-color);
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    padding: 0;
-    flex-shrink: 0;
+    color: var(--ngx-on-surface-variant);
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    z-index: 2;
+    line-height: 0;
+}
+
+.ngx-datepicker__toggle svg {
+    width: 20px;
+    height: 20px;
+    display: block;
 }
 
 .ngx-datepicker__toggle:hover:not(:disabled) {
-    background: rgba(0, 0, 0, 0.04);
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+.ngx-datepicker__input {
+    padding-right: 40px !important;
 }
 
 .ngx-datepicker__toggle:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+}
+
+/* The suffix that wraps the toggle should have no extra padding —
+   the toggle itself is absolutely positioned. */
+.ngx-datepicker .ngx-input-suffix {
+    padding: 0;
+    width: 40px;
+    position: relative;
 }
 
 .ngx-datepicker__icon {

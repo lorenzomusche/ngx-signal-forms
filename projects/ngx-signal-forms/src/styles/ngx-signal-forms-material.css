@@ -301,7 +301,7 @@
 }
 
 /* M3 focus: state layer around thumb */
-.ngx-toggle input:focus-visible + .ngx-toggle__track {
+.ngx-toggle input:focus-visible+.ngx-toggle__track {
     outline: 2px solid var(--ngx-input-focus-color);
     outline-offset: 2px;
 }
@@ -317,7 +317,8 @@
 }
 
 .ngx-radio-circle {
-    width: 1.25rem;  /* 20px */
+    width: 1.25rem;
+    /* 20px */
     height: 1.25rem;
     border: 2px solid var(--ngx-outline);
     background: transparent;
@@ -325,13 +326,14 @@
 }
 
 .ngx-radio-circle::after {
-    width: 0.625rem; /* 10px */
+    width: 0.625rem;
+    /* 10px */
     height: 0.625rem;
     background: var(--ngx-on-primary, #fff);
     transform: translate(-50%, -50%) scale(0);
 }
 
-.ngx-radio-item input[type="radio"]:checked + .ngx-radio-circle {
+.ngx-radio-item input[type="radio"]:checked+.ngx-radio-circle {
     border-color: var(--ngx-input-focus-color);
     background: var(--ngx-input-focus-color);
 }
@@ -341,8 +343,10 @@
     content: '';
     position: absolute;
     top: 50%;
-    left: 0.625rem; /* center of the 20px circle */
-    width: 2.5rem;   /* 40px state layer */
+    left: 0.625rem;
+    /* center of the 20px circle */
+    width: 2.5rem;
+    /* 40px state layer */
     height: 2.5rem;
     background: var(--ngx-input-focus-color);
     border-radius: 50%;
@@ -357,11 +361,11 @@
     opacity: 0.08;
 }
 
-.ngx-radio-item input[type="radio"]:focus-visible + .ngx-radio-circle {
+.ngx-radio-item input[type="radio"]:focus-visible+.ngx-radio-circle {
     outline: none;
 }
 
-.ngx-radio-item input[type="radio"]:focus-visible ~ .ngx-radio-label {
+.ngx-radio-item input[type="radio"]:focus-visible~.ngx-radio-label {
     text-decoration: underline;
 }
 
@@ -384,7 +388,8 @@
 
 /* Chrome/Safari Thumb */
 .ngx-slider::-webkit-slider-thumb {
-    width: 1.25rem; /* 20px */
+    width: 1.25rem;
+    /* 20px */
     height: 1.25rem;
     background: var(--ngx-input-focus-color);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
@@ -393,7 +398,8 @@
 
 /* Firefox Thumb */
 .ngx-slider::-moz-range-thumb {
-    width: 1.25rem; /* 20px */
+    width: 1.25rem;
+    /* 20px */
     height: 1.25rem;
     background: var(--ngx-input-focus-color);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
@@ -670,7 +676,6 @@
 .ngx-datepicker__toggle {
     background: var(--ngx-surface-container-highest);
     border: none;
-    border-bottom: 1px solid var(--ngx-on-surface-variant);
     border-radius: 0;
     color: var(--ngx-on-surface-variant);
 }
@@ -700,13 +705,13 @@
     /* Timepicker — material/neutral palette overrides
        primary-container uses the zinc-100 tint, same visual weight as
        --ngx-select-option-selected-bg in this theme.                        */
-    --ngx-tp-primary:              var(--ngx-input-focus-color);
-    --ngx-tp-on-primary:           #ffffff;
-    --ngx-tp-primary-container:    var(--ngx-select-option-selected-bg);
+    --ngx-tp-primary: var(--ngx-input-focus-color);
+    --ngx-tp-on-primary: #ffffff;
+    --ngx-tp-primary-container: var(--ngx-select-option-selected-bg);
     --ngx-tp-on-primary-container: var(--ngx-on-surface);
-    --ngx-tp-surface:              var(--ngx-surface-container);
-    --ngx-tp-surface-variant:      var(--ngx-surface-container-highest);
-    --ngx-tp-outline:              var(--ngx-outline);
+    --ngx-tp-surface: var(--ngx-surface-container);
+    --ngx-tp-surface-variant: var(--ngx-surface-container-highest);
+    --ngx-tp-outline: var(--ngx-outline);
 }
 
 
