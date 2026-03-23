@@ -50,7 +50,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
     }
 
     <div class="ngx-datepicker" #wrapper>
-      <div class="ngx-datepicker__input-group ngx-daterange__group">
+      <div class="ngx-input-wrapper" [class.ngx-input-wrapper--disabled]="isDisabled()">
         <input
           #startInput
           type="text"
@@ -92,25 +92,26 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
           [attr.aria-haspopup]="'dialog'"
           autocomplete="off"
         />
-        <span class="spacer"></span>
-        <button
-          type="button"
-          class="ngx-datepicker__toggle"
-          [disabled]="isDisabled()"
-          aria-label="Open calendar"
-          tabindex="-1"
-          (click)="toggleOverlay()"
-        >
-          <svg
-            class="ngx-datepicker__icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+        <div class="ngx-input-suffix">
+          <button
+            type="button"
+            class="ngx-datepicker__toggle"
+            [disabled]="isDisabled()"
+            aria-label="Open calendar"
+            tabindex="-1"
+            (click)="toggleOverlay()"
           >
-            <path
-              d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"
-            />
-          </svg>
-        </button>
+            <svg
+              class="ngx-datepicker__icon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       @if (open()) {

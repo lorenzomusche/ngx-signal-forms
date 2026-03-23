@@ -327,33 +327,26 @@
     width: 100%;
 }
 
-.ngx-timepicker__input-group {
-    display: flex;
-    align-items: center;
-    position: relative;
-    width: 100%;
-    box-sizing: border-box;
-}
-
 .ngx-timepicker__input {
     flex: 1;
     width: 0; // Force flex to control width, preventing grow
-    min-width: 100%;
-    padding-right: 48px !important;
+    min-width: 0;
     box-sizing: border-box;
 }
 
 .ngx-timepicker__toggle {
-    position: absolute;
-    right: 12px;
-    padding: 0;
     background: none;
     border: none;
     cursor: pointer;
     display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--ngx-on-surface-variant);
     border-radius: 50%;
     transition: background-color 0.2s;
+    padding: 0;
+    width: 32px;
+    height: 32px;
 
     &:hover:not(:disabled) {
         background-color: var(--ngx-surface-container-highest);

@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,6 +19,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
   selector: "ngx-control-timepicker",
   standalone: true,
   imports: [
+    NgTemplateOutlet,
     NgxControlLabelComponent,
     NgxErrorListComponent,
     NgxTimepickerClockComponent,
@@ -40,7 +42,12 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
     />
 
     <div class="ngx-timepicker" #wrapper>
-      <div class="ngx-timepicker__input-group">
+      <div class="ngx-input-wrapper" [class.ngx-input-wrapper--disabled]="isDisabled()">
+        @if (prefix(); as p) {
+           <div class="ngx-input-prefix">
+             <ng-container [ngTemplateOutlet]="p.template" />
+           </div>
+        }
         <input
           #inputEl
           type="text"
@@ -62,25 +69,31 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
           [attr.aria-haspopup]="'dialog'"
           autocomplete="off"
         />
-        <button
-          type="button"
-          class="ngx-timepicker__toggle"
-          [disabled]="isDisabled()"
-          aria-label="Open time picker"
-          tabindex="-1"
-          (click)="toggleOverlay()"
-        >
-          <svg
-            class="ngx-timepicker__icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
+        <div class="ngx-input-suffix">
+          @if (suffix(); as s) {
+            <ng-container [ngTemplateOutlet]="s.template" />
+          } @else {
+            <button
+              type="button"
+              class="ngx-timepicker__toggle"
+              [disabled]="isDisabled()"
+              aria-label="Open time picker"
+              tabindex="-1"
+              (click)="toggleOverlay()"
+            >
+              <svg
+                class="ngx-timepicker__icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          }
+        </div>
       </div>
 
       @if (open()) {
