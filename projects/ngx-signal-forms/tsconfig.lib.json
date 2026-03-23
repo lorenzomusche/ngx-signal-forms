@@ -20,5 +20,10 @@
   "exclude": [
     "src/test.ts",
     "**/*.spec.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "compilationMode": "partial",
+    "flatModuleId": "@ngx-signals/forms",
+    "flatModuleOutFile": "ngx-signals-forms"
+  }
 }
