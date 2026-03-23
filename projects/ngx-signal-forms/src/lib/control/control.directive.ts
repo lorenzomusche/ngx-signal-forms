@@ -8,6 +8,10 @@ import {
 } from "@angular/core";
 import { NGX_FORM_ADAPTER, NGX_INLINE_ERRORS } from "../core/tokens";
 import { NgxFieldError, NgxFieldState, NgxFormAdapter } from "../core/types";
+import { NgxPrefixDirective } from "./prefix.directive";
+import { NgxSuffixDirective } from "./suffix.directive";
+import { NgxSupportingTextDirective } from "./supporting-text.directive";
+import { contentChild } from "@angular/core";
 
 /** Global counter for generating unique field IDs. */
 let _nextFieldId = 0;
@@ -39,6 +43,15 @@ export abstract class NgxBaseControl<TValue = unknown> {
 
   /** Marks the field as disabled for assistive technology (auto-derived from field state). */
   readonly ariaDisabled = input<boolean | undefined>(undefined);
+
+  /** Leading content (icon/text) provided via `ngxPrefix` directive. */
+  protected readonly prefix = contentChild(NgxPrefixDirective);
+
+  /** Trailing content (icon/text/button) provided via `ngxSuffix` directive. */
+  protected readonly suffix = contentChild(NgxSuffixDirective);
+
+  /** Supporting text (helper text) provided via `ngxSupportingText` directive. */
+  protected readonly supportingText = contentChild(NgxSupportingTextDirective);
 
   /** Resolved field state — reactive to name() changes. */
   protected readonly fieldState: Signal<NgxFieldState<TValue>> = computed(
@@ -80,6 +93,10 @@ export abstract class NgxBaseControl<TValue = unknown> {
   /** Effective aria-disabled: explicit input overrides field state. */
   protected readonly effectiveAriaDisabled: Signal<boolean> = computed(
     () => this.ariaDisabled() ?? this.isDisabled(),
+  );
+  /** Whether the field is required (deduced from validators). */
+  protected readonly isRequired: Signal<boolean> = computed(() =>
+    this.fieldState().required(),
   );
   /** Error messages joined as a single string for inline display. */
   protected readonly inlineErrorText: Signal<string> = computed(() =>

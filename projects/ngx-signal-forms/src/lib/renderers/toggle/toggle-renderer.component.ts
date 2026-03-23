@@ -35,6 +35,9 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
       @if (label()) {
         <span class="ngx-toggle__label">
           {{ label() }}
+          @if (isRequired()) {
+            <span class="ngx-label__required" aria-hidden="true">*</span>
+          }
           @if (inlineErrors && touched() && hasErrors()) {
             <ngx-inline-error-icon [errorText]="inlineErrorText()" />
           }
