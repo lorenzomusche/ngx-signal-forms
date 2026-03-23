@@ -9,11 +9,42 @@
 
 ---
 
+## Table of Contents
+- [Features](#features)
+- [Why @ngx-signals/forms?](#why-ngx-signalsforms)
+- [Quick Start](#quick-start)
+- [Live Demo](#live-demo)
+- [Built-in Renderers](#built-in-renderers)
+- [Components & Features](#components--features)
+  - [Text & Textarea](#text--textarea)
+  - [Number & Slider](#number--slider)
+  - [Date Picker](#date-picker)
+  - [Date Range Picker](#date-range-picker)
+  - [Time Picker](#time-picker)
+  - [Multiselect Modes](#multiselect-modes)
+  - [Checkbox & Toggle](#checkbox--toggle)
+  - [Segmented Button](#segmented-button)
+  - [File Upload](#file-upload)
+  - [Radio Group](#radio-group)
+  - [Chips & Custom Templates](#chips--custom-templates)
+  - [Conditional Options](#conditional-options)
+- [Validation](#validation)
+  - [Schema-level](#schema-level)
+  - [Pure Validators](#pure-validators)
+- [Advanced](#advanced)
+  - [Custom Renderer](#custom-renderer)
+  - [Architecture](#architecture)
+  - [Theming](#theming)
+  - [Utilities](#utilities)
+- [Build](#build)
+
+---
+
 ## Features
 
 - **Declarative syntax** — `<ngx-control-text name="firstName" label="First Name" />`
 - **Signal-first** — all state exposed as `Signal<T>`, no `Observable` boilerplate
-- **12 built-in renderers** — text, number, datepicker (M3), select, multiselect, checkbox, toggle, textarea, radio, slider, file, segmented
+- **14 built-in renderers** — text, number, datepicker (M3), daterange, timepicker, select, multiselect, checkbox, toggle, textarea, radio, slider, file, segmented
 - **Custom renderers** — extend `NgxBaseControl<T>` and register in your module
 - **Schema validators** — `schemaRequired`, `schemaEmail`, `schemaMin`, `schemaMax`, `schemaMinLength`, `schemaMaxLength`, `schemaPattern`
 - **Pure validators** — `required`, `minLength`, `email`, `pattern`, `min`, `max`, `compose`, `composeFirst`
@@ -27,6 +58,21 @@
 - **Overlay positioning** — shared `computeOverlayPosition()` utility used by select, multiselect, and datepicker
 - **Theming** — CSS custom properties with base and Material Design 3 themes
 - **Full strict TypeScript** — no `any`, immutable arrays, functional composition
+
+---
+
+## Why @ngx-signals/forms?
+
+Standard Angular Reactive Forms are powerful but can feel verbose and boilerplate-heavy, especially with the introduction of Signals.
+
+| Feature                | @ngx-signals/forms                 | Reactive Forms (Standard)      |
+| ---------------------- | ---------------------------------- | ------------------------------ |
+| **Paradigm**           | Declarative Templates              | Imperative Code-first          |
+| **Data Engine**        | Native Angular Signals             | RxJS Observables (or raw values)|
+| **Renderer Pattern**   | Pluggable Components               | Generic `ControlValueAccessor` |
+| **Validation**         | Unified Schema & Pure Functions    | Class-based / Async Validators |
+| **Type-Safety**        | Strict End-to-End                  | Difficult manual typing        |
+| **Boilerplate**        | Minimal (just use components)      | High (FormGroup/FormControl)   |
 
 ---
 
@@ -60,6 +106,8 @@ import {
   NgxCheckboxComponent,
   NgxToggleComponent,
   NgxDatePickerComponent,
+  NgxDateRangePickerComponent,
+  NgxTimepickerComponent,
   NgxTextareaComponent,
   NgxRadioGroupComponent,
   NgxSliderComponent,
@@ -85,6 +133,8 @@ import {
     NgxCheckboxComponent,
     NgxToggleComponent,
     NgxDatePickerComponent,
+    NgxDateRangePickerComponent,
+    NgxTimepickerComponent,
     NgxTextareaComponent,
     NgxRadioGroupComponent,
     NgxSliderComponent,
@@ -159,6 +209,20 @@ export class MyComponent {
 
 ---
 
+## Live Demo
+
+Explore the library in action with our interactive demo.
+
+- **Source Code**: [projects/demo](file:///Users/lorenzo.local/projects/personale/ngx-signal-forms/projects/demo)
+- **Local Run**:
+  ```bash
+  pnpm install
+  pnpm start
+  ```
+  *Then navigate to `http://localhost:4200`*
+
+---
+
 ## Built-in Renderers
 
 | Selector                  | Component                 | Value type              |
@@ -166,6 +230,8 @@ export class MyComponent {
 | `ngx-control-text`        | `NgxTextComponent`        | `string`                |
 | `ngx-control-number`      | `NgxNumberComponent`      | `number \| null`        |
 | `ngx-control-datepicker`  | `NgxDatePickerComponent`  | `string \| null`        |
+| `ngx-control-daterange`   | `NgxDateRangePickerComponent` | `NgxDateRange \| null` |
+| `ngx-control-timepicker`  | `NgxTimepickerComponent`  | `string \| null`        |
 | `ngx-control-select`      | `NgxSelectComponent`      | `TValue \| null`        |
 | `ngx-control-multiselect` | `NgxMultiselectComponent` | `ReadonlyArray<TValue>` |
 | `ngx-control-checkbox`    | `NgxCheckboxComponent`    | `boolean`               |
@@ -178,9 +244,65 @@ export class MyComponent {
 
 ---
 
-## Date Picker
+## Components & Features
+
+### Text & Textarea
+
+Standard inputs for short and long-form text.
+
+```html
+<ngx-control-text
+  name="firstName"
+  label="First Name"
+  placeholder="Enter your name"
+/>
+
+<ngx-control-textarea
+  name="bio"
+  label="Biography"
+  [rows]="5"
+  placeholder="Tell us about yourself..."
+/>
+```
+
+### Number & Slider
+
+Inputs for numeric values with optional range and step constraints.
+
+```html
+<ngx-control-number
+  name="age"
+  label="Age"
+  [minValue]="0"
+  [maxValue]="120"
+  [showSpinButtons]="true"
+/>
+
+<ngx-control-slider
+  name="volume"
+  label="Volume"
+  [min]="0"
+  [max]="100"
+  [step]="5"
+  [showValue]="true"
+/>
+```
+
+### Date Picker
 
 The M3 date picker (`ngx-control-datepicker`) replaces the native `<input type="date">` with a text input + calendar popup. Values are always ISO 8601 strings (`YYYY-MM-DD`).
+
+#### Keyboard navigation (M3 spec)
+
+| Key                             | Action                        |
+| ------------------------------- | ----------------------------- |
+| `ArrowLeft / ArrowRight`        | Previous / next day           |
+| `ArrowUp / ArrowDown`           | Same day previous / next week |
+| `Home / End`                    | First / last day of month     |
+| `PageUp / PageDown`             | Previous / next month         |
+| `Shift+PageUp / Shift+PageDown` | Previous / next year          |
+| `Enter / Space`                 | Select focused date           |
+| `Escape`                        | Close calendar                |
 
 ```html
 <ngx-control-datepicker
@@ -235,9 +357,32 @@ The date picker is composed of 5 standalone components:
 
 All sub-components are exported and can be used standalone for custom calendar UIs.
 
+### Date Range Picker
+
+The `ngx-control-daterange` component provides a compact, two-input interface for selecting a start and end date, backed by a unified M3 range calendar popup. Like the standard date picker, it fully supports keyboard navigation.
+
+```html
+<ngx-control-daterange
+  name="vacation"
+  label="Vacation Period"
+  minDate="2024-01-01"
+/>
+```
+
+### Time Picker
+
+The M3 time picker (`ngx-control-timepicker`) provides a visual clock overlay for selecting hours, minutes, and AM/PM. Values are strings in `hh:mm AM/PM` format.
+
+```html
+<ngx-control-timepicker
+  name="alarm"
+  label="Alarm Time"
+/>
+```
+
 ---
 
-## Multiselect Modes
+### Multiselect Modes
 
 The `ngx-control-multiselect` component supports two interaction modes via the `mode` input:
 
@@ -251,11 +396,24 @@ The `ngx-control-multiselect` component supports two interaction modes via the `
   [options]="tagOptions"
   mode="multi"
 />
+
+### Checkbox & Toggle
+
+Boolean inputs for flat and visual switch states.
+
+```html
+<ngx-control-checkbox
+  name="agree"
+  label="I agree to the terms and conditions"
+/>
+
+<ngx-control-toggle
+  name="notifications"
+  label="Enable push notifications"
+/>
 ```
 
----
-
-## Segmented Button
+### Segmented Button
 
 A modern alternative to radio buttons for small sets of options.
 
@@ -267,9 +425,7 @@ A modern alternative to radio buttons for small sets of options.
 />
 ```
 
----
-
-## File Upload
+### File Upload
 
 Standalone file selection with drag & drop support and immediate event emission.
 
@@ -284,9 +440,7 @@ Standalone file selection with drag & drop support and immediate event emission.
 
 The `fileSelected` event emits `File | File[] | null` immediately upon selection or clearing, useful for immediate uploads or client-side processing.
 
----
-
-## Radio Group
+### Radio Group
 
 Standard selection from a list of mutual-exclusive options.
 
@@ -299,9 +453,7 @@ Standard selection from a list of mutual-exclusive options.
 />
 ```
 
----
-
-## Chips & Custom Templates
+### Chips & Custom Templates
 
 Enhance `ngx-control-select` and `ngx-control-multiselect` with custom templates and chip-based selection.
 
@@ -329,9 +481,7 @@ Use the `ngxChips` directive inside your custom template to render items as inte
 </ngx-control-multiselect>
 ```
 
----
-
-## Conditional Options
+### Conditional Options
 
 The `[ngxDependsOn]` directive allows you to create dependent form controls (like a Province select that filters based on a Country select) with minimal boilerplate. It works automatically with `ngx-control-select` and `ngx-control-multiselect`.
 
@@ -373,7 +523,7 @@ interface NgxFormSubmitEvent<T extends object> {
 
 ---
 
-## Validators
+## Validation
 
 ### Schema-level (applied in adapter, powered by `@angular/forms/signals`)
 
@@ -423,7 +573,9 @@ const nameValidators = ngxCompose(
 
 ---
 
-## Custom Renderer
+## Advanced
+
+### Custom Renderer
 
 Extend `NgxBaseControl<TValue>` to create a custom renderer:
 
