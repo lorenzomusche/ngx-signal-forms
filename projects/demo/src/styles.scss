@@ -4,8 +4,8 @@
 @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
 
 /* Apply a custom color scheme — change the color to theme the entire form */
-$primary: #f81d1d;
-// $primary: #3a3a3a;
+// $primary: #f81d1d;
+$primary: #3a3a3a;
 
 @include ngx.color-scheme($primary, $settings: (prefer-light-text: true));
 @include ngx.color-scheme-dark($primary, $settings: (prefer-light-text: true));

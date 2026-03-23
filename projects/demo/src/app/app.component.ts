@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import {
   createSignalFormAdapter,
   NgxCheckboxComponent,
-  NgxChipsDirective,
+  NgxConditionalOptionsDirective,
   NgxDatePickerComponent,
   NgxDateRange,
   NgxDateRangePickerComponent,
@@ -12,7 +12,6 @@ import {
   NgxFormError,
   ngxFormSerialize,
   NgxFormSubmitEvent,
-  NgxConditionalOptionsDirective,
   NgxInlineErrorsDirective,
   NgxMultiselectComponent,
   NgxNumberComponent,
@@ -31,7 +30,7 @@ import {
   NgxTextareaComponent,
   NgxTextComponent,
   NgxTimepickerComponent,
-  NgxToggleComponent,
+  NgxToggleComponent
 } from "ngx-signal-forms";
 
 interface ContactForm extends Record<string, unknown> {
@@ -77,7 +76,6 @@ interface ContactForm extends Record<string, unknown> {
     NgxSliderComponent,
     NgxFileComponent,
     NgxSegmentedButtonComponent,
-    NgxChipsDirective,
     NgxConditionalOptionsDirective,
   ],
   template: `
@@ -393,7 +391,7 @@ export class AppComponent {
     this.lastSubmitResult.set(JSON.stringify(ngxFormSerialize(value), null, 2));
     console.log("Form submitted with value:", value);
   };
-  
+
   onFileSelected(file: File | File[] | null): void {
     console.log("File selected before submit:", file);
   }
