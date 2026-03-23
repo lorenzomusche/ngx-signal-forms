@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve demo",
-    "build:lib": "ng build ngx-signal-forms",
+    "build:lib": "ng build ngx-signal-forms && cp README.md LICENSE projects/ngx-signal-forms/dist/",
     "build:demo": "ng build demo",
     "watch:lib": "ng build ngx-signal-forms --watch",
     "lint": "ng lint"

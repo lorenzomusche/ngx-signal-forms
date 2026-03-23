@@ -9,7 +9,7 @@
             "sourceRoot": "projects/ngx-signal-forms/src",
             "architect": {
                 "build": {
-                    "builder": "ng-packagr:build",
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
                     "options": {
                         "project": "projects/ngx-signal-forms/ng-package.json"
                     },
