@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "ngx-signals-forms": {
+        "ngx-signal-forms": {
             "projectType": "library",
             "root": "projects/ngx-signal-forms",
             "sourceRoot": "projects/ngx-signal-forms/src",

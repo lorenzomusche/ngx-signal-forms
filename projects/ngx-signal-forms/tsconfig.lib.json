@@ -24,6 +24,6 @@
   "angularCompilerOptions": {
     "compilationMode": "partial",
     "flatModuleId": "@ngx-signals/forms",
-    "flatModuleOutFile": "ngx-signals-forms"
+    "flatModuleOutFile": "ngx-signal-forms"
   }
 }
