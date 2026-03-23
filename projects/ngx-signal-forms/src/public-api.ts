@@ -82,6 +82,7 @@ export { NgxErrorListComponent } from "./lib/control/error-list.component";
 export { NgxInlineErrorIconComponent } from "./lib/control/inline-error-icon.component";
 export { NgxInlineErrorsDirective } from "./lib/control/inline-errors.directive";
 export { NgxOptionDirective } from "./lib/control/option.directive";
+export { NgxChipsDirective } from "./lib/control/chips.directive";
 
 // ─── Built-in renderer components ────────────────────────────────────────────
 export { NgxCheckboxComponent } from "./lib/renderers/checkbox/checkbox-renderer.component";
@@ -99,6 +100,10 @@ export { NgxSelectComponent } from "./lib/renderers/select/select-renderer.compo
 export { NgxTextComponent } from "./lib/renderers/text/text-renderer.component";
 export { NgxTextareaComponent } from "./lib/renderers/textarea/textarea-renderer.component";
 export { NgxToggleComponent } from "./lib/renderers/toggle/toggle-renderer.component";
+export { NgxRadioGroupComponent } from "./lib/renderers/radio/radio-group-renderer.component";
+export { NgxSliderComponent } from "./lib/renderers/slider/slider-renderer.component";
+export { NgxFileComponent } from "./lib/renderers/file/file-renderer.component";
+export { NgxSegmentedButtonComponent } from "./lib/renderers/segmented-button/segmented-button-renderer.component";
 
 // Timepicker (Material 3)
 export { NgxTimepickerComponent } from "./lib/renderers/timepicker";

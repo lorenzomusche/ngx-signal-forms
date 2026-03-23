@@ -43,6 +43,7 @@ import { NgxSelectOption } from "../../core/types";
     NgTemplateOutlet,
     NgxInlineErrorIconComponent,
     NgxErrorListComponent,
+    NgxOptionDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -85,7 +86,7 @@ import { NgxSelectOption } from "../../core/types";
             <span class="ngx-select__value">
               <ng-container
                 [ngTemplateOutlet]="tpl"
-                [ngTemplateOutletContext]="{ $implicit: sel }"
+                [ngTemplateOutletContext]="{ $implicit: sel, selected: true }"
               />
             </span>
           } @else {
@@ -135,7 +136,10 @@ import { NgxSelectOption } from "../../core/types";
                 >
                   <ng-container
                     [ngTemplateOutlet]="tpl"
-                    [ngTemplateOutletContext]="{ $implicit: opt }"
+                    [ngTemplateOutletContext]="{
+                      $implicit: opt,
+                      selected: opt.value === value()
+                    }"
                   />
                 </li>
               } @empty {

@@ -7,10 +7,14 @@ import {
   input,
   signal,
   viewChild,
+  contentChild,
+  TemplateRef,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
+import { NgxOptionDirective } from "../../control/option.directive";
 import {
   computeOverlayPosition,
   OverlayPosition,
@@ -37,7 +41,12 @@ import { NgxSelectOption } from "../../core/types";
 @Component({
   selector: "ngx-control-multiselect",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
+  imports: [
+    NgxInlineErrorIconComponent,
+    NgxErrorListComponent,
+    NgTemplateOutlet,
+    NgxOptionDirective,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-renderer ngx-renderer--multiselect",
@@ -81,60 +90,74 @@ import { NgxSelectOption } from "../../core/types";
       [attr.aria-disabled]="effectiveAriaDisabled()"
     >
       @for (opt of options(); track opt.value) {
-        @if (mode() === "multi") {
-          <div
-            class="ngx-chip ngx-chip--counter"
-            [class.ngx-chip--selected]="countOf(opt.value) > 0"
-            [title]="opt.label"
-          >
-            <button
-              type="button"
-              class="ngx-chip__btn"
-              [disabled]="isDisabled() || countOf(opt.value) === 0"
-              (click)="decrement(opt.value)"
-              aria-label="Decrease"
-            >
-              <svg viewBox="0 0 12 12" aria-hidden="true">
-                <line x1="3" y1="6" x2="9" y2="6" />
-              </svg>
-            </button>
-            <span class="ngx-chip__label">{{ opt.label }}</span>
-            <span class="ngx-chip__count">&times;{{ countOf(opt.value) }}</span>
-            <button
-              type="button"
-              class="ngx-chip__btn"
-              [disabled]="isDisabled()"
-              (click)="increment(opt.value)"
-              aria-label="Increase"
-            >
-              <svg viewBox="0 0 12 12" aria-hidden="true">
-                <line x1="3" y1="6" x2="9" y2="6" />
-                <line x1="6" y1="3" x2="6" y2="9" />
-              </svg>
-            </button>
-          </div>
-        } @else {
-          <button
+        @if (optionTpl(); as tpl) {
+           <button
             type="button"
-            class="ngx-chip"
-            [class.ngx-chip--selected]="isSelected(opt.value)"
+            class="ngx-chip-wrapper"
             [disabled]="isDisabled()"
-            [title]="opt.label"
-            [attr.aria-pressed]="isSelected(opt.value)"
             (click)="onToggle(opt.value)"
-            (blur)="markAsTouched()"
           >
-            @if (isSelected(opt.value)) {
-              <svg
-                class="ngx-chip__check"
-                viewBox="0 0 18 18"
-                aria-hidden="true"
-              >
-                <polyline points="3.5 9.5 7 13 14.5 5.5" />
-              </svg>
-            }
-            <span class="ngx-chip__label">{{ opt.label }}</span>
+            <ng-container
+              [ngTemplateOutlet]="tpl"
+              [ngTemplateOutletContext]="{ $implicit: opt, selected: isSelected(opt.value) }"
+            />
           </button>
+        } @else {
+          @if (mode() === "multi") {
+            <div
+              class="ngx-chip ngx-chip--counter"
+              [class.ngx-chip--selected]="countOf(opt.value) > 0"
+              [title]="opt.label"
+            >
+              <button
+                type="button"
+                class="ngx-chip__btn"
+                [disabled]="isDisabled() || countOf(opt.value) === 0"
+                (click)="decrement(opt.value)"
+                aria-label="Decrease"
+              >
+                <svg viewBox="0 0 12 12" aria-hidden="true">
+                  <line x1="3" y1="6" x2="9" y2="6" />
+                </svg>
+              </button>
+              <span class="ngx-chip__label">{{ opt.label }}</span>
+              <span class="ngx-chip__count">&times;{{ countOf(opt.value) }}</span>
+              <button
+                type="button"
+                class="ngx-chip__btn"
+                [disabled]="isDisabled()"
+                (click)="increment(opt.value)"
+                aria-label="Increase"
+              >
+                <svg viewBox="0 0 12 12" aria-hidden="true">
+                  <line x1="3" y1="6" x2="9" y2="6" />
+                  <line x1="6" y1="3" x2="6" y2="9" />
+                </svg>
+              </button>
+            </div>
+          } @else {
+            <button
+              type="button"
+              class="ngx-chip"
+              [class.ngx-chip--selected]="isSelected(opt.value)"
+              [disabled]="isDisabled()"
+              [title]="opt.label"
+              [attr.aria-pressed]="isSelected(opt.value)"
+              (click)="onToggle(opt.value)"
+              (blur)="markAsTouched()"
+            >
+              @if (isSelected(opt.value)) {
+                <svg
+                  class="ngx-chip__check"
+                  viewBox="0 0 18 18"
+                  aria-hidden="true"
+                >
+                  <polyline points="3.5 9.5 7 13 14.5 5.5" />
+                </svg>
+              }
+              <span class="ngx-chip__label">{{ opt.label }}</span>
+            </button>
+          }
         }
       }
     </div>
@@ -161,18 +184,16 @@ import { NgxSelectOption } from "../../core/types";
           (input)="onSearchInput($event)"
           (keydown.escape)="closeSearch()"
         />
-        <div class="ngx-multiselect-overlay__grid">
+        <div class="ngx-multiselect__options ngx-multiselect-overlay__grid">
           @for (opt of searchResults(); track opt.value; let i = $index) {
             @if (mode() === "multi") {
               <div
-                class="ngx-multiselect-overlay__item ngx-multiselect-overlay__item--counter"
-                [class.ngx-multiselect-overlay__item--selected]="
-                  countOf(opt.value) > 0
-                "
+                class="ngx-chip ngx-chip--counter"
+                [class.ngx-chip--selected]="countOf(opt.value) > 0"
               >
                 <button
                   type="button"
-                  class="ngx-multiselect-overlay__item-btn"
+                  class="ngx-chip__btn"
                   (click)="decrement(opt.value)"
                   [disabled]="countOf(opt.value) === 0"
                   aria-label="Decrease"
@@ -181,15 +202,15 @@ import { NgxSelectOption } from "../../core/types";
                     <line x1="3" y1="6" x2="9" y2="6" />
                   </svg>
                 </button>
-                <span class="ngx-multiselect-overlay__item-label">{{
+                <span class="ngx-chip__label">{{
                   opt.label
                 }}</span>
-                <span class="ngx-multiselect-overlay__count"
+                <span class="ngx-chip__count"
                   >&times;{{ countOf(opt.value) }}</span
                 >
                 <button
                   type="button"
-                  class="ngx-multiselect-overlay__item-btn"
+                  class="ngx-chip__btn"
                   (click)="increment(opt.value)"
                   aria-label="Increase"
                 >
@@ -202,10 +223,20 @@ import { NgxSelectOption } from "../../core/types";
             } @else {
               <button
                 type="button"
-                class="ngx-multiselect-overlay__item"
+                class="ngx-chip"
+                [class.ngx-chip--selected]="isSelected(opt.value)"
                 (click)="onOverlaySelect(opt.value)"
               >
-                {{ opt.label }}
+                @if (isSelected(opt.value)) {
+                  <svg
+                    class="ngx-chip__check"
+                    viewBox="0 0 18 18"
+                    aria-hidden="true"
+                  >
+                    <polyline points="3.5 9.5 7 13 14.5 5.5" />
+                  </svg>
+                }
+                <span class="ngx-chip__label">{{ opt.label }}</span>
               </button>
             }
           } @empty {
@@ -227,6 +258,11 @@ export class NgxMultiselectComponent<TValue = string> extends NgxBaseControl<
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
   readonly searchable = input<boolean>(false);
   readonly mode = input<"single" | "multi">("single");
+
+  /** Custom option template provided via `<ng-template ngxOption>`. */
+  protected readonly optionTpl = contentChild(NgxOptionDirective, {
+    read: TemplateRef,
+  });
 
   protected readonly fieldId = `ngx-control-multiselect-${NgxBaseControl.nextId()}`;
 
