@@ -10,6 +10,7 @@ import {
   NgxFormAdapter,
   NgxFormComponent,
   NgxFormError,
+  ngxFormSerialize,
   NgxFormSubmitEvent,
   NgxInlineErrorsDirective,
   NgxMultiselectComponent,
@@ -22,7 +23,6 @@ import {
   ngxSchemaMin,
   ngxSchemaMinLength,
   ngxSchemaRequired,
-  ngxFormSerialize,
   NgxSegmentedButtonComponent,
   NgxSelectComponent,
   NgxSelectOption,
@@ -201,6 +201,7 @@ interface ContactForm extends Record<string, unknown> {
             name="resume"
             label="Upload Resume (PDF only)"
             accept=".pdf"
+            (fileSelected)="onFileSelected($event)"
           />
 
           <ngx-control-segmented
@@ -348,6 +349,10 @@ export class AppComponent {
     this.lastSubmitResult.set(JSON.stringify(ngxFormSerialize(value), null, 2));
     console.log("Form submitted with value:", value);
   };
+  
+  onFileSelected(file: File | File[] | null): void {
+    console.log("File selected before submit:", file);
+  }
 
   onSubmitted(_event: NgxFormSubmitEvent<ContactForm>): void {
     // Event can be inspected during development via browser devtools

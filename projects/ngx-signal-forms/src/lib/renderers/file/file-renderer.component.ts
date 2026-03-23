@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, viewChild, ElementRef, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, input, viewChild, ElementRef, signal, output } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
@@ -99,6 +99,7 @@ export class NgxFileComponent extends NgxBaseControl<File | File[] | null> {
   readonly label    = input<string>("");
   readonly accept   = input<string>("");
   readonly multiple = input<boolean>(false);
+  readonly fileSelected = output<File | File[] | null>();
 
   protected readonly fieldId = `ngx-control-file-${NgxBaseControl.nextId()}`;
   protected readonly dragOver = signal(false);
@@ -137,6 +138,7 @@ export class NgxFileComponent extends NgxBaseControl<File | File[] | null> {
     if (this.fileInput()) {
       this.fileInput()!.nativeElement.value = "";
     }
+    this.fileSelected.emit(null);
   }
 
   private processFiles(files: FileList | null): void {
@@ -149,5 +151,6 @@ export class NgxFileComponent extends NgxBaseControl<File | File[] | null> {
     }
     this.markAsDirty();
     this.markAsTouched();
+    this.fileSelected.emit(this.value());
   }
 }

@@ -268,6 +268,23 @@ A modern alternative to radio buttons for small sets of options.
 
 ---
 
+## File Upload
+
+Standalone file selection with drag & drop support and immediate event emission.
+
+```html
+<ngx-control-file
+  name="resume"
+  label="Upload Resume"
+  accept=".pdf,.doc"
+  (fileSelected)="onFileSelected($event)"
+/>
+```
+
+The `fileSelected` event emits `File | File[] | null` immediately upon selection or clearing, useful for immediate uploads or client-side processing.
+
+---
+
 ## Radio Group
 
 Standard selection from a list of mutual-exclusive options.

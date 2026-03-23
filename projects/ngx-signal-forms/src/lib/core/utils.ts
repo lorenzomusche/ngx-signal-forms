@@ -5,7 +5,7 @@
  * specifically mapping native File objects into descriptive strings
  * (e.g. "[File: resume.pdf (12345 bytes)]") to prevent empty {} in JSON.stringify.
  */
-export function ngxFormSerialize(value: any): any {
+export function ngxFormSerialize(value: any): unknown {
   if (value === null || typeof value !== "object") {
     return value;
   }
