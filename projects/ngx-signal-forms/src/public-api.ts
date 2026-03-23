@@ -114,6 +114,7 @@ export { NgxSegmentedButtonComponent } from "./lib/renderers/segmented-button/se
 export { NgxTimepickerComponent } from "./lib/renderers/timepicker";
 
 // Utilities
+export { NgxA11yAnnouncer } from "./lib/core/a11y-announcer";
 export { ngxFormSerialize } from "./lib/core/utils";
 export { filterOptionsByQuery } from "./lib/core/options-utils";
 

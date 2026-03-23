@@ -10,6 +10,7 @@ import {
   computeOverlayPosition,
   OverlayPosition,
 } from "./overlay-position";
+import { NgxA11yAnnouncer } from "./a11y-announcer";
 
 /**
  * Abstract base class for components that have an overlay popup (select, pickers).
@@ -34,6 +35,8 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
   /** Reference to the host element for position calculation. */
   protected readonly hostRef = inject(ElementRef);
 
+  protected readonly announcer = inject(NgxA11yAnnouncer);
+
   /** Toggles the overlay state. */
   protected toggleOverlay(): void {
     if (this.isDisabled()) return;
@@ -46,11 +49,14 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
     this.onBeforeOpen();
     this.open.set(true);
     this.position.set(computeOverlayPosition(this.hostRef.nativeElement));
+    this.announcer.announce("Popup opened");
   }
 
   /** Closes the overlay. */
   protected closeOverlay(): void {
+    if (!this.open()) return;
     this.open.set(false);
+    this.announcer.announce("Popup closed");
   }
 
   /**
