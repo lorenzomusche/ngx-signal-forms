@@ -341,9 +341,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ngx-on-surface-variant);
+    color: inherit; /* Inherit focus color from .ngx-input-suffix */
     border-radius: 50%;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
     padding: 0;
     width: 32px;
     height: 32px;

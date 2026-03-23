@@ -316,6 +316,12 @@ textarea:has(+ .ngx-input-suffix) {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: color 0.2s;
+}
+
+.ngx-input-wrapper:focus-within .ngx-input-prefix,
+.ngx-input-wrapper:focus-within .ngx-input-suffix {
+    color: var(--ngx-input-focus-color);
 }
 
 .ngx-input-prefix {
@@ -1441,9 +1447,9 @@ button.ngx-chip:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ngx-on-surface-variant);
+    color: inherit; /* Inherit focus color from .ngx-input-suffix */
     border-radius: 50%;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
     padding: 0;
     width: 32px;
     height: 32px;
