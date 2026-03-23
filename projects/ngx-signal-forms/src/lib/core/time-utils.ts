@@ -43,6 +43,19 @@ export function buildTimeString(
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')} ${period}`;
 }
 
+/** Get the current system time in "HH:MM AM/PM" format. */
+export function getCurrentTime(): string {
+  const now = new Date();
+  let hour = now.getHours();
+  const minute = now.getMinutes();
+  const period = hour >= 12 ? 'PM' : 'AM';
+  
+  hour = hour % 12;
+  if (hour === 0) hour = 12;
+  
+  return buildTimeString(hour, minute, period);
+}
+
 // ── Angle / Selection helpers ─────────────────────────────────────────────────
 
 /** Convert an hour (1–12) to a dial angle in degrees (0 = 12 o'clock). */

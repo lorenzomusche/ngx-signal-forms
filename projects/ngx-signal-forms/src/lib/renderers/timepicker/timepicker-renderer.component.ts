@@ -8,6 +8,7 @@ import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
+import { getCurrentTime } from "../../core/time-utils";
 import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
 
 /**
@@ -114,7 +115,8 @@ export class NgxTimepickerComponent extends NgxOverlayControl<string | null> {
   protected readonly draftValue = signal<string | null>(null);
 
   protected override onBeforeOpen(): void {
-    this.draftValue.set(this.value());
+    // If empty, default to current system time so 'OK' button picks it immediately.
+    this.draftValue.set(this.value() || getCurrentTime());
   }
 
   protected onTimePicked(time: string): void {
