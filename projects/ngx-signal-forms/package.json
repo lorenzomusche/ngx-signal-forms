@@ -1,7 +1,11 @@
 {
-  "name": "ngx-signal-forms",
-  "version": "0.1.0",
-  "description": "Angular declarative Signal Forms library — type-safe, reactive, renderer-pluggable via DI tokens",
+  "name": "@ngx-signals/forms",
+  "version": "1.0.0",
+  "description": "The elite declarative form engine for Angular Signals. Typesafe, M3-optimized, and built for performance.",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/lorenzomusche"
+  },
   "keywords": [
     "angular",
     "forms",

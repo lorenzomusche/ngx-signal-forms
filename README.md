@@ -1,4 +1,4 @@
-# ngx-signal-forms
+# @ngx-signals/forms
 
 > Angular declarative form library built on the **Signal Forms API** — type-safe, reactive, renderer-pluggable via DI tokens.
 
@@ -35,17 +35,17 @@
 ### 1. Install
 
 ```bash
-npm install ngx-signal-forms
+npm install @ngx-signals/forms
 ```
 
 ### 2. Import theme
 
 ```scss
-@import "ngx-signal-forms/styles/ngx-signal-forms.css";
+@import "@ngx-signals/forms/styles/ngx-signal-forms.css";
 // Optional: Material Design 3 theme
-@import "ngx-signal-forms/styles/ngx-signal-forms-material.css";
+@import "@ngx-signals/forms/styles/ngx-signal-forms-material.css";
 // Optional: iOS theme
-@import "ngx-signal-forms/styles/ngx-signal-forms-ios.css";
+@import "@ngx-signals/forms/styles/ngx-signal-forms-ios.css";
 ```
 
 ### 3. Import components
@@ -72,7 +72,7 @@ import {
   ngxSchemaRequired,
   ngxSchemaEmail,
   ngxSchemaMinLength,
-} from 'ngx-signal-forms';
+} from '@ngx-signals/forms';
 
 @Component({
   standalone: true,
@@ -208,7 +208,7 @@ The M3 date picker (`ngx-control-datepicker`) replaces the native `<input type="
 The date picker auto-detects the browser locale via `navigator.language`. Override globally or per-component:
 
 ```ts
-import { NGX_DATE_LOCALE, buildDateLocale } from "ngx-signal-forms";
+import { NGX_DATE_LOCALE, buildDateLocale } from "@ngx-signals/forms";
 
 // Global override
 providers: [{ provide: NGX_DATE_LOCALE, useValue: buildDateLocale("it-IT") }];
@@ -385,7 +385,7 @@ import {
   schemaMax,
   schemaMinLength,
   schemaMaxLength,
-} from "ngx-signal-forms";
+} from "@ngx-signals/forms";
 
 const adapter = createSignalFormAdapter({
   model: this.model,
@@ -412,7 +412,7 @@ import {
   ngxMax,
   ngxCompose,
   ngxComposeFirst,
-} from "ngx-signal-forms";
+} from "@ngx-signals/forms";
 
 const nameValidators = ngxCompose(
   ngxRequired("Name is required"),
@@ -507,7 +507,7 @@ A Material Design 3 theme is included: `ngx-signal-forms-material.css`.
 Converts a form model into a JSON-serializable object. It automatically maps native `File` and `File[]` objects into descriptive strings (e.g., `"[File: resume.pdf (12345 bytes)]"`) to prevent them from appearing as empty `{}` when using `JSON.stringify`.
 
 ```ts
-import { ngxFormSerialize } from 'ngx-signal-forms';
+import { ngxFormSerialize } from '@ngx-signals/forms';
 
 const serialized = ngxFormSerialize(adapter.getValue());
 console.log(JSON.stringify(serialized, null, 2));
@@ -518,7 +518,7 @@ console.log(JSON.stringify(serialized, null, 2));
 ## Build
 
 ```bash
-ng build ngx-signal-forms
+ng build @ngx-signals/forms
 ```
 
 Requires Angular 21+ with `@angular/forms/signals` (experimental).
