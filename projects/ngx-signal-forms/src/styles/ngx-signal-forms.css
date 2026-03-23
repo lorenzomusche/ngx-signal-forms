@@ -1801,7 +1801,6 @@ button.ngx-chip:hover {
     flex-shrink: 0;
     /* Inherit the field background so the separator blends in */
     border-top: var(--ngx-input-border);
-    border-bottom: var(--ngx-input-border);
     padding: 0 2px;
 }
 

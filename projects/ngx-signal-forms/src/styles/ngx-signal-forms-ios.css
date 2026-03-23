@@ -542,7 +542,6 @@
 .ngx-daterange__sep {
     background: #fff;
     border-top: var(--ngx-input-border);
-    border-bottom: var(--ngx-input-border);
 }
 
 .ngx-daterange__group .ngx-daterange__input:first-of-type {

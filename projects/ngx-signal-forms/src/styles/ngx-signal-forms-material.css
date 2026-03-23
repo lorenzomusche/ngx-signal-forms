@@ -719,7 +719,6 @@
 .ngx-daterange__sep {
     background: var(--ngx-surface-container-highest);
     border: none;
-    border-bottom: 1px solid var(--ngx-on-surface-variant);
 }
 
 /* Compact inputs within the range group — filled style overrides */
