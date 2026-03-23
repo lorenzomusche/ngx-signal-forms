@@ -452,6 +452,21 @@ A Material Design 3 theme is included: `ngx-signal-forms-material.css`.
 
 ---
 
+## Utilities
+
+### `ngxFormSerialize(value: any): any`
+
+Converts a form model into a JSON-serializable object. It automatically maps native `File` and `File[]` objects into descriptive strings (e.g., `"[File: resume.pdf (12345 bytes)]"`) to prevent them from appearing as empty `{}` when using `JSON.stringify`.
+
+```ts
+import { ngxFormSerialize } from 'ngx-signal-forms';
+
+const serialized = ngxFormSerialize(adapter.getValue());
+console.log(JSON.stringify(serialized, null, 2));
+```
+
+---
+
 ## Build
 
 ```bash
