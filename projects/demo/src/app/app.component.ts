@@ -1,11 +1,12 @@
-import { UpperCasePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import {
   createSignalFormAdapter,
   NgxCheckboxComponent,
+  NgxChipsDirective,
   NgxDatePickerComponent,
   NgxDateRange,
   NgxDateRangePickerComponent,
+  NgxFileComponent,
   NgxFormAdapter,
   NgxFormComponent,
   NgxFormError,
@@ -14,18 +15,21 @@ import {
   NgxMultiselectComponent,
   NgxNumberComponent,
   NgxOptionDirective,
-  NgxSelectComponent,
-  NgxSelectOption,
-  NgxTextareaComponent,
-  NgxTextComponent,
-  NgxTimepickerComponent,
-  NgxToggleComponent,
+  NgxRadioGroupComponent,
   ngxSchemaEmail,
   ngxSchemaMax,
   ngxSchemaMaxLength,
   ngxSchemaMin,
   ngxSchemaMinLength,
   ngxSchemaRequired,
+  NgxSegmentedButtonComponent,
+  NgxSelectComponent,
+  NgxSelectOption,
+  NgxSliderComponent,
+  NgxTextareaComponent,
+  NgxTextComponent,
+  NgxTimepickerComponent,
+  NgxToggleComponent,
 } from "ngx-signal-forms";
 
 interface ContactForm extends Record<string, unknown> {
@@ -40,6 +44,10 @@ interface ContactForm extends Record<string, unknown> {
   travelDates: NgxDateRange | null;
   newsletter: boolean;
   acceptTerms: boolean;
+  preferredContact: "email" | "phone" | "sms";
+  satisfaction: number;
+  resume: File | null;
+  frequency: "daily" | "weekly" | "monthly";
 }
 
 @Component({
@@ -60,7 +68,11 @@ interface ContactForm extends Record<string, unknown> {
     NgxToggleComponent,
     NgxOptionDirective,
     NgxTimepickerComponent,
-    UpperCasePipe,
+    NgxRadioGroupComponent,
+    NgxSliderComponent,
+    NgxFileComponent,
+    NgxSegmentedButtonComponent,
+    NgxChipsDirective,
   ],
   template: `
     <div class="demo-card">
@@ -133,7 +145,7 @@ interface ContactForm extends Record<string, unknown> {
             [options]="interestOptions"
             [searchable]="true"
             mode="multi"
-          />
+          ></ngx-control-multiselect>
 
           <ngx-control-select
             name="country"
@@ -146,10 +158,7 @@ interface ContactForm extends Record<string, unknown> {
               <span style="margin-right: 0.5rem">{{
                 countryFlags[opt.value]
               }}</span>
-              <strong>{{ opt.label }}</strong>
-              <small style="margin-left: auto; color: #888">{{
-                opt.value | uppercase
-              }}</small>
+              {{ opt.label }}
             </ng-template>
           </ngx-control-select>
 
@@ -171,6 +180,33 @@ interface ContactForm extends Record<string, unknown> {
               label="Subscribe to newsletter"
             />
           </div>
+
+          <ngx-control-radio
+            name="preferredContact"
+            label="Preferred Contact Method"
+            [options]="contactOptions"
+            layout="horizontal"
+          />
+
+          <ngx-control-slider
+            name="satisfaction"
+            label="Rate your experience"
+            [min]="1"
+            [max]="10"
+            [step]="1"
+          />
+
+          <ngx-control-file
+            name="resume"
+            label="Upload Resume (PDF only)"
+            accept=".pdf"
+          />
+
+          <ngx-control-segmented
+            name="frequency"
+            label="Contact Frequency"
+            [options]="frequencyOptions"
+          />
 
           <button type="submit" [disabled]="!adapter.state.canSubmit()">
             @if (adapter.state.submitting()) {
@@ -207,6 +243,10 @@ export class AppComponent {
     travelDates: null,
     newsletter: false,
     acceptTerms: false,
+    preferredContact: "email",
+    satisfaction: 5,
+    resume: null,
+    frequency: "weekly",
   });
 
   // ── Adapter ─────────────────────────────────────────────────────────────────
@@ -239,6 +279,9 @@ export class AppComponent {
 
       // bio: max 500 chars
       ngxSchemaMaxLength(path.bio, 500);
+
+      // preferredContact: required
+      ngxSchemaRequired(path.preferredContact);
     },
   });
 
@@ -279,6 +322,18 @@ export class AppComponent {
     { value: "graphql", label: "GraphQL" },
     { value: "docker", label: "Docker" },
     { value: "ci-cd", label: "CI/CD" },
+  ];
+
+  readonly contactOptions: readonly NgxSelectOption[] = [
+    { value: "email", label: "Email" },
+    { value: "phone", label: "Phone" },
+    { value: "sms", label: "SMS" },
+  ];
+
+  readonly frequencyOptions: readonly NgxSelectOption[] = [
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
+    { value: "monthly", label: "Monthly" },
   ];
 
   // ── Submit handling ─────────────────────────────────────────────────────────

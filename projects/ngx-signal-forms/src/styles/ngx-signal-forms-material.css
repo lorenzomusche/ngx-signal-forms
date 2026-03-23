@@ -81,7 +81,7 @@
     --ngx-toggle-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
 
     /* Multiselect — filter chips */
-    --ngx-multiselect-padding: 0.25rem 0;
+    --ngx-multiselect-padding: 0.25rem 0.75rem;
     --ngx-multiselect-max-height: 5.5rem;
     --ngx-chip-height: 1.75rem;
     --ngx-chip-padding: 0 0.625rem;
@@ -95,7 +95,7 @@
     --ngx-chip-selected-color: #fff;
     --ngx-chip-selected-border: 1px solid #18181b;
     --ngx-chip-max-width: 11rem;
-    --ngx-chip-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
+    --ngx-chip-transition: 0.1s ease-out;
 
     /* Chip hover/selected hover */
     --ngx-chip-hover-bg: rgba(24, 24, 27, 0.06);
@@ -294,9 +294,232 @@
 }
 
 /* M3 focus: state layer around thumb */
-.ngx-toggle input:focus-visible+.ngx-toggle__track {
+.ngx-toggle input:focus-visible + .ngx-toggle__track {
     outline: 2px solid var(--ngx-input-focus-color);
     outline-offset: 2px;
+}
+
+/* ─── Radio Group — M3 spec (20dp outer, 10dp inner) ──────────────────────── */
+
+.ngx-radio-group-label {
+    color: var(--ngx-on-surface-variant);
+    letter-spacing: 0.006em;
+}
+
+.ngx-radio-item {
+    gap: 0.75rem;
+}
+
+.ngx-radio-circle {
+    width: 1.25rem;  /* 20px */
+    height: 1.25rem;
+    border: 2px solid var(--ngx-outline);
+    background: transparent;
+    transition: border-color 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.ngx-radio-circle::after {
+    width: 0.625rem; /* 10px */
+    height: 0.625rem;
+    background: var(--ngx-on-primary, #fff);
+    transform: translate(-50%, -50%) scale(0);
+}
+
+.ngx-radio-item input[type="radio"]:checked + .ngx-radio-circle {
+    border-color: var(--ngx-input-focus-color);
+    background: var(--ngx-input-focus-color);
+}
+
+/* State layer (hover/focus ring) */
+.ngx-radio-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0.625rem; /* center of the 20px circle */
+    width: 2.5rem;   /* 40px state layer */
+    height: 2.5rem;
+    background: var(--ngx-input-focus-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.2s, opacity 0.2s;
+    pointer-events: none;
+}
+
+.ngx-radio-item:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.08;
+}
+
+.ngx-radio-item input[type="radio"]:focus-visible + .ngx-radio-circle {
+    outline: none;
+}
+
+.ngx-radio-item input[type="radio"]:focus-visible ~ .ngx-radio-label {
+    text-decoration: underline;
+}
+
+.ngx-radio-item input[type="radio"]:focus-visible::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.12;
+}
+
+.ngx-radio-item--disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+}
+
+/* ─── Slider — M3 spec (4dp track, 20dp thumb) ───────────────────────────── */
+
+.ngx-slider {
+    background: var(--ngx-surface-container-highest);
+    height: 4px;
+}
+
+/* Chrome/Safari Thumb */
+.ngx-slider::-webkit-slider-thumb {
+    width: 1.25rem; /* 20px */
+    height: 1.25rem;
+    background: var(--ngx-input-focus-color);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    border: none;
+}
+
+/* Firefox Thumb */
+.ngx-slider::-moz-range-thumb {
+    width: 1.25rem; /* 20px */
+    height: 1.25rem;
+    background: var(--ngx-input-focus-color);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    border: none;
+}
+
+.ngx-slider:focus-visible {
+    outline: none;
+}
+
+.ngx-slider-value {
+    color: var(--ngx-on-surface);
+    font-weight: 500;
+}
+
+/* Slider State Layer */
+.ngx-slider-container {
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+/* ─── File Upload — M3 spec ─────────────────────────────────────────────── */
+
+.ngx-file-container {
+    border-color: var(--ngx-outline-variant);
+    background: var(--ngx-surface-container-low);
+    border-radius: 12px;
+}
+
+.ngx-file-container--dragover {
+    border-color: var(--ngx-input-focus-color);
+    background: var(--ngx-surface-container-high);
+}
+
+.ngx-file-button {
+    background: var(--ngx-input-focus-color);
+    border-radius: 100px;
+    padding: 0 1.5rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.ngx-file-placeholder {
+    color: var(--ngx-on-surface-variant);
+}
+
+.ngx-file-name {
+    color: var(--ngx-on-surface);
+    font-weight: 500;
+}
+
+.ngx-file-clear {
+    color: var(--ngx-error);
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.ngx-file-clear:hover {
+    opacity: 1;
+}
+
+/* ─── Chips Overlay — M3 spec ─────────────────────────────────────────── */
+
+.ngx-chip--removable {
+    padding-right: 0.5rem;
+    gap: 0.5rem;
+}
+
+.ngx-chip--removable::after {
+    content: '×';
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.ngx-chip--removable:hover::after {
+    opacity: 1;
+}
+
+/* ─── Segmented Button — M3 spec (Outlined) ────────────────────────────── */
+
+.ngx-segmented {
+    background: transparent;
+    border: 1px solid var(--ngx-outline-variant);
+    border-radius: 100px;
+    padding: 0;
+    gap: 0;
+    height: 2.5rem; /* 40px */
+}
+
+.ngx-segmented__button {
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid var(--ngx-outline-variant);
+    padding: 0 1.5rem;
+    height: 100%;
+    background: transparent;
+    color: var(--ngx-on-surface);
+    transition: background 0.2s, color 0.1s;
+}
+
+.ngx-segmented__button--first {
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+}
+
+.ngx-segmented__button--last {
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+    border-right: none;
+}
+
+.ngx-segmented__button--selected {
+    background: var(--ngx-secondary-container, #e8def8);
+    color: var(--ngx-on-secondary-container, #1d192b);
+    box-shadow: none;
+}
+
+.ngx-segmented__button--selected:hover {
+    background: var(--ngx-secondary-container-hover, #d0bcff);
+}
+
+.ngx-segmented__button:hover:not(.ngx-segmented__button--selected):not(:disabled) {
+    background: var(--ngx-surface-container-high);
+}
+
+.ngx-segmented__check {
+    width: 1.125rem; /* 18px */
+    height: 1.125rem;
 }
 
 /* ─── Custom Checkbox — high-contrast neutral ─────────────────────────────── */
@@ -332,20 +555,7 @@
     scrollbar-color: var(--ngx-outline-variant) transparent;
 }
 
-.ngx-chip:hover:not(:disabled):not(.ngx-chip--selected) {
-    background: var(--ngx-chip-hover-bg);
-    border-color: var(--ngx-chip-hover-border);
-    color: var(--ngx-chip-hover-color);
-}
-
-.ngx-chip--selected:hover:not(:disabled):not(.ngx-chip--counter) {
-    background: var(--ngx-chip-selected-hover-bg);
-    color: var(--ngx-chip-selected-hover-color);
-}
-
-.ngx-chip__btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.15);
-}
+/* Unselected/Selected hover states for chips now use base CSS filled-style for high contrast. */
 
 /* Overlay — select-style dropdown */
 .ngx-multiselect-overlay__panel {
