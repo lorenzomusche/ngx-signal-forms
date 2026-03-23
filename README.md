@@ -11,6 +11,7 @@
 
 ## Table of Contents
 - [Features](#features)
+- [Accessibility (a11y)](#accessibility-a11y)
 - [Why @ngx-signals/forms?](#why-ngx-signalsforms)
 - [Quick Start](#quick-start)
 - [Live Demo](#live-demo)
@@ -57,11 +58,24 @@
 - **Date locale (i18n)** — `NGX_DATE_LOCALE` DI token with auto-detected browser locale and `buildDateLocale()` factory
 - **Overlay positioning** — shared `computeOverlayPosition()` utility used by select, multiselect, and datepicker
 - **Theming** — CSS custom properties with base and Material Design 3 themes
+- **Rich Accessibility (a11y)** — built-in aria roles, keyboard navigation (M3), and screen reader announcements for overlays
 - **Full strict TypeScript** — no `any`, immutable arrays, functional composition
 
 ---
 
+## Accessibility (a11y)
+
+The library is designed with strict adherence to **Material Design 3 (M3)** and **WCAG** accessibility standards:
+
+- **Keyboard Navigation**: Full keyboard support across all complex components. For example, the `ngx-control-datepicker` and `ngx-control-daterange` support standard M3 calendar keys (`Arrow` keys, `PageUp/Down`, `Home/End`, `Enter`/`Space`).
+- **Screen Reader Announcements**: A zero-dependency `NgxA11yAnnouncer` service is deeply integrated into all popups (Select, Multiselect, Datepicker, Timepicker). Screen readers (VoiceOver, NVDA, etc.) are politely notified via `aria-live` regions exactly when overlays open and close.
+- **ARIA Attributes**: Components automatically manage `role="dialog"`, `role="listbox"`, `aria-expanded`, `aria-activedescendant`, `aria-selected`, and `aria-invalid` states dynamically without any boilerplate required from the developer.
+- **Focus Management**: Focus states are visually distinct, and programmatic "roving focus" is handled behind the scenes so keyboard users always know exactly where they are.
+
+---
+
 ## Why @ngx-signals/forms?
+
 
 Standard Angular Reactive Forms are powerful but can feel verbose and boilerplate-heavy, especially with the introduction of Signals.
 
