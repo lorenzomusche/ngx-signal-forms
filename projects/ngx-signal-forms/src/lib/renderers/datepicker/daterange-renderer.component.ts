@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,8 +7,8 @@ import {
   viewChild,
 } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
-import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import {
   CalendarDate,
   compareDates,
@@ -28,7 +27,6 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
   selector: "ngx-control-daterange",
   standalone: true,
   imports: [
-    NgTemplateOutlet,
     NgxRangeCalendarComponent,
     NgxControlLabelComponent,
     NgxErrorListComponent,
