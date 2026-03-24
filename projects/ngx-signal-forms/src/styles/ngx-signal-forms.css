@@ -82,6 +82,7 @@ input[type="date"]:focus,
     /* Typography */
     --ngx-label-font-weight: 600;
     --ngx-label-font-size: 0.875rem;
+    --ngx-input-line-height: 1.5;
 
     /* Inputs — M3 Filled style */
     --ngx-input-padding: 0.625rem 0.75rem;
@@ -253,6 +254,7 @@ input[type="date"]:focus,
     align-items: center;
     /* Centered for standard inputs */
     width: 100%;
+    min-height: 2.75rem;
     background-color: var(--ngx-input-bg);
     border-radius: var(--ngx-input-border-radius);
     /* Bottom indicator via box-shadow — never causes layout shift */
@@ -391,15 +393,15 @@ textarea:has(+ .ngx-input-suffix) {
 
     /* Vertical Position: Margin + Label + Mid Gap */
     --ngx-fl-label-active-top: calc(0.5rem + (var(--ngx-fl-density-val) * 0.0625rem));
-    /* 8px -> 4px */
-    --ngx-fl-gap-mid: calc(0.25rem + (var(--ngx-fl-density-val) * 0.03125rem));
+    /* Vertical Position: Margin + Label + Mid Gap (Reduced gap to give more room for line-height) */
+    --ngx-fl-gap-mid: calc(0.125rem + (var(--ngx-fl-density-val) * 0.03125rem));
     /* 4px -> 2px */
 
     /* Final Padding Top (Mathematical Baseline) */
     --ngx-fl-pad-top: calc(var(--ngx-fl-label-active-top) + var(--ngx-fl-label-height) + var(--ngx-fl-gap-mid));
 
-    /* Baseline Bottom padding */
-    --ngx-fl-pad-bottom: calc(var(--ngx-floating-input-height) - var(--ngx-fl-pad-top) - 1.1rem);
+    /* Baseline Bottom padding: 1.5rem is the allocated space for text with line-height 1.5 */
+    --ngx-fl-pad-bottom: calc(var(--ngx-floating-input-height) - var(--ngx-fl-pad-top) - 1.45rem);
 
     --ngx-floating-input-padding: var(--ngx-fl-pad-top) 1rem var(--ngx-fl-pad-bottom);
 
@@ -443,16 +445,17 @@ textarea:has(+ .ngx-input-suffix) {
     padding-top: var(--ngx-fl-pad-top-textarea) !important;
 }
 
-/* Fix for native Select: its baseline is often irregular, forced alignment here */
+/* Fix for native Select: its baseline is often irregular, forced alignment here to avoid bottom clip */
 .ngx-renderer.ngx-floating-label .ngx-input-wrapper select {
-    padding-top: calc(var(--ngx-fl-pad-top) + 2px) !important;
-    line-height: 1.25 !important;
+    padding-top: calc(var(--ngx-fl-pad-top) - 1px) !important;
+    padding-bottom: 0 !important;
+    line-height: var(--ngx-input-line-height) !important;
 }
 
-/* Custom trigger requires flex to align internal spans */
+/* Custom trigger requires flex to align internal spans (Aligned to flex-start to match input padding) */
 .ngx-renderer.ngx-floating-label .ngx-input-wrapper .ngx-select__trigger {
     display: flex;
-    align-items: center; /* Ensures content is centered in the box, matching standard inputs */
+    align-items: flex-start;
 }
 
 /* Fix for native Select: hide text when the label is resting in the center to avoid overlap with placeholder */
@@ -663,6 +666,7 @@ textarea:has(+ .ngx-input-suffix) {
     outline: none;
     color: var(--ngx-input-color);
     font-size: var(--ngx-input-font-size);
+    line-height: var(--ngx-input-line-height);
 }
 
 .ngx-renderer select,
@@ -1216,7 +1220,7 @@ textarea:has(+ .ngx-input-suffix) {
     padding: var(--ngx-chip-padding);
     font-size: var(--ngx-chip-font-size);
     font-family: inherit;
-    line-height: 1;
+    line-height: var(--ngx-input-line-height);
     border: var(--ngx-chip-border);
     border-radius: var(--ngx-chip-border-radius);
     background: var(--ngx-chip-bg);
@@ -1444,13 +1448,14 @@ button.ngx-chip:hover {
 
 .ngx-select__trigger {
     display: flex;
-    align-items: center;
+    align-items: center; /* Centering for standard inputs (non-floating) */
     justify-content: space-between;
     width: 100%;
     padding: var(--ngx-input-padding);
     border: none;
     background: transparent;
     font-size: var(--ngx-input-font-size);
+    line-height: var(--ngx-input-line-height);
     color: var(--ngx-input-color);
     cursor: pointer;
     text-align: left;
@@ -1554,6 +1559,7 @@ button.ngx-chip:hover {
     border: none;
     border-bottom: 1px solid var(--ngx-select-border-subtle);
     font-size: var(--ngx-input-font-size);
+    line-height: var(--ngx-input-line-height);
     font-family: inherit;
     color: var(--ngx-input-color);
     outline: none;
@@ -1584,6 +1590,8 @@ button.ngx-chip:hover {
     display: flex;
     align-items: center;
     padding: var(--ngx-select-option-padding);
+    font-size: var(--ngx-input-font-size);
+    line-height: var(--ngx-input-line-height);
     cursor: pointer;
     transition: background 0.1s;
 }
