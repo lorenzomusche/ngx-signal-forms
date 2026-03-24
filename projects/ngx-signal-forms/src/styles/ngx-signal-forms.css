@@ -1626,26 +1626,45 @@ button.ngx-chip:hover {
 }
 
 .ngx-control__inline-errors-tooltip {
-    display: none;
+    opacity: 0;
+    visibility: hidden;
     position: absolute;
     left: 50%;
-    bottom: calc(100% + 0.375rem);
-    transform: translateX(-50%);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+    bottom: calc(100% + 0.5rem);
+    transform: translateX(-50%) scale(0.95);
+    padding: 0.375rem 0.625rem;
+    border-radius: 4px;
     background: var(--ngx-error-color);
     color: #fff;
     font-size: var(--ngx-error-font-size);
-    font-weight: 400;
+    font-weight: 500;
+    line-height: 1.2;
     white-space: nowrap;
     z-index: 1000;
     pointer-events: none;
+    transition: opacity 0.1s ease-out, transform 0.1s ease-out, visibility 0.1s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.ngx-control__inline-errors-tooltip::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--ngx-error-color);
 }
 
 .ngx-control__inline-errors:hover .ngx-control__inline-errors-tooltip,
 .ngx-control__inline-errors:focus-within .ngx-control__inline-errors-tooltip,
-.ngx-control__inline-errors:focus .ngx-control__inline-errors-tooltip {
-    display: block;
+.ngx-control__inline-errors:focus .ngx-control__inline-errors-tooltip,
+.ngx-renderer:has(:focus):not(.ngx-renderer--open) .ngx-control__inline-errors-tooltip,
+.ngx-renderer:focus-within:not(.ngx-renderer--open) .ngx-control__inline-errors-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
 }
 
 /* ─── Date Picker ─────────────────────────────────────────────────────────── */

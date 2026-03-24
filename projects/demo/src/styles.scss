@@ -2,16 +2,16 @@
 @use 'sass:color';
 @use 'color-scheme' as ngx;
 
-// @import 'ngx-signal-forms/styles/ngx-signal-forms.css';
-@import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
+@import 'ngx-signal-forms/styles/ngx-signal-forms.css';
+// @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
 // @import 'ngx-signal-forms/styles/ngx-signal-forms-ios.css';
 // @import 'ngx-signal-forms/styles/ngx-signal-forms-ionic.css';
 
 /* Apply a custom color scheme — change the color to theme the entire form */
 $primary: #3a3a3a;
 
-@include ngx.color-scheme($primary, $settings: (prefer-light-text: true));
-@include ngx.color-scheme-dark($primary, $settings: (prefer-light-text: true));
+// @include ngx.color-scheme($primary, $settings: (prefer-light-text: true));
+// @include ngx.color-scheme-dark($primary, $settings: (prefer-light-text: true));
 
 /*
  * Available themes:

@@ -50,7 +50,7 @@ interface ContactForm extends Record<string, unknown> {
   age: number | null;
   country: string | null;
   province: string | null;
-  visitedProvinces: ReadonlyArray<string>;
+  provinceMs: ReadonlyArray<string>;
   birthDate: string | null;
   appointmentTime: string | null;
   bio: string;
@@ -253,19 +253,18 @@ interface ContactForm extends Record<string, unknown> {
 
           <ngx-control-select
             name="province"
-            label="Province / State"
+            label="Province / State (Select)"
             placeholder="Select a province…"
             [ngxDependsOn]="'country'"
             [ngxOptionsMap]="provincesByCountry"
           />
 
           <ngx-control-multiselect
-            name="visitedProvinces"
-            label="Visited Provinces"
+            name="provinceMs"
+            label="Province / State (MultiSelect)"
             [ngxDependsOn]="'country'"
             [ngxOptionsMap]="provincesByCountry"
             [searchable]="true"
-            mode="multi"
           />
 
           <ngx-control-textarea
@@ -366,7 +365,7 @@ export class AppComponent {
     birthDate: null,
     country: "it",
     province: "RM",
-    visitedProvinces: [],
+    provinceMs: ["RM"],
     appointmentTime: null,
     bio: "",
     interests: ["testing"],

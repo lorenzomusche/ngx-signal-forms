@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { NgxInlineErrorIconComponent } from "./inline-error-icon.component";
+
 /**
  * Shared label + optional inline-error-icon block.
  *
@@ -17,6 +19,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 @Component({
   selector: "ngx-control-label",
   standalone: true,
+  imports: [NgxInlineErrorIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `
@@ -26,7 +29,6 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
         class="ngx-label" 
         [class.ngx-label--filled]="filled()"
         [class.ngx-label--has-error]="showInlineError()"
-        [title]="showInlineError() ? errorText() : null"
       >
         {{ label() }}
         @if (required()) {
@@ -36,6 +38,9 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
             aria-hidden="true"
             >*</span
           >
+        }
+        @if (showInlineError()) {
+          <ngx-inline-error-icon [errorText]="errorText()" />
         }
       </label>
     }
