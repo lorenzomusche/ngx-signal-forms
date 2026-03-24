@@ -91,6 +91,8 @@ export { NgxInlineErrorsDirective } from "./lib/control/inline-errors.directive"
 export { NgxConditionalOptionsDirective } from "./lib/control/conditional-options.directive";
 export { NgxOptionDirective } from "./lib/control/option.directive";
 export { NgxChipsDirective } from "./lib/control/chips.directive";
+export { NgxFloatingLabelsDirective } from "./lib/form/ngx-floating-labels.directive";
+export { NGX_FLOATING_LABELS } from "./lib/core/tokens";
 
 // ─── Built-in renderer components ────────────────────────────────────────────
 export { NgxCheckboxComponent } from "./lib/renderers/checkbox/checkbox-renderer.component";

@@ -13,6 +13,7 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
   imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--textarea",
     "[class.ngx-inline-errors]": "inlineErrors",
   },
@@ -25,20 +26,32 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
       [showInlineError]="inlineErrors && touched() && hasErrors()"
       [errorText]="inlineErrorText()"
     />
-    <textarea
-      [id]="fieldId"
-      [placeholder]="placeholder()"
-      [value]="value()"
-      [disabled]="isDisabled()"
-      [rows]="rows()"
-      (input)="onInput($event)"
-      (blur)="markAsTouched()"
-      [attr.aria-invalid]="hasErrors()"
-      [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
-      [attr.aria-required]="ariaRequired() || isRequired()"
-      [attr.aria-disabled]="effectiveAriaDisabled()"
-      [attr.aria-label]="label() || null"
-    ></textarea>
+    <div class="ngx-input-wrapper">
+      @if (prefix(); as p) {
+        <div class="ngx-input-prefix">
+          <ng-container [ngTemplateOutlet]="p.template" />
+        </div>
+      }
+      <textarea
+        [id]="fieldId"
+        [placeholder]="placeholder()"
+        [value]="value() ?? ''"
+        [disabled]="isDisabled()"
+        [rows]="rows()"
+        (input)="onInput($event)"
+        (blur)="markAsTouched()"
+        [attr.aria-invalid]="hasErrors()"
+        [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+        [attr.aria-required]="ariaRequired() || isRequired()"
+        [attr.aria-disabled]="effectiveAriaDisabled()"
+        [attr.aria-label]="label() || null"
+      ></textarea>
+      @if (suffix(); as s) {
+        <div class="ngx-input-suffix">
+          <ng-container [ngTemplateOutlet]="s.template" />
+        </div>
+      }
+    </div>
     
     @if (supportingText(); as st) {
       <div class="ngx-supporting-text">

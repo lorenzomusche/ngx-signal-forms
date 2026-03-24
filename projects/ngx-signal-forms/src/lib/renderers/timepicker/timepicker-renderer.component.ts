@@ -27,6 +27,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './timepicker-renderer.component.scss',
   host: {
+    "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--timepicker",
     "[class.ngx-inline-errors]": "inlineErrors",
     "(document:click)": "onDocumentClick($event)",

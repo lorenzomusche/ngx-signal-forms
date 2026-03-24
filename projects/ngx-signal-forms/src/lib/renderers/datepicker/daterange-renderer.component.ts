@@ -33,6 +33,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--datepicker ngx-renderer--daterange",
     "[class.ngx-inline-errors]": "inlineErrors",
     "(document:click)": "onDocumentClick($event)",

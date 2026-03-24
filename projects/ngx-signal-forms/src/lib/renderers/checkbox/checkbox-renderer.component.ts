@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
-import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.component";
-import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 
 /**
  * Checkbox renderer component.
@@ -14,7 +12,7 @@ import { NgxControlLabelComponent } from "../../control/ngx-control-label.compon
 @Component({
   selector: "ngx-control-checkbox",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent, NgxControlLabelComponent],
+  imports: [NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-renderer ngx-renderer--checkbox" },
   template: `
@@ -32,16 +30,15 @@ import { NgxControlLabelComponent } from "../../control/ngx-control-label.compon
         [attr.aria-disabled]="effectiveAriaDisabled()"
         [attr.aria-label]="label() || null"
       />
-      @if (label()) {
-        <ngx-control-label
-          [label]="label()"
-          [forId]="fieldId"
-          [required]="isRequired()"
-          [filled]="!!value()"
-          [showInlineError]="inlineErrors && touched() && hasErrors()"
-          [errorText]="inlineErrorText()"
-        />
-      }
+      <span
+        class="ngx-label"
+        [title]="(inlineErrors && touched() && hasErrors()) ? inlineErrorText() : null"
+      >
+        {{ label() }}
+        @if (label() && isRequired()) {
+          <span class="ngx-label__required" aria-hidden="true">*</span>
+        }
+      </span>
     </label>
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />

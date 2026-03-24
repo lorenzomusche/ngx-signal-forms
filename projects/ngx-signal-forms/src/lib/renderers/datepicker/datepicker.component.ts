@@ -28,6 +28,7 @@ import { NgxCalendarComponent } from "./calendar.component";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--datepicker",
     "[class.ngx-inline-errors]": "inlineErrors",
     "(document:click)": "onDocumentClick($event)",

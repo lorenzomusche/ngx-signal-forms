@@ -19,6 +19,7 @@ import { NgxNumberSpinButtonsDirective } from "./number-spin-buttons.directive";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--number",
     "[class.ngx-inline-errors]": "inlineErrors",
   },

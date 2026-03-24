@@ -17,6 +17,7 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
   imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--text",
     "[class.ngx-inline-errors]": "inlineErrors",
   },
