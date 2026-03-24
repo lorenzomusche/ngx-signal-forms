@@ -189,7 +189,7 @@ input[type="date"]:focus,
     --ngx-datepicker-popup-border: var(--ngx-select-dropdown-border);
     --ngx-datepicker-popup-border-radius: var(--ngx-select-dropdown-border-radius);
     --ngx-datepicker-popup-shadow: var(--ngx-select-dropdown-shadow);
-    --ngx-datepicker-icon-size: 1.25rem;
+    --ngx-datepicker-icon-size: 1.5rem;
 
     /* Surface & semantic colors (M3-like tokens) */
     --ngx-surface: #fff;
@@ -1769,8 +1769,9 @@ button.ngx-chip:hover {
     display: block;
 }
 
-.ngx-datepicker__toggle:hover:not(:disabled) {
-    background-color: rgba(0, 0, 0, 0.06);
+.ngx-datepicker__toggle:hover:not(:disabled),
+.ngx-timepicker__toggle:hover:not(:disabled) {
+    background-color: var(--ngx-surface-container-highest);
 }
 
 .ngx-datepicker__input {
@@ -1784,7 +1785,8 @@ button.ngx-chip:hover {
 
 /* The suffix that wraps the toggle should have no extra padding —
    the toggle itself is absolutely positioned. */
-.ngx-datepicker .ngx-input-suffix {
+.ngx-datepicker .ngx-input-suffix,
+.ngx-timepicker .ngx-input-suffix {
     padding: 0;
     width: 40px;
     position: relative;
@@ -1827,7 +1829,8 @@ button.ngx-chip:hover {
     right: 0;
 }
 
-.ngx-datepicker__backdrop {
+.ngx-datepicker__backdrop,
+.ngx-timepicker__backdrop {
     position: fixed;
     inset: 0;
     z-index: 999;
@@ -1835,7 +1838,8 @@ button.ngx-chip:hover {
     transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.ngx-datepicker__popup--overlay {
+.ngx-datepicker__popup--overlay,
+.ngx-timepicker__popup--overlay {
     position: fixed;
     z-index: 1000;
     top: 50%;

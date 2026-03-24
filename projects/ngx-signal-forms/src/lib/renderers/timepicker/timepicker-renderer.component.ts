@@ -131,7 +131,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
 })
 export class NgxTimepickerComponent extends NgxOverlayControl<string | null> {
   readonly placeholder = input<string>("hh:mm AM/PM");
-  protected override readonly minSpace = 480;
+  protected override readonly minSpace = 440;
   protected override readonly minWidth = 320;
 
   protected readonly fieldId = `ngx-control-timepicker-${NgxBaseControl.nextId()}`;
