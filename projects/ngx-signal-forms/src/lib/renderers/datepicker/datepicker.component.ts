@@ -96,6 +96,7 @@ import { NgxCalendarComponent } from "./calendar.component";
           class="ngx-datepicker__popup"
           [class.ngx-datepicker__popup--above]="position() === 'above'"
           [class.ngx-datepicker__popup--overlay]="position() === 'overlay'"
+          [class.ngx-datepicker__popup--right]="alignment() === 'right'"
         >
           <ngx-calendar
             #calendar
@@ -124,6 +125,8 @@ export class NgxDatePickerComponent extends NgxOverlayControl<string | null> {
   readonly placeholder = input<string>("YYYY-MM-DD");
   readonly minDate = input<string | null>(null);
   readonly maxDate = input<string | null>(null);
+  protected override readonly minSpace = 380;
+  protected override readonly minWidth = 320;
 
   protected readonly fieldId = `ngx-control-datepicker-${NgxBaseControl.nextId()}`;
 

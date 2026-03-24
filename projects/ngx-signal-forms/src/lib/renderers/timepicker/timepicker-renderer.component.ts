@@ -106,6 +106,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
           class="ngx-timepicker__popup"
           [class.ngx-timepicker__popup--above]="position() === 'above'"
           [class.ngx-timepicker__popup--overlay]="position() === 'overlay'"
+          [class.ngx-timepicker__popup--right]="alignment() === 'right'"
         >
           <ngx-timepicker-clock
             [value]="draftValue()"
@@ -130,6 +131,8 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
 })
 export class NgxTimepickerComponent extends NgxOverlayControl<string | null> {
   readonly placeholder = input<string>("hh:mm AM/PM");
+  protected override readonly minSpace = 480;
+  protected override readonly minWidth = 320;
 
   protected readonly fieldId = `ngx-control-timepicker-${NgxBaseControl.nextId()}`;
   protected readonly draftValue = signal<string | null>(null);

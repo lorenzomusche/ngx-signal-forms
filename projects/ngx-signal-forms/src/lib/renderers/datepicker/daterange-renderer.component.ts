@@ -17,6 +17,7 @@ import {
   parseIsoDate,
 } from "../../core/date-utils";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
+import { OverlayAlignment } from "../../core/overlay-position";
 import { NgxDateRange } from "../../core/types";
 import { NgxRangeCalendarComponent } from "./range-calendar.component";
 
@@ -126,6 +127,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
           class="ngx-datepicker__popup"
           [class.ngx-datepicker__popup--above]="position() === 'above'"
           [class.ngx-datepicker__popup--overlay]="position() === 'overlay'"
+          [class.ngx-datepicker__popup--right]="alignment() === 'right'"
         >
           <ngx-range-calendar
             #calendar
@@ -156,6 +158,9 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
   readonly endPlaceholder = input<string>("End");
   readonly minDate = input<string | null>(null);
   readonly maxDate = input<string | null>(null);
+  protected override readonly minSpace = 400;
+  protected override readonly minWidth = 350;
+  protected override readonly preferredAlignment: OverlayAlignment = "right";
 
   protected readonly fieldId = `ngx-daterange-${NgxBaseControl.nextId()}`;
 

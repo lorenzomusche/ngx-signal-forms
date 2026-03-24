@@ -1,7 +1,3 @@
-:host {
-    // Inherit display: flex from .ngx-renderer class
-}
-
 // ── Container ────────────────────────────────────────────────────────────────
 //
 // All --tp-* tokens cascade from global --ngx-* workspace tokens.
@@ -36,7 +32,11 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: fit-content; // Shrink to content as requested
+    width: fit-content;
+    max-width: 95vw;
+    max-height: 95vh;
+    overflow-y: auto;
+    box-sizing: border-box;
     font-family: var(--ngx-font-family, "Roboto", sans-serif);
 }
 
@@ -377,14 +377,26 @@
         margin-top: 0;
         margin-bottom: 4px;
     }
+
+    &--right:not(&--overlay) {
+        left: auto;
+        right: 0;
+    }
+
+    &--overlay {
+        position: fixed;
+        z-index: 1001;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+    }
 }
 
 .ngx-timepicker__backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
     z-index: 999;
-    background: transparent;
+    background: var(--ngx-overlay-backdrop-bg, rgba(0, 0, 0, 0.4));
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
