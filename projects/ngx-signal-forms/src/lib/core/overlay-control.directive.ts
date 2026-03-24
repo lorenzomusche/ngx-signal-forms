@@ -60,6 +60,10 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
   /** Preferred horizontal alignment. Default 'left'. */
   protected readonly preferredAlignment: OverlayAlignment = "left";
 
+  /** Preferred vertical position. Defaults to 'below'. */
+  protected readonly preferredPosition: "above" | "below" = "below";
+
+
   /** Opens the overlay and recalculates its position. */
   protected openOverlay(): void {
     if (this.isDisabled() || this.open()) return;
@@ -70,7 +74,9 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
       minSpace: this.minSpace,
       minWidth: this.minWidth,
       preferredAlignment: this.preferredAlignment,
+      preferredPosition: this.preferredPosition,
     });
+
 
     this.position.set(result.position);
 

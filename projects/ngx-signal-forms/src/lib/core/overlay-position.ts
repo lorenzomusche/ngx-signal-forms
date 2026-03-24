@@ -26,6 +26,8 @@ export interface OverlayPositionConfig {
   readonly minWidth?: number;
   /** Preferred horizontal alignment. */
   readonly preferredAlignment?: OverlayAlignment;
+  /** Preferred vertical position. Defaults to 'below'. */
+  readonly preferredPosition?: "above" | "below";
 }
 
 const DEFAULT_MIN_SPACE = 128;
@@ -35,7 +37,7 @@ const DEFAULT_MIN_WIDTH = 250;
  * Compute the best overlay position for a popup relative to a trigger.
  *
  * Strategy:
- *   1. Evaluate Vertical Slot (Below then Above).
+ *   1. Evaluate Vertical Slots (User preference, then fallback to other).
  *   2. For each slot, try Horizontal alignment (Prefer requested alignment, then fallback to other).
  *   3. If a slot fits both vertically and horizontally → Return it.
  *   4. If no anchored slot fits → `'overlay'` (centered).
@@ -50,7 +52,9 @@ export function computeOverlayPosition(
 ): ComputedPosition {
   const minSpace = config?.minSpace ?? DEFAULT_MIN_SPACE;
   const minWidth = config?.minWidth ?? DEFAULT_MIN_WIDTH;
-  const pref = config?.preferredAlignment ?? "left";
+  const prefAlign = config?.preferredAlignment ?? "left";
+  const prefPos = config?.preferredPosition ?? "below";
+
   const rect = triggerElement.getBoundingClientRect();
 
   const spaceBelow = window.innerHeight - rect.bottom;
@@ -62,16 +66,23 @@ export function computeOverlayPosition(
   const fitsLeft = rect.left + minWidth <= window.innerWidth - 12;
   const fitsRight = rect.right >= minWidth + 12;
 
-  // Attempt each vertical slot
-  for (const pos of ["below", "above"] as const) {
+  // Horizontal preference order
+  const alignments: OverlayAlignment[] =
+    prefAlign === "left" ? ["left", "right"] : ["right", "left"];
+
+  // Vertical preference order
+  const positions: OverlayPosition[] =
+    prefPos === "below" ? ["below", "above"] : ["above", "below"];
+
+  // Attempt each vertical slot in order of preference
+  for (const pos of positions) {
     const fitsVertical = pos === "below" ? fitsBelow : fitsAbove;
     if (fitsVertical) {
-      if (pref === "left") {
-        if (fitsLeft) return { position: pos, alignment: "left" };
-        if (fitsRight) return { position: pos, alignment: "right" };
-      } else {
-        if (fitsRight) return { position: pos, alignment: "right" };
-        if (fitsLeft) return { position: pos, alignment: "left" };
+      for (const align of alignments) {
+        const fitsHorizontal = align === "left" ? fitsLeft : fitsRight;
+        if (fitsHorizontal) {
+          return { position: pos, alignment: align };
+        }
       }
     }
   }
@@ -79,3 +90,4 @@ export function computeOverlayPosition(
   // Fallback to Centered Overlay
   return { position: "overlay", alignment: "left" };
 }
+

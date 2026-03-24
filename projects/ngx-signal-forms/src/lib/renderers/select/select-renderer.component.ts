@@ -224,8 +224,10 @@ export class NgxSelectComponent<TValue = string>
   extends NgxOptionsOverlayControl<TValue | null, TValue>
   implements NgxOptionsControl<TValue> {
   readonly placeholder = input<string>("");
+  protected override readonly minSpace = 250;
 
   /** Custom option template provided via `<ng-template ngxOption>`. */
+
   protected readonly optionTpl = contentChild(NgxOptionDirective, {
     read: TemplateRef,
   });
