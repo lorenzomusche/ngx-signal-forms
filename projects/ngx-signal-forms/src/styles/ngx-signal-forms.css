@@ -1213,7 +1213,8 @@ textarea:has(+ .ngx-input-suffix) {
 .ngx-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.125rem;
+    justify-content: center;
+    gap: 0;
     height: var(--ngx-chip-height);
     max-width: var(--ngx-chip-max-width);
     padding: var(--ngx-chip-padding);
@@ -1228,6 +1229,20 @@ textarea:has(+ .ngx-input-suffix) {
     user-select: none;
     white-space: nowrap;
     transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    --ngx-chip-check-reserve: 1.25em;
+}
+
+.ngx-chip:not(.ngx-chip--counter)::before,
+.ngx-chip:not(.ngx-chip--counter)::after {
+    content: '';
+    width: calc(var(--ngx-chip-check-reserve) / 2);
+    flex-shrink: 0;
+    transition: width var(--ngx-chip-transition);
+}
+
+.ngx-chip--selected:not(.ngx-chip--counter)::before,
+.ngx-chip--selected:not(.ngx-chip--counter)::after {
+    width: 0;
 }
 
 button.ngx-chip:hover {
@@ -1242,7 +1257,7 @@ button.ngx-chip:hover {
 }
 
 .ngx-chip__check {
-    width: 1em;
+    width: 0;
     height: 1em;
     flex-shrink: 0;
     fill: none;
@@ -1250,6 +1265,16 @@ button.ngx-chip:hover {
     stroke-width: 2.5;
     stroke-linecap: round;
     stroke-linejoin: round;
+    opacity: 0;
+    visibility: hidden;
+    transition: width var(--ngx-chip-transition), opacity var(--ngx-chip-transition), margin var(--ngx-chip-transition);
+}
+
+.ngx-chip--selected .ngx-chip__check {
+    width: 1em;
+    opacity: 1;
+    visibility: visible;
+    margin-right: 0.25em;
 }
 
 .ngx-chip--selected {

@@ -143,15 +143,13 @@ import { NgxOptionsControl } from "../../core/types";
               (click)="onToggle(opt.value)"
               (blur)="markAsTouched()"
             >
-              @if (isSelected(opt.value)) {
-                <svg
-                  class="ngx-chip__check"
-                  viewBox="0 0 18 18"
-                  aria-hidden="true"
-                >
-                  <polyline points="3.5 9.5 7 13 14.5 5.5" />
-                </svg>
-              }
+              <svg
+                class="ngx-chip__check"
+                viewBox="0 0 18 18"
+                aria-hidden="true"
+              >
+                <polyline points="3.5 9.5 7 13 14.5 5.5" />
+              </svg>
               <span class="ngx-chip__label">{{ opt.label }}</span>
             </button>
           }
@@ -224,15 +222,13 @@ import { NgxOptionsControl } from "../../core/types";
                 [class.ngx-chip--selected]="isSelected(opt.value)"
                 (click)="onOverlaySelect(opt.value)"
               >
-                @if (isSelected(opt.value)) {
-                  <svg
-                    class="ngx-chip__check"
-                    viewBox="0 0 18 18"
-                    aria-hidden="true"
-                  >
-                    <polyline points="3.5 9.5 7 13 14.5 5.5" />
-                  </svg>
-                }
+                <svg
+                  class="ngx-chip__check"
+                  viewBox="0 0 18 18"
+                  aria-hidden="true"
+                >
+                  <polyline points="3.5 9.5 7 13 14.5 5.5" />
+                </svg>
                 <span class="ngx-chip__label">{{ opt.label }}</span>
               </button>
             }
