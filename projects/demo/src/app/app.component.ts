@@ -7,6 +7,7 @@ import {
   NgxDateRange,
   NgxDateRangePickerComponent,
   NgxFileComponent,
+  NgxFloatingLabelsDirective,
   NgxFormAdapter,
   NgxFormComponent,
   NgxFormError,
@@ -83,6 +84,7 @@ interface ContactForm extends Record<string, unknown> {
     NgxSuffixDirective,
     NgxSupportingTextDirective,
     NgxConditionalOptionsDirective,
+    NgxFloatingLabelsDirective,
   ],
   template: `
     <div class="demo-card">
@@ -95,6 +97,7 @@ interface ContactForm extends Record<string, unknown> {
         <ngx-form
           [adapter]="adapter"
           [action]="submitAction"
+          [ngxFloatingLabels]="true"
           (submitted)="onSubmitted($event)"
         >
           <div class="form-row">

@@ -21,7 +21,11 @@ import { NgxA11yAnnouncer } from "./a11y-announcer";
  * - Outside click detection to close the popup.
  * - `wrapper` viewChild for position calculations.
  */
-@Directive()
+@Directive({
+  host: {
+    "[class.ngx-renderer--open]": "open()",
+  },
+})
 export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
   /** Signal tracking if the overlay is currently open. */
   protected readonly open = signal(false);
