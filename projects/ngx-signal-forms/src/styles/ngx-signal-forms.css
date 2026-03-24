@@ -2071,11 +2071,13 @@ button.ngx-chip:hover {
 }
 
 /* Compact inputs — sized to ISO date width, pushed left */
-.ngx-daterange__input {
-    flex: 0 0 auto;
-    width: 6.5rem;
-    min-width: 0;
+.ngx-input-wrapper.ngx-daterange__group .ngx-daterange__input {
+    flex: 0 0 auto !important;
+    width: 8.5rem !important;
+    min-width: 0 !important;
     text-align: center;
+    padding-left: 0.4rem !important;
+    padding-right: 0.4rem !important;
     font-variant-numeric: tabular-nums;
     font-size: clamp(0.9rem, 2.5vw, 1.05rem);
 }
@@ -2105,22 +2107,24 @@ button.ngx-chip:hover {
     outline: none;
 }
 
-/* Push the calendar toggle to the far right */
-.ngx-daterange__group .ngx-datepicker__toggle {
-    margin-left: auto;
+/* Push the calendar toggle and any suffix to the far right */
+.ngx-input-wrapper.ngx-daterange__group .ngx-input-suffix {
+    margin-left: auto !important;
+}
+
+.ngx-input-wrapper.ngx-daterange__group .ngx-datepicker__toggle {
+    flex-shrink: 0;
 }
 
 /* Thin separator between inputs */
 .ngx-daterange__sep {
     display: flex;
     align-items: center;
-    padding: 0 0.125rem;
+    padding: 0 0.5rem;
     font-size: var(--ngx-datepicker-cell-font-size, 0.875rem);
     color: var(--ngx-on-surface-variant, #666);
     user-select: none;
     border: none;
-    /* Inherit the field background so the separator blends in */
-    padding: 0 2px;
 }
 
 /* Focus ring for datepicker input group */

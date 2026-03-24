@@ -55,7 +55,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
     }
 
     <div class="ngx-datepicker" #wrapper>
-      <div class="ngx-input-wrapper" [class.ngx-input-wrapper--disabled]="isDisabled()">
+      <div class="ngx-input-wrapper ngx-daterange__group" [class.ngx-input-wrapper--disabled]="isDisabled()">
         <input
           #startInput
           type="text"
@@ -158,8 +158,8 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
   readonly endPlaceholder = input<string>("End");
   readonly minDate = input<string | null>(null);
   readonly maxDate = input<string | null>(null);
-  protected override readonly minSpace = 400;
-  protected override readonly minWidth = 350;
+  protected override readonly minSpace = 350;
+  protected override readonly minWidth = 330;
   protected override readonly preferredAlignment: OverlayAlignment = "right";
 
   protected readonly fieldId = `ngx-daterange-${NgxBaseControl.nextId()}`;
