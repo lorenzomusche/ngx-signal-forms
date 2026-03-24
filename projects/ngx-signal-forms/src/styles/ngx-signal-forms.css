@@ -367,36 +367,43 @@ textarea:has(+ .ngx-input-suffix) {
 .ngx-renderer.ngx-floating-label {
     /* Base Atomic Units */
     --ngx-fl-density-val: var(--ngx-floating-density, -2);
-    
+
     /* Variable exposed for TS ResizeObserver to perfectly align label offset */
     --ngx-fl-input-padding-with-prefix: 0.75rem;
 
-    --ngx-fl-label-height: 0.75rem; /* Standard 12px for M3 floating labels */
-    
+    --ngx-fl-label-height: 0.75rem;
+    /* Standard 12px for M3 floating labels */
+
     /* Prefix Composition Math (3.25rem = 52px total shift) */
-    --ngx-prefix-pad-left: 1rem;   /* 16px */
-    --ngx-prefix-icon-area: 2rem;  /* 32px (includes icon + inner margin) */
-    --ngx-prefix-spacer: 0.25rem;  /* 4px gap to input text */
+    --ngx-prefix-pad-left: 1rem;
+    /* 16px */
+    --ngx-prefix-icon-area: 2rem;
+    /* 32px (includes icon + inner margin) */
+    --ngx-prefix-spacer: 0.25rem;
+    /* 4px gap to input text */
     --ngx-fl-prefix-width: calc(var(--ngx-prefix-pad-left) + var(--ngx-prefix-icon-area) + var(--ngx-prefix-spacer));
-    
+
     /* Dynamic Heights */
-    --ngx-fl-height: calc(3.5rem + (var(--ngx-fl-density-val) * 0.25rem)); /* 56 -> 40px */
+    --ngx-fl-height: calc(3.5rem + (var(--ngx-fl-density-val) * 0.25rem));
+    /* 56 -> 40px */
     --ngx-floating-input-height: var(--ngx-fl-height);
 
     /* Vertical Position: Margin + Label + Mid Gap */
-    --ngx-fl-label-active-top: calc(0.5rem + (var(--ngx-fl-density-val) * 0.0625rem)); /* 8px -> 4px */
-    --ngx-fl-gap-mid: calc(0.25rem + (var(--ngx-fl-density-val) * 0.03125rem)); /* 4px -> 2px */
+    --ngx-fl-label-active-top: calc(0.5rem + (var(--ngx-fl-density-val) * 0.0625rem));
+    /* 8px -> 4px */
+    --ngx-fl-gap-mid: calc(0.25rem + (var(--ngx-fl-density-val) * 0.03125rem));
+    /* 4px -> 2px */
 
     /* Final Padding Top (Mathematical Baseline) */
     --ngx-fl-pad-top: calc(var(--ngx-fl-label-active-top) + var(--ngx-fl-label-height) + var(--ngx-fl-gap-mid));
-    
+
     /* Baseline Bottom padding */
     --ngx-fl-pad-bottom: calc(var(--ngx-floating-input-height) - var(--ngx-fl-pad-top) - 1.1rem);
 
     --ngx-floating-input-padding: var(--ngx-fl-pad-top) 1rem var(--ngx-fl-pad-bottom);
 
     position: relative;
-    margin-top: 0; 
+    margin-top: 0;
 }
 
 /* 2. Adjust the wrapper and children to respect the mathematical baseline */
@@ -408,7 +415,8 @@ textarea:has(+ .ngx-input-suffix) {
 
 /* Permit textareas to have a larger top area for the label and grow naturally */
 .ngx-renderer.ngx-floating-label.ngx-renderer--textarea {
-    --ngx-fl-pad-top-textarea: 2.25rem; /* Increased to 36px to give a clear 'Above' feeling */
+    --ngx-fl-pad-top-textarea: 2.25rem;
+    /* Increased to 36px to give a clear 'Above' feeling */
 }
 
 .ngx-renderer.ngx-floating-label.ngx-renderer--textarea .ngx-input-wrapper {
@@ -424,7 +432,8 @@ textarea:has(+ .ngx-input-suffix) {
     padding: var(--ngx-floating-input-padding) !important;
     height: 100% !important;
     box-sizing: border-box;
-    line-height: inherit; /* Rely solely on padding-top to push text, not flex alignment */
+    line-height: inherit;
+    /* Rely solely on padding-top to push text, not flex alignment */
 }
 
 /* Explicitly push textarea text down to make room for the label at the top */
@@ -449,7 +458,8 @@ textarea:has(+ .ngx-input-suffix) {
 .ngx-renderer.ngx-floating-label .ngx-input-prefix,
 .ngx-renderer.ngx-floating-label .ngx-input-suffix {
     padding-top: 0;
-    align-items: center; /* Always centered in the container for standard 56px inputs */
+    align-items: center;
+    /* Always centered in the container for standard 56px inputs */
     display: flex;
 }
 
@@ -463,7 +473,8 @@ textarea:has(+ .ngx-input-suffix) {
 .ngx-renderer.ngx-floating-label .ngx-input-prefix {
     box-sizing: border-box;
     padding-left: 1rem;
-    padding-right: 0; /* Rimosso per coerenza con il padding dell'input */
+    padding-right: 0;
+    /* Rimosso per coerenza con il padding dell'input */
 }
 
 .ngx-renderer.ngx-floating-label .ngx-input-suffix {
@@ -487,7 +498,7 @@ textarea:has(+ .ngx-input-suffix) {
 
 .ngx-renderer.ngx-floating-label .ngx-label {
     position: absolute;
-    left: var(--ngx-label-left-offset, 1rem); 
+    left: var(--ngx-label-left-offset, 1rem);
     top: 0;
     z-index: 10;
     pointer-events: auto;
@@ -500,14 +511,15 @@ textarea:has(+ .ngx-input-suffix) {
 
     /* Resting state perfectly centered between boundaries */
     transform: translateY(calc((var(--ngx-floating-input-height) - 1.25rem) / 2)) scale(1);
-    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
-                font-size 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
-                color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        font-size 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* For textareas, the resting position should sit in the allocated top padding. */
 .ngx-renderer.ngx-floating-label.ngx-renderer--textarea .ngx-label {
-    transform: translateY(0.625rem) scale(1); /* Positioned at 10px from top as a header */
+    transform: translateY(0.625rem) scale(1);
+    /* Positioned at 10px from top as a header */
 }
 
 /* 4. Active Label State (Focused, Filled, or types that always float) */
@@ -1111,7 +1123,8 @@ textarea:has(+ .ngx-input-suffix) {
 .ngx-multiselect__header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    flex: 1;
+    justify-content: end;
 }
 
 .ngx-multiselect__label {
@@ -1532,10 +1545,12 @@ button.ngx-chip:hover {
 
 .ngx-select__option--active {
     background: var(--ngx-select-option-hover-bg);
+    color: var(--ngx-select-option-hover-color);
 }
 
 .ngx-select__option--selected {
     background: var(--ngx-select-option-selected-bg);
+    color: var(--ngx-select-option-selected-color);
     font-weight: var(--ngx-select-option-selected-weight);
 }
 

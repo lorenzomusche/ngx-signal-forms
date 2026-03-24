@@ -717,7 +717,6 @@
 
 /* Separator inherits M3 filled-field surface */
 .ngx-daterange__sep {
-    background: var(--ngx-surface-container-highest);
     border: none;
 }
 

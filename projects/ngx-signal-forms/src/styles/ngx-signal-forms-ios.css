@@ -540,7 +540,6 @@
 
 /* Date range — iOS rounded bordered inputs */
 .ngx-daterange__sep {
-    background: #fff;
     border-top: var(--ngx-input-border);
 }
 
