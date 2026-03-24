@@ -37,6 +37,13 @@
                         "styles": [
                             "projects/demo/src/styles.scss"
                         ],
+                        "assets": [
+                            {
+                                "glob": "**/*.css",
+                                "input": "projects/ngx-signal-forms/src/styles",
+                                "output": "styles"
+                            }
+                        ],
                         "stylePreprocessorOptions": {
                             "includePaths": [
                                 "projects/ngx-signal-forms/src/styles"

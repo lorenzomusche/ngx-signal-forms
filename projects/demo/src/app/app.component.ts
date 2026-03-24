@@ -37,6 +37,12 @@ import {
   NgxToggleComponent
 } from "ngx-signal-forms";
 
+interface DesignSystemForm extends Record<string, unknown> {
+  // theme: "default" | "material" | "ios" | "ionic";
+  density: number;
+  floating: boolean;
+}
+
 interface ContactForm extends Record<string, unknown> {
   firstName: string;
   lastName: string;
@@ -56,10 +62,6 @@ interface ContactForm extends Record<string, unknown> {
   satisfaction: number;
   resume: File | null;
   frequency: "daily" | "weekly" | "monthly";
-  // Demo configuration
-  theme: "material" | "ios" | "ionic";
-  density: number;
-  floating: boolean;
 }
 
 @Component({
@@ -99,46 +101,76 @@ interface ContactForm extends Record<string, unknown> {
       </p>
 
       <section style="margin-bottom: 2rem;">
-        <ngx-form
+          <details 
+            class="playground-accordion"
+            style="margin-bottom: 2rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.08); background: #fafafa; overflow: hidden;"
+            [open]="false"
+          >
+            <summary style="padding: 0.75rem 1.25rem; list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; background: #fff; font-size: 0.8125rem; font-weight: 600; color: #4361ee; transition: background 0.2s;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-size: 1rem;">🛠️</span>
+                <span>Design System Inspector</span>
+              </div>
+              <div style="font-size: 0.65rem; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em;">Click to toggle configuration</div>
+            </summary>
+
+            <div 
+              class="demo-config" 
+              style="padding: 1.25rem; background: #fff; border-top: 1px solid var(--ngx-outline-subtle); position: relative;"
+            >
+              <!-- Decorative accent bar -->
+              <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #4361ee, #7209b7);"></div>
+              
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+                <div style="padding-right: 1.5rem;">
+                  <h4 style="margin: 0 0 0.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ngx-input-focus-color); font-weight: 700;">
+                    Real-time Theme Engine
+                  </h4>
+                  <p style="margin: 0; font-size: 0.8125rem; color: var(--ngx-on-surface-variant); opacity: 0.8;">
+                    Instantly modify the visual experience
+                  </p>
+                </div>
+              </div>
+
+               <ngx-form #designSystemForm
+          [adapter]="designSystemAdapter"
+          [ngxFloatingLabels]="designSystemConfig().floating"
+          [ngxFloatingLabelsDensity]="designSystemConfig().density"
+        >
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <ngx-control-toggle
+                  name="floating"
+                  label="Interactive Floating Labels"
+                />
+              </div>
+              <div [class.disabled]="!designSystemForm.getValue()['floating']" style="display: grid; grid-template-columns: 1fr; gap: 1rem; justify-items: start;">
+                <!-- <ngx-control-select
+                  name="theme"
+                  label="Pick a UI Theme"
+                  [options]="themeOptions"
+                >
+                  <ng-template ngxOption let-opt>
+                    {{ opt.label }}
+                  </ng-template>
+                </ngx-control-select> -->
+
+                <ngx-control-segmented
+                  name="density"
+                  label="Layout Density"
+                  [options]="densityOptions"
+                />
+              </div>
+            </ngx-form>
+            </div>
+          </details>
+
+          <ngx-form
           [adapter]="adapter"
           [action]="submitAction"
-          [ngxFloatingLabels]="config().floating"
-          [ngxFloatingLabelsDensity]="config().density"
+          [ngxFloatingLabels]="designSystemConfig().floating"
+          [ngxFloatingLabelsDensity]="designSystemConfig().density"
           (submitted)="onSubmitted($event)"
-          [class]="'theme-' + config().theme"
         >
-          <header class="demo-config" style="margin-bottom: 2.5rem; padding: 1.5rem; background: var(--ngx-surface-container); border-radius: 12px; border: 1px dashed var(--ngx-outline-variant);">
-            <h2 style="margin: 0 0 1rem; font-size: 1rem; font-weight: 500;">Live Theme & Rules Playground</h2>
-            
-            <div class="form-row">
-              <ngx-control-multiselect
-                name="theme"
-                label="Visual Theme"
-                [options]="themeOptions"
-                mode="single"
-              >
-                <ng-template ngxOption let-opt>
-                  <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span>{{ themeIcons[opt.value] }}</span>
-                    <strong>{{ opt.label }}</strong>
-                  </div>
-                </ng-template>
-              </ngx-control-multiselect>
-
-              <ngx-control-segmented
-                name="density"
-                label="Layout Density"
-                [options]="densityOptions"
-              />
-            </div>
-
-            <div style="margin-top: 1rem; display: flex; gap: 2rem;">
-              <ngx-control-toggle
-                name="floating"
-                label="Enable Floating Labels"
-              />
-            </div>
-          </header>
 
           <div class="form-row">
             <ngx-control-text
@@ -303,7 +335,28 @@ interface ContactForm extends Record<string, unknown> {
   `,
 })
 export class AppComponent {
+
+  constructor() {
+    /* const document = inject(DOCUMENT);
+    effect(() => {
+      const theme = this.designSystemConfig().theme;
+      const link = this.document.getElementById("ngx-theme-link") as HTMLLinkElement;
+      if (link) {
+        const filename =
+          theme === "default"
+            ? "ngx-signal-forms.css"
+            : `ngx-signal-forms-${theme}.css`;
+        link.href = `styles/${filename}`;
+      }
+    }); */
+  }
   // ── Form model (writable signal) ────────────────────────────────────────────
+
+  private readonly designSystemModel = signal<DesignSystemForm>({
+    // theme: "default",
+    density: -2,
+    floating: false,
+  });
 
   private readonly model = signal<ContactForm>({
     firstName: "lorenzo",
@@ -323,13 +376,15 @@ export class AppComponent {
     preferredContact: "email",
     satisfaction: 5,
     resume: null,
-    frequency: "weekly",
-    theme: "material",
-    density: -2,
-    floating: true,
+    frequency: "weekly"
   });
 
   // ── Adapter ─────────────────────────────────────────────────────────────────
+
+  readonly designSystemAdapter: NgxFormAdapter<DesignSystemForm> = createSignalFormAdapter({
+    model: this.designSystemModel,
+    submitMode: "valid-only",
+  });
 
   readonly adapter: NgxFormAdapter<ContactForm> = createSignalFormAdapter({
     model: this.model,
@@ -366,10 +421,10 @@ export class AppComponent {
   });
 
   /** Configuration derived from the form model for reactive binding */
-  readonly config = computed(() => ({
-    theme: this.adapter.getField("theme")!()?.value() as "material" | "ios" | "ionic",
-    density: this.adapter.getField("density")!()?.value() as number,
-    floating: this.adapter.getField("floating")!()?.value() as boolean,
+  readonly designSystemConfig = computed(() => ({
+    // theme: this.adapter.getField("theme")!()?.value() as "default" | "material" | "ios" | "ionic",
+    density: this.designSystemAdapter.getField("density")!()?.value() as number,
+    floating: this.designSystemAdapter.getField("floating")!()?.value() as boolean,
   }));
 
   // ── Select / multiselect options ────────────────────────────────────────────
@@ -444,16 +499,11 @@ export class AppComponent {
   ];
 
   readonly themeOptions: readonly NgxSelectOption[] = [
-    { value: "material", label: "Material 3" },
-    { value: "ios", label: "iOS Design" },
-    { value: "ionic", label: "Ionic Solid" },
+    { value: "default", label: "📄 Base Theme" },
+    { value: "material", label: "🎨 Material 3" },
+    { value: "ios", label: "🍎 iOS Design" },
+    { value: "ionic", label: "⚡ Ionic Solid" },
   ];
-
-  readonly themeIcons: Record<string, string> = {
-    material: "🎨",
-    ios: "🍎",
-    ionic: "⚡",
-  };
 
   readonly densityOptions: readonly NgxSelectOption<number>[] = [
     { value: 0, label: "Standard" },

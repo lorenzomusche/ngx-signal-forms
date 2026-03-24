@@ -2,25 +2,16 @@
 @use 'sass:color';
 @use 'color-scheme' as ngx;
 
+@import 'ngx-signal-forms/styles/ngx-signal-forms.css';
+// @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
+// @import 'ngx-signal-forms/styles/ngx-signal-forms-ios.css';
+// @import 'ngx-signal-forms/styles/ngx-signal-forms-ionic.css';
+
 /* Apply a custom color scheme — change the color to theme the entire form */
 $primary: #3a3a3a;
 
 @include ngx.color-scheme($primary, $settings: (prefer-light-text: true));
 @include ngx.color-scheme-dark($primary, $settings: (prefer-light-text: true));
-
-@import 'ngx-signal-forms/styles/ngx-signal-forms.css';
-
-.theme-material {
-    @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
-}
-
-.theme-ios {
-    @import 'ngx-signal-forms/styles/ngx-signal-forms-ios.css';
-}
-
-.theme-ionic {
-    @import 'ngx-signal-forms/styles/ngx-signal-forms-ionic.css';
-}
 
 /*
  * Available themes:
@@ -151,6 +142,11 @@ button[type="submit"]:disabled {
     margin: 0.5rem 0 0;
     white-space: pre-wrap;
     font-size: 0.8rem;
+}
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 @media (prefers-color-scheme: dark) {
