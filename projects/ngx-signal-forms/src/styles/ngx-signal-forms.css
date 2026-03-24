@@ -359,6 +359,220 @@ textarea:has(+ .ngx-input-suffix) {
     margin-bottom: 0;
 }
 
+/* ─── Floating Labels ─────────────────────────────────────────────────────── */
+
+/* ─── Floating Labels ─────────────────────────────────────────────────────── */
+
+/* 1. Base Setup: Parametrized Composition Math */
+.ngx-renderer.ngx-floating-label {
+    /* Base Atomic Units */
+    --ngx-fl-density-val: var(--ngx-floating-density, -2);
+    
+    /* Variable exposed for TS ResizeObserver to perfectly align label offset */
+    --ngx-fl-input-padding-with-prefix: 0.75rem;
+
+    --ngx-fl-label-height: 0.75rem; /* Standard 12px for M3 floating labels */
+    
+    /* Prefix Composition Math (3.25rem = 52px total shift) */
+    --ngx-prefix-pad-left: 1rem;   /* 16px */
+    --ngx-prefix-icon-area: 2rem;  /* 32px (includes icon + inner margin) */
+    --ngx-prefix-spacer: 0.25rem;  /* 4px gap to input text */
+    --ngx-fl-prefix-width: calc(var(--ngx-prefix-pad-left) + var(--ngx-prefix-icon-area) + var(--ngx-prefix-spacer));
+    
+    /* Dynamic Heights */
+    --ngx-fl-height: calc(3.5rem + (var(--ngx-fl-density-val) * 0.25rem)); /* 56 -> 40px */
+    --ngx-floating-input-height: var(--ngx-fl-height);
+
+    /* Vertical Position: Margin + Label + Mid Gap */
+    --ngx-fl-label-active-top: calc(0.5rem + (var(--ngx-fl-density-val) * 0.0625rem)); /* 8px -> 4px */
+    --ngx-fl-gap-mid: calc(0.25rem + (var(--ngx-fl-density-val) * 0.03125rem)); /* 4px -> 2px */
+
+    /* Final Padding Top (Mathematical Baseline) */
+    --ngx-fl-pad-top: calc(var(--ngx-fl-label-active-top) + var(--ngx-fl-label-height) + var(--ngx-fl-gap-mid));
+    
+    /* Baseline Bottom padding */
+    --ngx-fl-pad-bottom: calc(var(--ngx-floating-input-height) - var(--ngx-fl-pad-top) - 1.1rem);
+
+    --ngx-floating-input-padding: var(--ngx-fl-pad-top) 1rem var(--ngx-fl-pad-bottom);
+
+    position: relative;
+    margin-top: 0; 
+}
+
+/* 2. Adjust the wrapper and children to respect the mathematical baseline */
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper {
+    height: var(--ngx-floating-input-height);
+    min-height: var(--ngx-floating-input-height);
+    align-items: stretch;
+}
+
+/* Permit textareas to have a larger top area for the label and grow naturally */
+.ngx-renderer.ngx-floating-label.ngx-renderer--textarea {
+    --ngx-fl-pad-top-textarea: 2.25rem; /* Increased to 36px to give a clear 'Above' feeling */
+}
+
+.ngx-renderer.ngx-floating-label.ngx-renderer--textarea .ngx-input-wrapper {
+    height: auto;
+    min-height: 6rem;
+    align-items: stretch;
+}
+
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper input,
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper select,
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper textarea,
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper .ngx-select__trigger {
+    padding: var(--ngx-floating-input-padding) !important;
+    height: 100% !important;
+    box-sizing: border-box;
+    line-height: inherit; /* Rely solely on padding-top to push text, not flex alignment */
+}
+
+/* Explicitly push textarea text down to make room for the label at the top */
+.ngx-renderer.ngx-floating-label.ngx-renderer--textarea .ngx-input-wrapper textarea {
+    height: auto !important;
+    padding-top: var(--ngx-fl-pad-top-textarea) !important;
+}
+
+/* Fix for native Select: its baseline is often irregular, forced alignment here */
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper select {
+    padding-top: calc(var(--ngx-fl-pad-top) + 2px) !important;
+    line-height: 1.25 !important;
+}
+
+/* Custom trigger requires flex to align internal spans */
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper .ngx-select__trigger {
+    display: flex;
+    align-items: flex-start;
+}
+
+/* Component-based decorators alignment (Centered Vertically by default) */
+.ngx-renderer.ngx-floating-label .ngx-input-prefix,
+.ngx-renderer.ngx-floating-label .ngx-input-suffix {
+    padding-top: 0;
+    align-items: center; /* Always centered in the container for standard 56px inputs */
+    display: flex;
+}
+
+/* For textareas, icons must align at the top with the first line of text, not center in the huge box! */
+.ngx-renderer.ngx-floating-label.ngx-renderer--textarea .ngx-input-prefix,
+.ngx-renderer.ngx-floating-label.ngx-renderer--textarea .ngx-input-suffix {
+    align-items: flex-start;
+    padding-top: var(--ngx-fl-pad-top);
+}
+
+.ngx-renderer.ngx-floating-label .ngx-input-prefix {
+    box-sizing: border-box;
+    padding-left: 1rem;
+    padding-right: 0; /* Rimosso per coerenza con il padding dell'input */
+}
+
+.ngx-renderer.ngx-floating-label .ngx-input-suffix {
+    padding-right: 1rem;
+    padding-left: 0.25rem;
+}
+
+/* 3. Horizontal Shift Logic */
+/* Quando presente un prefisso, l'input assorbe la spaziatura anziché raddoppiarla col prefisso */
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper:has(.ngx-input-prefix) input,
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper:has(.ngx-input-prefix) select,
+.ngx-renderer.ngx-floating-label .ngx-input-wrapper:has(.ngx-input-prefix) textarea {
+    padding-left: var(--ngx-fl-input-padding-with-prefix) !important;
+}
+
+/* 
+ * NOTE: The --ngx-label-left-offset in presence of a prefix is NO LONGER computed heuristically here in CSS.
+ * It is now Perfectly calculated by NgxBaseControl via ResizeObserver measuring the EXACT rendered width
+ * of the prefix, eliminating all layout bugs related to icon sizes.
+ */
+
+.ngx-renderer.ngx-floating-label .ngx-label {
+    position: absolute;
+    left: var(--ngx-label-left-offset, 1rem); 
+    top: 0;
+    z-index: 10;
+    pointer-events: auto;
+    transform-origin: left top;
+    margin-bottom: 0;
+
+    font-size: var(--ngx-input-font-size);
+    color: var(--ngx-input-placeholder-color);
+    font-weight: 400;
+
+    /* Resting state perfectly centered between boundaries */
+    transform: translateY(calc((var(--ngx-floating-input-height) - 1.25rem) / 2)) scale(1);
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                font-size 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* For textareas, the resting position should sit in the allocated top padding. */
+.ngx-renderer.ngx-floating-label.ngx-renderer--textarea .ngx-label {
+    transform: translateY(0.625rem) scale(1); /* Positioned at 10px from top as a header */
+}
+
+/* 4. Active Label State (Focused, Filled, or types that always float) */
+/* M3 floating label moves to 8px from top (positive 8px) and scales to 12px (0.75x) */
+.ngx-renderer.ngx-floating-label:has(.ngx-input-wrapper:focus-within) .ngx-label,
+.ngx-renderer.ngx-floating-label:has(.ngx-label--filled) .ngx-label,
+.ngx-renderer.ngx-floating-label:has(.ngx-label--has-error) .ngx-label,
+.ngx-renderer.ngx-floating-label:has(input[type="date"]) .ngx-label,
+.ngx-renderer.ngx-floating-label:has(input[type="time"]) .ngx-label,
+.ngx-renderer.ngx-floating-label:has(.ngx-select__option--selected) .ngx-label,
+.ngx-renderer.ngx-floating-label:has(.ngx-chip) .ngx-label,
+.ngx-renderer.ngx-floating-label:has(input:not(:placeholder-shown)) .ngx-label,
+.ngx-renderer.ngx-floating-label.ngx-renderer--open .ngx-label {
+    transform: translateY(var(--ngx-fl-label-active-top)) scale(0.75);
+    /* Scaled top distance based on density */
+    color: var(--ngx-on-surface-variant);
+    font-weight: 500;
+}
+
+/* 
+ * Highlight label color. 
+ * Error state (invalid) MUST take precedence over Focus state.
+ */
+.ngx-renderer.ngx-floating-label:has(.ngx-input-wrapper:focus-within) .ngx-label {
+    color: var(--ngx-input-focus-color);
+}
+
+.ngx-renderer.ngx-floating-label:has([aria-invalid="true"]) .ngx-label,
+.ngx-renderer.ngx-floating-label:has(.ngx-label--has-error) .ngx-label,
+.ngx-label.ngx-label--has-error {
+    color: var(--ngx-error-color) !important;
+}
+
+/* 5. Handle Prefixes: offset the label rightwards if a prefix exists */
+.ngx-renderer.ngx-floating-label:has(.ngx-input-prefix) {
+    --ngx-label-left-offset: 2.5rem;
+    /* 40px estimated */
+}
+
+/* 6. Placeholder Visibility: Hyper-robust direct selector.
+   If placeholder is shown AND field is not focused, force hide it.
+   This works regardless of parent classes or :has support. */
+.ngx-renderer.ngx-floating-label input:placeholder-shown:not(:focus)::placeholder,
+.ngx-renderer.ngx-floating-label textarea:placeholder-shown:not(:focus)::placeholder {
+    opacity: 0 !important;
+    color: transparent !important;
+    visibility: hidden !important;
+}
+
+/* Ensure placeholder is visible when focused OR filled (for transitions) */
+.ngx-renderer.ngx-floating-label input:focus::placeholder,
+.ngx-renderer.ngx-floating-label textarea:focus::placeholder,
+.ngx-renderer.ngx-floating-label input:not(:placeholder-shown)::placeholder,
+.ngx-renderer.ngx-floating-label textarea:not(:placeholder-shown)::placeholder {
+    opacity: 1 !important;
+    color: var(--ngx-input-placeholder-color) !important;
+    visibility: visible !important;
+}
+
+/* For Select (which doesn't have a placeholder-shown state same as inputs), we keep the class-based logic */
+.ngx-renderer.ngx-floating-label:not(:has(:focus-within)):not(:has(.ngx-label--filled)) .ngx-select__placeholder {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
 /* ─── Standalone Inputs (M3 Filled — no wrapper) ─────────────────────────── */
 
 .ngx-renderer input[type="text"],
@@ -718,8 +932,8 @@ textarea:has(+ .ngx-input-suffix) {
 }
 
 .ngx-label__required {
-    color: #b3261e;
-    /* M3 Error color */
+    color: var(--ngx-error-color);
+    /* Standard error color for consistency */
     margin-left: 0.125rem;
 }
 
@@ -1447,7 +1661,8 @@ button.ngx-chip:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: inherit; /* Inherit focus color from .ngx-input-suffix */
+    color: inherit;
+    /* Inherit focus color from .ngx-input-suffix */
     border-radius: 50%;
     transition: background-color 0.2s, color 0.2s;
     padding: 0;
@@ -1804,9 +2019,8 @@ button.ngx-chip:hover {
     font-size: var(--ngx-datepicker-cell-font-size, 0.875rem);
     color: var(--ngx-on-surface-variant, #666);
     user-select: none;
-    flex-shrink: 0;
+    border: none;
     /* Inherit the field background so the separator blends in */
-    border-top: var(--ngx-input-border);
     padding: 0 2px;
 }
 
