@@ -117,7 +117,7 @@
 .ngx-renderer select,
 .ngx-select__trigger,
 .ngx-datepicker__input {
-    background: var(--ngx-input-bg);
+    background-color: var(--ngx-input-bg);
     color: var(--ngx-input-color);
     border: none;
     border-bottom: 1px solid var(--ion-color-medium);
@@ -131,7 +131,7 @@
 .ngx-renderer select:hover:not(:disabled):not(:focus),
 .ngx-select__trigger:hover:not(:disabled):not(:focus),
 .ngx-datepicker__input:hover:not(:disabled):not(:focus) {
-    background: #e9eaec; /* Slightly darker than light */
+    background-color: #e9eaec; /* Slightly darker than light */
 }
 
 /* Focus replaces the bottom border with a primary colored inner shadow */
@@ -142,7 +142,7 @@
 .ngx-datepicker__input:focus {
     border-bottom-color: var(--ngx-input-focus-color);
     box-shadow: var(--ngx-input-focus-shadow);
-    background: #e9eaec;
+    background-color: #e9eaec;
     outline: none;
 }
 
@@ -169,7 +169,7 @@
 .ngx-select__trigger:disabled,
 .ngx-datepicker__input:disabled {
     opacity: 0.4;
-    background: transparent;
+    background-color: transparent;
     border-bottom-style: dashed;
     cursor: not-allowed;
 }

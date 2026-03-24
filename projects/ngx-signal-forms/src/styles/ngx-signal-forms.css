@@ -50,6 +50,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 input[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 
@@ -430,7 +431,7 @@ textarea:has(+ .ngx-input-suffix) {
 .ngx-renderer.ngx-floating-label .ngx-input-wrapper textarea,
 .ngx-renderer.ngx-floating-label .ngx-input-wrapper .ngx-select__trigger {
     padding: var(--ngx-floating-input-padding) !important;
-    height: 100% !important;
+    height: var(--ngx-floating-input-height) !important;
     box-sizing: border-box;
     line-height: inherit;
     /* Rely solely on padding-top to push text, not flex alignment */
@@ -451,7 +452,12 @@ textarea:has(+ .ngx-input-suffix) {
 /* Custom trigger requires flex to align internal spans */
 .ngx-renderer.ngx-floating-label .ngx-input-wrapper .ngx-select__trigger {
     display: flex;
-    align-items: flex-start;
+    align-items: center; /* Ensures content is centered in the box, matching standard inputs */
+}
+
+/* Fix for native Select: hide text when the label is resting in the center to avoid overlap with placeholder */
+.ngx-renderer.ngx-floating-label:not(:has(:focus-within)):not(:has(.ngx-label--filled)) select {
+    color: transparent !important;
 }
 
 /* Component-based decorators alignment (Centered Vertically by default) */
@@ -657,6 +663,33 @@ textarea:has(+ .ngx-input-suffix) {
     outline: none;
     color: var(--ngx-input-color);
     font-size: var(--ngx-input-font-size);
+}
+
+.ngx-renderer select,
+.ngx-input-wrapper select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    cursor: pointer;
+    /* Use padding area for the arrow icon */
+    padding-right: 2.5rem !important;
+}
+
+/* 
+ * Standardized Select Arrow Positioning 
+ * Centers itself relative to the entire box height to match standard input design.
+ */
+.ngx-input-wrapper .ngx-select__arrow {
+    position: absolute;
+    right: 0.75rem;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    pointer-events: none;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .ngx-input-wrapper:has(input[aria-invalid="true"]),
@@ -1457,8 +1490,20 @@ button.ngx-chip:hover {
 
 .ngx-select__arrow {
     margin-left: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--ngx-select-arrow-color);
+    width: 1rem;
+    height: 1rem;
+    color: var(--ngx-on-surface-variant);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ngx-select__arrow svg {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .ngx-select__dropdown {

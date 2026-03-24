@@ -202,7 +202,7 @@
 .ngx-renderer input[type="email"],
 .ngx-renderer textarea,
 .ngx-renderer select {
-    background: #fff;
+    background-color: #fff;
     color: var(--ngx-input-color);
     border: var(--ngx-input-border);
     border-radius: var(--ngx-input-border-radius);
@@ -238,7 +238,7 @@
 .ngx-renderer input:disabled,
 .ngx-renderer textarea:disabled,
 .ngx-renderer select:disabled {
-    background: var(--ngx-disabled-bg);
+    background-color: var(--ngx-disabled-bg);
     border-color: var(--ngx-outline-subtle);
     color: var(--ngx-disabled-color);
     cursor: not-allowed;
