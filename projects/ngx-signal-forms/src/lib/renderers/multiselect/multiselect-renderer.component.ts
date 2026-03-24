@@ -40,7 +40,6 @@ import { NgxOptionsControl } from "../../core/types";
     },
   ],
   host: {
-    "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--multiselect",
     "[class.ngx-inline-errors]": "inlineErrors",
     "(document:keydown.escape)": "open() && closeOverlay()",

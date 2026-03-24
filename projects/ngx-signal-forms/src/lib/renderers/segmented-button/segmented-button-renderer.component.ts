@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { booleanAttribute, ChangeDetectionStrategy, Component, input, InputSignalWithTransform } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
@@ -12,7 +12,7 @@ import { NgxSelectOption } from "../../core/types";
   standalone: true,
   imports: [NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--segmented" },
+  host: { class: "ngx-renderer ngx-renderer--segmented", "[style.width]": "fullWidth() ? '100%' : 'fit-content'" },
   template: `
     <ngx-control-label
       [label]="label()"
@@ -59,6 +59,8 @@ import { NgxSelectOption } from "../../core/types";
 })
 export class NgxSegmentedButtonComponent<TValue = any> extends NgxBaseControl<TValue | null> {
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
+
+  public readonly fullWidth: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 
   protected readonly fieldId = `ngx-control-segmented-${NgxBaseControl.nextId()}`;
 
