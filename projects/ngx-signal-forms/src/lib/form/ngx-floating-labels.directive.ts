@@ -1,0 +1,45 @@
+import { Directive, effect, ElementRef, inject, input } from "@angular/core";
+import { NGX_FLOATING_LABELS } from "../core/tokens";
+
+/**
+ * Opt-in directive to enable Material-style floating labels for all descendant
+ * ngx-signal-forms controls.
+ *
+ * Usage:
+ * ```html
+ * <ngx-form [ngxFloatingLabels]="true" [ngxFloatingLabelsDensity]="-3">
+ *   ...
+ * </ngx-form>
+ * ```
+ */
+@Directive({
+  selector: "ngx-form[ngxFloatingLabels], form[ngxFloatingLabels]",
+  standalone: true,
+  providers: [
+    {
+      provide: NGX_FLOATING_LABELS,
+      useExisting: NgxFloatingLabelsDirective,
+    },
+  ],
+})
+export class NgxFloatingLabelsDirective {
+  /** Enables or disables floating labels for descendants. Defaults to true when the directive is used. */
+  readonly ngxFloatingLabels = input<boolean>(true);
+
+  /** 
+   * Density scaling for the floating labels, replicating M3 density behavior. 
+   * 0 is standard M3 (56px), negative values make it more compact. Defaults to -2 for balanced compactness (48px).
+   */
+  readonly ngxFloatingLabelsDensity = input<number>(-2);
+
+  constructor() {
+    const el = inject(ElementRef);
+    effect(() => {
+      // Set the density custom property on the host element so it trickles down
+      el.nativeElement.style.setProperty(
+        "--ngx-floating-density",
+        this.ngxFloatingLabelsDensity().toString()
+      );
+    });
+  }
+}

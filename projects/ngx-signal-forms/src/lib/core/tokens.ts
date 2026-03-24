@@ -25,3 +25,10 @@ export const NGX_INLINE_ERRORS = new InjectionToken<boolean>(
 export const NGX_OPTIONS_CONTROL = new InjectionToken<NgxOptionsControl<unknown>>(
   "NGX_OPTIONS_CONTROL",
 );
+
+/**
+ * Provided by NgxFloatingLabelsDirective to enable floating labels globally on a form.
+ */
+export const NGX_FLOATING_LABELS = new InjectionToken<
+  import("../form/ngx-floating-labels.directive").NgxFloatingLabelsDirective
+>("NGX_FLOATING_LABELS");
