@@ -8,6 +8,7 @@ import {
 import { NgxBaseControl } from "../control/control.directive";
 import {
   computeOverlayPosition,
+  OverlayAlignment,
   OverlayPosition,
 } from "./overlay-position";
 import { NgxA11yAnnouncer } from "./a11y-announcer";
@@ -33,6 +34,9 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
   /** Computed position of the overlay (below, above, or fixed overlay for mobile). */
   protected readonly position = signal<OverlayPosition>("below");
 
+  /** Computed alignment of the overlay (left, right). */
+  protected readonly alignment = signal<OverlayAlignment>("left");
+
   /** The wrapper element used to anchor the overlay and detect outside clicks. */
   protected readonly wrapperRef = viewChild<ElementRef<HTMLElement>>("wrapper");
 
@@ -47,12 +51,31 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
     this.open() ? this.closeOverlay() : this.openOverlay();
   }
 
+  /** Minimum space required below or above to anchor the overlay. Default 128px. */
+  protected readonly minSpace: number = 128;
+
+  /** Minimum horizontal space required for the overlay. Default 250px. */
+  protected readonly minWidth: number = 250;
+
+  /** Preferred horizontal alignment. Default 'left'. */
+  protected readonly preferredAlignment: OverlayAlignment = "left";
+
   /** Opens the overlay and recalculates its position. */
   protected openOverlay(): void {
     if (this.isDisabled() || this.open()) return;
     this.onBeforeOpen();
     this.open.set(true);
-    this.position.set(computeOverlayPosition(this.hostRef.nativeElement));
+
+    const result = computeOverlayPosition(this.hostRef.nativeElement, {
+      minSpace: this.minSpace,
+      minWidth: this.minWidth,
+      preferredAlignment: this.preferredAlignment,
+    });
+
+    this.position.set(result.position);
+
+    // If perfectly fits both, or fallback to center, prefer the requested alignment if it fits.
+    this.alignment.set(result.alignment);
     this.announcer.announce("Popup opened");
   }
 

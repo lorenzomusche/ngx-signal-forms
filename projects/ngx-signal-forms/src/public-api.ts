@@ -62,6 +62,8 @@ export type { ParsedTime } from "./lib/core/time-utils";
 // ─── Overlay positioning ─────────────────────────────────────────────────────
 export { computeOverlayPosition } from "./lib/core/overlay-position";
 export type {
+  ComputedPosition,
+  OverlayAlignment,
   OverlayPosition,
   OverlayPositionConfig,
 } from "./lib/core/overlay-position";
