@@ -103,7 +103,7 @@ input[type="date"]:focus,
     --ngx-error-color: #e63946;
     --ngx-helper-font-size: 0.75rem;
     --ngx-helper-line-height: 1.25rem;
-    --ngx-helper-padding-top: 0.375rem;
+    --ngx-helper-padding-top: 0;
     --ngx-error-font-size: var(--ngx-helper-font-size);
     --ngx-error-line-height: var(--ngx-helper-line-height);
     /* Error focus uses an inset shadow for consistency with M3 */
@@ -221,7 +221,7 @@ input[type="date"]:focus,
     --ngx-tp-separator-color: var(--ngx-on-surface-variant);
 
     --ngx-renderer-gap: 0.375rem;
-    --ngx-renderer-margin-bottom: 1rem;
+    --ngx-renderer-margin-bottom: .5rem;
     --ngx-input-height: 2.5rem;
 }
 
@@ -1444,7 +1444,8 @@ button.ngx-chip:hover {
 
 .ngx-select__trigger {
     display: flex;
-    align-items: center; /* Centering for standard inputs (non-floating) */
+    align-items: center;
+    /* Centering for standard inputs (non-floating) */
     justify-content: space-between;
     width: 100%;
     padding: var(--ngx-input-padding);
@@ -2033,7 +2034,7 @@ button.ngx-chip:hover {
     text-align: center;
     font-size: 0.75rem;
     color: var(--ngx-on-surface-variant, #666);
-    padding-top: 0.375rem;
+    padding-top: 0;
     user-select: none;
 }
 
