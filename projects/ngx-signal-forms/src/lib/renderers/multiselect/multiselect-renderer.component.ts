@@ -42,6 +42,7 @@ import { NgxOptionsControl } from "../../core/types";
   host: {
     class: "ngx-renderer ngx-renderer--multiselect",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
     "(document:keydown.escape)": "open() && closeOverlay()",
     "(document:click)": "onDocumentClick($event)",
   },

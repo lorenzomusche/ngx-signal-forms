@@ -556,7 +556,7 @@ textarea:has(+ .ngx-input-suffix) {
     color: var(--ngx-input-focus-color);
 }
 
-.ngx-renderer.ngx-floating-label:has([aria-invalid="true"]) .ngx-label,
+.ngx-renderer.ngx-floating-label.ngx-renderer--touched:has([aria-invalid="true"]) .ngx-label,
 .ngx-renderer.ngx-floating-label:has(.ngx-label--has-error) .ngx-label,
 .ngx-label.ngx-label--has-error {
     color: var(--ngx-error-color) !important;
@@ -637,14 +637,14 @@ textarea:has(+ .ngx-input-suffix) {
     box-shadow: var(--ngx-input-focus-shadow);
 }
 
-.ngx-renderer input[aria-invalid="true"],
-.ngx-renderer textarea[aria-invalid="true"],
-.ngx-renderer select[aria-invalid="true"] {
+.ngx-renderer--touched input[aria-invalid="true"],
+.ngx-renderer--touched textarea[aria-invalid="true"],
+.ngx-renderer--touched select[aria-invalid="true"] {
     box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 }
 
-.ngx-renderer input[aria-invalid="true"]:focus,
-.ngx-renderer textarea[aria-invalid="true"]:focus {
+.ngx-renderer--touched input[aria-invalid="true"]:focus,
+.ngx-renderer--touched textarea[aria-invalid="true"]:focus {
     box-shadow: var(--ngx-error-focus-shadow);
 }
 
@@ -696,9 +696,11 @@ textarea:has(+ .ngx-input-suffix) {
     justify-content: center;
 }
 
-.ngx-input-wrapper:has(input[aria-invalid="true"]),
-.ngx-input-wrapper:has(select[aria-invalid="true"]),
-.ngx-input-wrapper:has([aria-invalid="true"]) {
+.ngx-renderer--touched .ngx-input-wrapper:has(input[aria-invalid="true"]),
+.ngx-renderer--touched .ngx-input-wrapper:has(select[aria-invalid="true"]),
+.ngx-renderer--touched .ngx-input-wrapper:has([aria-invalid="true"]),
+.ngx-renderer--touched .ngx-select:has([aria-invalid="true"]),
+.ngx-renderer--touched .ngx-multiselect__options[aria-invalid="true"] {
     box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 }
 
@@ -981,14 +983,17 @@ textarea:has(+ .ngx-input-suffix) {
 }
 
 .ngx-label__required {
-    color: var(--ngx-error-color);
-    /* Standard error color for consistency */
+    color: inherit;
+    /* Follows label color */
     margin-left: 0.125rem;
+    transition: color 0.2s ease;
+}
+
+.ngx-label--has-error .ngx-label__required {
+    color: var(--ngx-error-color);
 }
 
 .ngx-label__required--filled {
-    color: currentColor;
-    /* Inherit from label (on-surface-variant) */
     opacity: 0.7;
     /* Subtler when filled */
 }
@@ -1468,7 +1473,7 @@ button.ngx-chip:hover {
 }
 
 /* Error state: applied on the wrapper, not the trigger */
-.ngx-input-wrapper:has(.ngx-select__trigger[aria-invalid="true"]) {
+.ngx-renderer--touched .ngx-input-wrapper:has(.ngx-select__trigger[aria-invalid="true"]) {
     box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
 }
 
@@ -1658,10 +1663,8 @@ button.ngx-chip:hover {
 }
 
 .ngx-control__inline-errors:hover .ngx-control__inline-errors-tooltip,
-.ngx-control__inline-errors:focus-within .ngx-control__inline-errors-tooltip,
 .ngx-control__inline-errors:focus .ngx-control__inline-errors-tooltip,
-.ngx-renderer:has(:focus):not(.ngx-renderer--open) .ngx-control__inline-errors-tooltip,
-.ngx-renderer:focus-within:not(.ngx-renderer--open) .ngx-control__inline-errors-tooltip {
+.ngx-control__inline-errors:focus-within .ngx-control__inline-errors-tooltip {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) scale(1);
@@ -1733,7 +1736,7 @@ button.ngx-chip:hover {
     z-index: 1;
 }
 
-.ngx-datepicker__input[aria-invalid="true"] {
+.ngx-renderer--touched .ngx-datepicker__input[aria-invalid="true"] {
     border-color: var(--ngx-error-color);
 }
 

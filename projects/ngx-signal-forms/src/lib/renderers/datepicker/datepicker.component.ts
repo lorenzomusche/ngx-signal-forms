@@ -31,6 +31,7 @@ import { NgxCalendarComponent } from "./calendar.component";
     "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--datepicker",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
     "(document:click)": "onDocumentClick($event)",
   },
   template: `

@@ -20,6 +20,7 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
     "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--text",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
   },
   template: `
     <ngx-control-label

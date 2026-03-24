@@ -26,7 +26,11 @@ let _nextFieldId = 0;
  * and resolves the field state by name. Provides convenience computed
  * signals that concrete renderers bind in their templates.
  */
-@Directive()
+@Directive({
+  host: {
+    "[class.ngx-renderer--touched]": "touched()",
+  },
+})
 export abstract class NgxBaseControl<TValue = unknown> implements OnDestroy {
   protected readonly hostElement = inject(ElementRef<HTMLElement>);
   private prefixObserver?: ResizeObserver;

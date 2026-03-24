@@ -46,6 +46,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
     "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--select",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
     "(document:click)": "onDocumentClick($event)",
     "(keydown)": "onKeydown($event)",
   },

@@ -22,6 +22,7 @@ import { NgxNumberSpinButtonsDirective } from "./number-spin-buttons.directive";
     "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--number",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
   },
   template: `
     <ngx-control-label
