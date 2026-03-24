@@ -30,6 +30,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
     "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--timepicker",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
     "(document:click)": "onDocumentClick($event)",
   },
   template: `
@@ -117,6 +118,11 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
       }
     </div>
 
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }

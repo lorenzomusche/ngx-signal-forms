@@ -245,6 +245,10 @@ import { NgxOptionsControl } from "../../core/types";
 
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
+    } @else if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
     }
   `,
 })

@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, computed, input, viewChild, ElementRef, signal, output } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
@@ -9,12 +10,13 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
 @Component({
   selector: "ngx-control-file",
   standalone: true,
-  imports: [NgxControlLabelComponent, NgxErrorListComponent],
+  imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--file",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
   },
   template: `
     <ngx-control-label
@@ -86,6 +88,11 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
       </div>
     </div>
 
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }

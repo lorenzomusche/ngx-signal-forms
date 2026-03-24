@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
@@ -10,9 +11,12 @@ import { NgxSelectOption } from "../../core/types";
 @Component({
   selector: "ngx-control-radio",
   standalone: true,
-  imports: [NgxControlLabelComponent, NgxErrorListComponent],
+  imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--radio-group" },
+  host: { 
+    class: "ngx-renderer ngx-renderer--radio-group",
+    "[class.ngx-renderer--touched]": "touched()",
+  },
   template: `
     <ngx-control-label
       [label]="label()"
@@ -51,6 +55,10 @@ import { NgxSelectOption } from "../../core/types";
 
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
+    } @else if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
     }
   `,
 })

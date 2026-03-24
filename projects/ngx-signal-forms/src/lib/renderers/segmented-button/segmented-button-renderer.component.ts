@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { booleanAttribute, ChangeDetectionStrategy, Component, input, InputSignalWithTransform } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
@@ -10,9 +11,13 @@ import { NgxSelectOption } from "../../core/types";
 @Component({
   selector: "ngx-control-segmented",
   standalone: true,
-  imports: [NgxControlLabelComponent, NgxErrorListComponent],
+  imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--segmented", "[style.width]": "fullWidth() ? '100%' : 'fit-content'" },
+  host: { 
+    class: "ngx-renderer ngx-renderer--segmented", 
+    "[class.ngx-renderer--touched]": "touched()",
+    "[style.width]": "fullWidth() ? '100%' : 'fit-content'" 
+  },
   template: `
     <ngx-control-label
       [label]="label()"
@@ -52,6 +57,11 @@ import { NgxSelectOption } from "../../core/types";
       }
     </div>
 
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }

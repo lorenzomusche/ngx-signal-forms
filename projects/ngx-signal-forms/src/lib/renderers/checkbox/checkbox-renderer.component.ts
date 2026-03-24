@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
@@ -12,9 +13,12 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
 @Component({
   selector: "ngx-control-checkbox",
   standalone: true,
-  imports: [NgxErrorListComponent],
+  imports: [NgTemplateOutlet, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--checkbox" },
+  host: { 
+    class: "ngx-renderer ngx-renderer--checkbox",
+    "[class.ngx-renderer--touched]": "touched()",
+  },
   template: `
     <label class="ngx-checkbox">
       <input
@@ -42,6 +46,10 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
     </label>
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
+    } @else if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
     }
   `,
 })

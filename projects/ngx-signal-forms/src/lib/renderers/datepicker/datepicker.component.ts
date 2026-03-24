@@ -110,6 +110,11 @@ import { NgxCalendarComponent } from "./calendar.component";
       }
     </div>
 
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }

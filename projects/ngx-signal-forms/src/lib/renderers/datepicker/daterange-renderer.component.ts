@@ -6,6 +6,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
@@ -27,6 +28,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
   selector: "ngx-control-daterange",
   standalone: true,
   imports: [
+    NgTemplateOutlet,
     NgxRangeCalendarComponent,
     NgxControlLabelComponent,
     NgxErrorListComponent,
@@ -36,6 +38,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
     "[class.ngx-floating-label]": "isFloatingLabel()",
     class: "ngx-renderer ngx-renderer--datepicker ngx-renderer--daterange",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
     "(document:click)": "onDocumentClick($event)",
   },
   template: `
@@ -138,6 +141,11 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
       }
     </div>
 
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }

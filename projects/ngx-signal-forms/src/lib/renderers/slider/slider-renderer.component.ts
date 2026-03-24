@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
@@ -9,11 +10,12 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
 @Component({
   selector: "ngx-control-slider",
   standalone: true,
-  imports: [NgxControlLabelComponent, NgxErrorListComponent],
+  imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-renderer ngx-renderer--slider",
     "[class.ngx-inline-errors]": "inlineErrors",
+    "[class.ngx-renderer--touched]": "touched()",
   },
   template: `
     <ngx-control-label
@@ -48,6 +50,11 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
       }
     </div>
 
+    @if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
+    }
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }

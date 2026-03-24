@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
@@ -9,9 +10,12 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
 @Component({
   selector: "ngx-control-toggle",
   standalone: true,
-  imports: [NgxInlineErrorIconComponent, NgxErrorListComponent],
+  imports: [NgTemplateOutlet, NgxInlineErrorIconComponent, NgxErrorListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: "ngx-renderer ngx-renderer--toggle" },
+  host: { 
+    class: "ngx-renderer ngx-renderer--toggle",
+    "[class.ngx-renderer--touched]": "touched()",
+  },
   template: `
     <label class="ngx-toggle">
       <input
@@ -46,6 +50,10 @@ import { NgxInlineErrorIconComponent } from "../../control/inline-error-icon.com
     </label>
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
+    } @else if (supportingText(); as st) {
+      <div class="ngx-supporting-text">
+        <ng-container [ngTemplateOutlet]="st.template" />
+      </div>
     }
   `,
 })

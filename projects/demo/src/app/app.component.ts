@@ -178,7 +178,9 @@ interface ContactForm extends Record<string, unknown> {
               label="First Name"
               placeholder="John"
               ngxInlineErrors
-            />
+            >
+              <div *ngxSupportingText>Enter your given name</div>
+            </ngx-control-text>
 
             <ngx-control-text
               name="lastName"
@@ -187,7 +189,7 @@ interface ContactForm extends Record<string, unknown> {
               ngxInlineErrors
             >
               <ng-template ngxPrefix>👤</ng-template>
-              <div *ngxSupportingText>Full name as per ID</div>
+              <div *ngxSupportingText>Enter your legal family name</div>
             </ngx-control-text>
 
           </div>
@@ -200,6 +202,7 @@ interface ContactForm extends Record<string, unknown> {
               ngxInlineErrors
             >
               <button *ngxSuffix type="button" (click)="0" style="background:none; border:none; cursor:pointer;">📧</button>
+              <div *ngxSupportingText>We'll never share your email</div>
             </ngx-control-text>
 
 
@@ -209,16 +212,22 @@ interface ContactForm extends Record<string, unknown> {
               placeholder="25"
               [minValue]="0"
               [maxValue]="120"
-            />
+            >
+              <div *ngxSupportingText>Must be between 0 and 120</div>
+            </ngx-control-number>
           </div>
 
           <div class="form-row">
-            <ngx-control-datepicker name="birthDate" label="Date of Birth" />
+            <ngx-control-datepicker name="birthDate" label="Date of Birth">
+              <div *ngxSupportingText>Select from the calendar</div>
+            </ngx-control-datepicker>
 
             <ngx-control-timepicker
               name="appointmentTime"
               label="Appointment Time"
-            />
+            >
+              <div *ngxSupportingText>Pick a slot for your visit</div>
+            </ngx-control-timepicker>
           </div>
 
           <ngx-control-daterange
@@ -226,7 +235,9 @@ interface ContactForm extends Record<string, unknown> {
             label="Travel Dates"
             minDate="2026-01-01"
             maxDate="2027-12-31"
-          />
+          >
+            <div *ngxSupportingText>Select start and end dates</div>
+          </ngx-control-daterange>
 
           <ngx-control-multiselect
             name="interests"
@@ -234,7 +245,9 @@ interface ContactForm extends Record<string, unknown> {
             [options]="interestOptions"
             [searchable]="true"
             mode="multi"
-          ></ngx-control-multiselect>
+          >
+             <div *ngxSupportingText>Choose your favorite topics</div>
+          </ngx-control-multiselect>
 
           <ngx-control-select
             name="country"
@@ -249,6 +262,7 @@ interface ContactForm extends Record<string, unknown> {
               }}</span>
               {{ opt.label }}
             </ng-template>
+            <div *ngxSupportingText>Used for regional settings</div>
           </ngx-control-select>
 
           <ngx-control-select
@@ -257,7 +271,9 @@ interface ContactForm extends Record<string, unknown> {
             placeholder="Select a province…"
             [ngxDependsOn]="'country'"
             [ngxOptionsMap]="provincesByCountry"
-          />
+          >
+            <div *ngxSupportingText>Dependent on Country selection</div>
+          </ngx-control-select>
 
           <ngx-control-multiselect
             name="provinceMs"
@@ -265,25 +281,33 @@ interface ContactForm extends Record<string, unknown> {
             [ngxDependsOn]="'country'"
             [ngxOptionsMap]="provincesByCountry"
             [searchable]="true"
-          />
+          >
+            <div *ngxSupportingText>Select multiple regions</div>
+          </ngx-control-multiselect>
 
           <ngx-control-textarea
             name="bio"
             label="Bio"
             placeholder="Tell us about yourself…"
             [rows]="3"
-          />
+          >
+            <div *ngxSupportingText>Maximum 500 characters</div>
+          </ngx-control-textarea>
 
           <div class="form-row">
             <ngx-control-checkbox
               name="acceptTerms"
               label="I accept the terms and conditions"
-            />
+            >
+              <div *ngxSupportingText>Legal requirement</div>
+            </ngx-control-checkbox>
 
             <ngx-control-toggle
               name="newsletter"
               label="Subscribe to newsletter"
-            />
+            >
+              <div *ngxSupportingText>Occasional marketing updates</div>
+            </ngx-control-toggle>
           </div>
 
           <ngx-control-radio
@@ -291,7 +315,9 @@ interface ContactForm extends Record<string, unknown> {
             label="Preferred Contact Method"
             [options]="contactOptions"
             layout="horizontal"
-          />
+          >
+            <div *ngxSupportingText>How should we reach you?</div>
+          </ngx-control-radio>
 
           <ngx-control-slider
             name="satisfaction"
@@ -299,20 +325,26 @@ interface ContactForm extends Record<string, unknown> {
             [min]="1"
             [max]="10"
             [step]="1"
-          />
+          >
+            <div *ngxSupportingText>1 = Poor, 10 = Excellent</div>
+          </ngx-control-slider>
 
           <ngx-control-file
             name="resume"
             label="Upload Resume (PDF only)"
             accept=".pdf"
             (fileSelected)="onFileSelected($event)"
-          />
+          >
+            <div *ngxSupportingText>Only PDF files are accepted</div>
+          </ngx-control-file>
 
           <ngx-control-segmented
             name="frequency"
             label="Contact Frequency"
             [options]="frequencyOptions"
-          />
+          >
+            <div *ngxSupportingText>Delivery schedule for messages</div>
+          </ngx-control-segmented>
 
           <button type="submit" [disabled]="!adapter.state.canSubmit()">
             @if (adapter.state.submitting()) {

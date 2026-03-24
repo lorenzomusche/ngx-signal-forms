@@ -64,13 +64,12 @@ import { NgxNumberSpinButtonsDirective } from "./number-spin-buttons.directive";
       }
     </div>
 
-    @if (supportingText(); as st) {
+    @if (!inlineErrors && touched() && hasErrors()) {
+      <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
+    } @else if (supportingText(); as st) {
       <div class="ngx-supporting-text">
         <ng-container [ngTemplateOutlet]="st.template" />
       </div>
-    }
-    @if (!inlineErrors && touched() && hasErrors()) {
-      <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
     }
   `,
 })
