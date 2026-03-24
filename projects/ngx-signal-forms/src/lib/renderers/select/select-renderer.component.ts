@@ -122,6 +122,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
             class="ngx-select__dropdown"
             [class.ngx-select__dropdown--above]="dropUp()"
             [class.ngx-select__dropdown--overlay]="overlayMode()"
+            [class.ngx-select__dropdown--right]="alignment() === 'right'"
           >
             @if (searchable()) {
               <input

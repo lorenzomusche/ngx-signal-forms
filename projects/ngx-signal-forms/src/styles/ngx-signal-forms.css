@@ -223,6 +223,7 @@ input[type="date"]:focus,
     --ngx-renderer-gap: 0.375rem;
     --ngx-renderer-margin-bottom: .5rem;
     --ngx-input-height: 2.5rem;
+    --ngx-overlay-backdrop-bg: rgba(0, 0, 0, 0.4);
 }
 
 /* ─── Renderer Layout ─────────────────────────────────────────────────────── */
@@ -1528,11 +1529,17 @@ button.ngx-chip:hover {
     margin: 0 0 0.25rem;
 }
 
+.ngx-select__dropdown--right:not(.ngx-select__dropdown--overlay) {
+    left: auto;
+    right: 0;
+}
+
 .ngx-select__overlay-backdrop {
     position: fixed;
     inset: 0;
     z-index: 999;
-    background: transparent;
+    background: var(--ngx-overlay-backdrop-bg);
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ngx-select__dropdown--overlay {
@@ -1799,6 +1806,10 @@ button.ngx-chip:hover {
     border: var(--ngx-datepicker-popup-border);
     border-radius: var(--ngx-datepicker-popup-border-radius);
     box-shadow: var(--ngx-datepicker-popup-shadow);
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .ngx-datepicker__popup--above {
@@ -1808,11 +1819,17 @@ button.ngx-chip:hover {
     margin-bottom: 0.25rem;
 }
 
+.ngx-datepicker__popup--right:not(.ngx-datepicker__popup--overlay) {
+    left: auto;
+    right: 0;
+}
+
 .ngx-datepicker__backdrop {
     position: fixed;
     inset: 0;
     z-index: 999;
-    background: transparent;
+    background: var(--ngx-overlay-backdrop-bg, rgba(0, 0, 0, 0.4));
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ngx-datepicker__popup--overlay {
