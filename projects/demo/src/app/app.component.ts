@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, signal } from "@angular/core";
 import {
   createSignalFormAdapter,
   NgxCheckboxComponent,
@@ -56,6 +56,10 @@ interface ContactForm extends Record<string, unknown> {
   satisfaction: number;
   resume: File | null;
   frequency: "daily" | "weekly" | "monthly";
+  // Demo configuration
+  theme: "material" | "ios" | "ionic";
+  density: number;
+  floating: boolean;
 }
 
 @Component({
@@ -85,6 +89,7 @@ interface ContactForm extends Record<string, unknown> {
     NgxSupportingTextDirective,
     NgxConditionalOptionsDirective,
     NgxFloatingLabelsDirective,
+    NgxOptionDirective
   ],
   template: `
     <div class="demo-card">
@@ -97,9 +102,44 @@ interface ContactForm extends Record<string, unknown> {
         <ngx-form
           [adapter]="adapter"
           [action]="submitAction"
-          [ngxFloatingLabels]="true"
+          [ngxFloatingLabels]="config().floating"
+          [ngxFloatingLabelsDensity]="config().density"
           (submitted)="onSubmitted($event)"
+          [class]="'theme-' + config().theme"
         >
+          <header class="demo-config" style="margin-bottom: 2.5rem; padding: 1.5rem; background: var(--ngx-surface-container); border-radius: 12px; border: 1px dashed var(--ngx-outline-variant);">
+            <h2 style="margin: 0 0 1rem; font-size: 1rem; font-weight: 500;">Live Theme & Rules Playground</h2>
+            
+            <div class="form-row">
+              <ngx-control-multiselect
+                name="theme"
+                label="Visual Theme"
+                [options]="themeOptions"
+                mode="single"
+              >
+                <ng-template ngxOption let-opt>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>{{ themeIcons[opt.value] }}</span>
+                    <strong>{{ opt.label }}</strong>
+                  </div>
+                </ng-template>
+              </ngx-control-multiselect>
+
+              <ngx-control-segmented
+                name="density"
+                label="Layout Density"
+                [options]="densityOptions"
+              />
+            </div>
+
+            <div style="margin-top: 1rem; display: flex; gap: 2rem;">
+              <ngx-control-toggle
+                name="floating"
+                label="Enable Floating Labels"
+              />
+            </div>
+          </header>
+
           <div class="form-row">
             <ngx-control-text
               name="firstName"
@@ -284,6 +324,9 @@ export class AppComponent {
     satisfaction: 5,
     resume: null,
     frequency: "weekly",
+    theme: "material",
+    density: -2,
+    floating: true,
   });
 
   // ── Adapter ─────────────────────────────────────────────────────────────────
@@ -321,6 +364,13 @@ export class AppComponent {
       ngxSchemaRequired(path.preferredContact);
     },
   });
+
+  /** Configuration derived from the form model for reactive binding */
+  readonly config = computed(() => ({
+    theme: this.adapter.getField("theme")!()?.value() as "material" | "ios" | "ionic",
+    density: this.adapter.getField("density")!()?.value() as number,
+    floating: this.adapter.getField("floating")!()?.value() as boolean,
+  }));
 
   // ── Select / multiselect options ────────────────────────────────────────────
 
@@ -391,6 +441,24 @@ export class AppComponent {
     { value: "daily", label: "Daily" },
     { value: "weekly", label: "Weekly" },
     { value: "monthly", label: "Monthly" },
+  ];
+
+  readonly themeOptions: readonly NgxSelectOption[] = [
+    { value: "material", label: "Material 3" },
+    { value: "ios", label: "iOS Design" },
+    { value: "ionic", label: "Ionic Solid" },
+  ];
+
+  readonly themeIcons: Record<string, string> = {
+    material: "🎨",
+    ios: "🍎",
+    ionic: "⚡",
+  };
+
+  readonly densityOptions: readonly NgxSelectOption<number>[] = [
+    { value: 0, label: "Standard" },
+    { value: -2, label: "Compact" },
+    { value: -3, label: "Ultra" },
   ];
 
   // ── Submit handling ─────────────────────────────────────────────────────────
