@@ -106,6 +106,8 @@ npm install @ngx-signals/forms
 @import "@ngx-signals/forms/styles/ngx-signal-forms-material.css";
 // Optional: iOS theme
 @import "@ngx-signals/forms/styles/ngx-signal-forms-ios.css";
+// Optional: Ionic theme
+@import "@ngx-signals/forms/styles/ngx-signal-forms-ionic.css";
 ```
 
 ### 3. Import components
