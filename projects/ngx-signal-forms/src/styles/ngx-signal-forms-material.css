@@ -24,7 +24,8 @@
 }
 
 .ngx-datepicker__popup {
-    width: 360px; /* M3 Docked spec: 360dp */
+    width: 360px;
+    /* M3 Docked spec: 360dp */
     max-width: calc(100vw - 32px);
     display: flex;
     flex-direction: column;
@@ -57,148 +58,98 @@
 /* ─── Custom property overrides ───────────────────────────────────────────── */
 
 :root {
-    /* M3 Shapes */
+    /* ─── Key Palette (Zinc Neutral) ───────────────────────────────────────── */
+    --ngx-primary: #18181b;
+    --ngx-on-primary: #ffffff;
+    --ngx-error: #dc2626;
+    --ngx-on-error: #ffffff;
+
+    /* ─── Dynamic Tints (Mathematical derivation from Key Palette) ────────── */
+    --ngx-surface: color-mix(in srgb, var(--ngx-primary), white 96%);
+    --ngx-surface-container-lowest: #ffffff;
+    --ngx-surface-container-low: color-mix(in srgb, var(--ngx-primary), white 95%);
+    --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), white 93%);
+    --ngx-surface-container-high: color-mix(in srgb, var(--ngx-primary), white 90%);
+    --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), white 88%);
+    --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), white 82%);
+
+    --ngx-primary-container: var(--ngx-surface-container-highest);
+    --ngx-on-primary-container: color-mix(in srgb, var(--ngx-primary), black 80%);
+    --ngx-error-container: color-mix(in srgb, var(--ngx-error), white 94%);
+    --ngx-on-error-container: var(--ngx-error);
+
+    --ngx-on-surface: color-mix(in srgb, var(--ngx-primary), black 80%);
+    --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-primary), black 40%);
+    --ngx-outline: color-mix(in srgb, var(--ngx-primary), black 20%);
+    --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 40%);
+    --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 60%);
+    
+    --ngx-disabled-bg: rgba(15, 23, 42, 0.04);
+    --ngx-disabled-color: rgba(15, 23, 42, 0.38);
+
+    /* ─── M3 Shapes & Layout ───────────────────────────────────────────────── */
     --ngx-corner-extra-small: 4px;
     --ngx-corner-small: 8px;
     --ngx-corner-medium: 12px;
     --ngx-corner-full: 100px;
+    --ngx-input-height: 3.5rem;
+    --ngx-renderer-margin-bottom: 1rem;
 
-    /* Typography */
+    /* ─── Typography ───────────────────────────────────────────────────────── */
     --ngx-font-family: "Outfit", "Inter", "Roboto", system-ui, -apple-system, sans-serif;
-    --ngx-label-font-weight: var(--ngx-font-weight-medium);
-    --ngx-label-font-size: 0.875rem;
     --ngx-font-weight-regular: 400;
     --ngx-font-weight-medium: 500;
     --ngx-font-weight-semibold: 600;
+    --ngx-label-font-weight: var(--ngx-font-weight-medium);
+    --ngx-label-font-size: 0.875rem;
 
-    /* Timepicker specific typography */
-    --ngx-tp-font-weight: var(--ngx-font-weight-regular);
-    --ngx-tp-period-font-weight: var(--ngx-font-weight-medium);
-
-    /* Filled text fields — M3 spec: 4dp top corners, 16dp horizontal padding */
+    /* ─── Input Specification Overrides ────────────────────────────────────── */
     --ngx-input-padding: 0.625rem 1rem calc(0.625rem + 2px);
-    --ngx-input-border: none;
-    --ngx-input-border-color: transparent;
     --ngx-input-border-radius: var(--ngx-corner-extra-small) var(--ngx-corner-extra-small) 0 0;
-    --ngx-input-color: #18181b;
-    --ngx-input-placeholder-color: #71717a;
     --ngx-input-font-size: 0.9375rem;
-    --ngx-input-focus-color: #18181b;
-    --ngx-input-focus-shadow: none;
+    --ngx-input-placeholder-color: var(--ngx-outline);
 
-    /* Errors — M3 body-small (12sp) */
-    --ngx-error-color: #dc2626;
-    --ngx-error-font-size: 0.75rem;
-    --ngx-helper-line-height: 1.33rem;
-    --ngx-error-line-height: var(--ngx-helper-line-height);
-    --ngx-error-focus-shadow: none;
-    --ngx-tooltip-border-radius: var(--ngx-corner-extra-small);
-
-    /* Checkbox — M3 18dp, 2px rounded */
-    --ngx-checkbox-size: 1.125rem;
-    --ngx-checkbox-accent: #18181b;
-    --ngx-checkbox-checkmark-color: #fff;
-    --ngx-checkbox-border: 2px solid #71717a;
-    --ngx-checkbox-border-radius: 2px;
-    --ngx-checkbox-gap: 0.5rem;
-    --ngx-checkbox-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
-
-    /* Toggle (Switch) — track 52×32dp */
+    /* ─── Toggle (Switch) ─────────────────────────────────────────────────── */
     --ngx-toggle-width: 3.25rem;
     --ngx-toggle-height: 2rem;
     --ngx-toggle-thumb-size: 1rem;
     --ngx-toggle-thumb-size-checked: 1.5rem;
     --ngx-toggle-thumb-offset: 0.25rem;
-    --ngx-toggle-thumb-color: #71717a;
-    --ngx-toggle-thumb-color-checked: #ffffff;
-    --ngx-toggle-bg: #e4e4e7;
-    --ngx-toggle-bg-checked: #18181b;
-    --ngx-toggle-border: 2px solid #71717a;
-    --ngx-toggle-border-checked: 2px solid #18181b;
-    --ngx-toggle-gap: 0.5rem;
-    --ngx-toggle-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
+    --ngx-toggle-thumb-color: var(--ngx-outline);
+    --ngx-toggle-thumb-color-checked: var(--ngx-on-primary);
+    --ngx-toggle-bg: var(--ngx-surface-container-highest);
+    --ngx-toggle-bg-checked: var(--ngx-primary);
+    --ngx-toggle-border: 2px solid var(--ngx-outline);
+    --ngx-toggle-border-checked: 2px solid var(--ngx-primary);
 
-    /* Multiselect — filter chips */
+    /* ─── Chips & Multiselect ─────────────────────────────────────────────── */
     --ngx-multiselect-padding: 0.25rem 1rem;
     --ngx-multiselect-max-height: 5.5rem;
-    --ngx-chip-height: 1.75rem;
-    --ngx-chip-padding: 0 0.75rem;
-    --ngx-chip-gap: 0.375rem;
-    --ngx-chip-font-size: 0.8125rem;
     --ngx-chip-border-radius: var(--ngx-corner-small);
-    --ngx-chip-border: 1px solid #d4d4d8;
-    --ngx-chip-bg: transparent;
-    --ngx-chip-color: #3f3f46;
-    --ngx-chip-selected-bg: #18181b;
-    --ngx-chip-selected-color: #fff;
-    --ngx-chip-selected-border: 1px solid #18181b;
+    --ngx-chip-color: var(--ngx-on-surface-variant);
     --ngx-chip-max-width: 11rem;
-    --ngx-chip-transition: 0.15s ease;
 
-    /* Chip hover/selected hover */
-    --ngx-chip-hover-bg: rgba(24, 24, 27, 0.06);
-    --ngx-chip-hover-border: #a1a1aa;
-    --ngx-chip-hover-color: inherit;
-    --ngx-chip-selected-hover-bg: #27272a;
-    --ngx-chip-selected-hover-color: #fff;
-
-    /* Custom Select dropdown — M3 menu surface */
-    --ngx-select-dropdown-bg: #f4f4f5;
-    --ngx-select-dropdown-border: none;
+    /* ─── Select ──────────────────────────────────────────────────────────── */
+    --ngx-select-dropdown-bg: var(--ngx-surface-container);
     --ngx-select-dropdown-border-radius: var(--ngx-corner-extra-small);
-    --ngx-select-dropdown-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    --ngx-select-dropdown-max-height: calc(var(--ngx-multiselect-max-height) + 40px);
-    --ngx-select-option-padding: 0.625rem 1rem;
     --ngx-select-option-hover-bg: rgba(24, 24, 27, 0.08);
-    --ngx-select-option-hover-color: inherit;
     --ngx-select-option-selected-bg: rgba(24, 24, 27, 0.12);
-    --ngx-select-option-selected-color: inherit;
-    --ngx-select-option-selected-weight: var(--ngx-font-weight-medium);
 
-    /* Surface & semantic colors (M3-like tokens) */
-    --ngx-surface: #ffffff;
-    --ngx-surface-container-lowest: #ffffff;
-    --ngx-surface-container-low: #f8fafc;
-    --ngx-surface-container: #f4f4f5;
-    --ngx-surface-container-high: #e2e8f0;
-    --ngx-surface-container-highest: #cbd5e1;
-    --ngx-surface-container-highest-hover: #94a3b8;
-
-    --ngx-primary: #18181b;
-    --ngx-on-primary: #ffffff;
-    --ngx-primary-container: #e4e4e7;
-    --ngx-on-primary-container: #09090b;
-
-    --ngx-on-surface: #0f172a;
-    --ngx-on-surface-variant: #475569;
-    --ngx-outline: #64748b;
-    --ngx-outline-variant: #94a3b8;
-    --ngx-outline-subtle: #e2e8f0;
-    --ngx-disabled-bg: rgba(15, 23, 42, 0.04);
-    --ngx-disabled-color: rgba(15, 23, 42, 0.38);
-
-    /* DatePicker & TimePicker standard surfaces */
-    --ngx-datepicker-popup-bg: #ffffff;
-    /* Solid white fallback */
+    /* ─── DatePicker & TimePicker ────────────────────────────────────────── */
+    --ngx-datepicker-popup-bg: var(--ngx-surface);
     --ngx-datepicker-popup-border: 1px solid var(--ngx-outline-subtle);
     --ngx-datepicker-popup-border-radius: 20px;
-    --ngx-datepicker-popup-shadow: var(--ngx-shadow-depth-2);
+    --ngx-datepicker-cell-size: 40px;
+    --ngx-datepicker-today-color: var(--ngx-primary);
+    --ngx-datepicker-range-bg: var(--ngx-surface-container-highest);
 
-    /* Elevation Shadows (M3 Spec) */
+    /* ─── Segmented Button ────────────────────────────────────────────────── */
+    --ngx-segmented-btn-bg-selected-hover: #27272a;
+
+    /* ─── Elevation Shadows (M3 Spec) ──────────────────────────────────────── */
     --ngx-shadow-depth-1: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --ngx-shadow-depth-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --ngx-shadow-depth-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
-
-    --ngx-renderer-gap: 0.375rem;
-    --ngx-renderer-margin-bottom: 1rem;
-    --ngx-input-height: 3.5rem;
-
-    /* Segmented Button — high contrast theme defaults */
-    --ngx-segmented-border: var(--ngx-outline-variant);
-    --ngx-segmented-btn-bg-selected: var(--ngx-primary);
-    --ngx-segmented-btn-color-selected: var(--ngx-on-primary);
-    --ngx-segmented-btn-bg-hover: var(--ngx-surface-container-highest);
-    --ngx-segmented-btn-bg-selected-hover: #27272a;
 }
 
 /* ─── Filled text field surface ───────────────────────────────────────────── */
@@ -688,14 +639,6 @@
 /* ─── Block errors — M3 supporting text spec: 4dp top padding ─────────────── */
 /* The ::after reservation must match the error's total height (including
    padding-top) to prevent layout shift when errors appear/disappear. */
-
-.ngx-renderer:not(.ngx-inline-errors)::after {
-    content: '';
-    display: block;
-    height: 1.25rem;
-    /* Reserve space for supporting/error text to prevent layout shift */
-    margin-top: 0.25rem;
-}
 
 .ngx-control__error {
     letter-spacing: 0.025em;

@@ -5,14 +5,14 @@
 //
 .ngx-timepicker-container {
     // ── Thematic Colors ───────────────────────────────────────────────────
-    --tp-primary: var(--ngx-tp-primary, var(--ngx-input-focus-color, #4361ee));
-    --tp-on-primary: var(--ngx-tp-on-primary, #fff);
-    --tp-primary-container: var(--ngx-tp-primary-container, var(--ngx-select-option-selected-bg, #e6ecff));
-    --tp-on-primary-container: var(--ngx-tp-on-primary-container, var(--ngx-on-surface, #09090b));
-    --tp-surface: var(--ngx-tp-surface, var(--ngx-select-dropdown-bg, #fff));
-    --tp-surface-variant: var(--ngx-tp-surface-variant, var(--ngx-surface-container, #f4f4f5));
-    --tp-outline: var(--ngx-tp-outline, var(--ngx-input-border-color, #ccc));
-    --tp-border-radius: var(--ngx-tp-border-radius, var(--ngx-datepicker-popup-border-radius, var(--ngx-input-border-radius, 6px)));
+    --tp-primary: var(--ngx-tp-primary, var(--ngx-primary));
+    --tp-on-primary: var(--ngx-tp-on-primary, var(--ngx-on-primary));
+    --tp-primary-container: var(--ngx-tp-primary-container, var(--ngx-primary-container));
+    --tp-on-primary-container: var(--ngx-tp-on-primary-container, var(--ngx-on-primary-container));
+    --tp-surface: var(--ngx-tp-surface, var(--ngx-surface));
+    --tp-surface-variant: var(--ngx-tp-surface-variant, var(--ngx-surface-container));
+    --tp-outline: var(--ngx-tp-outline, var(--ngx-outline-variant));
+    --tp-border-radius: var(--ngx-tp-border-radius, var(--ngx-datepicker-popup-border-radius, var(--ngx-input-border-radius)));
 
     // ── Typography ────────────────────────────────────────────────────────
     --tp-font-family: var(--ngx-font-family, "Roboto", sans-serif);
