@@ -28,5 +28,13 @@ yarn-debug.log*
 yarn-error.log*
 projects/ngx-signal-forms/dist/
 
+# Ignore all hidden files and folders except .gitignore
+.*
+!.gitignore
+
 # macOS system files
 .DS_Store
+
+# IDE and local config
+.vscode/
+.antigravity/

@@ -29,27 +29,39 @@ import { NgxIconComponent } from "../../control/ngx-icon.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-datepicker__header" },
   template: `
-    <button
-      type="button"
-      class="ngx-datepicker__nav-btn"
-      aria-label="Previous month"
-       (click)="previousMonth.emit()"
-    >
-      <ngx-icon name="CHEVRON_LEFT" />
-    </button>
+    <div class="ngx-datepicker__header-label">
+      <button
+        type="button"
+        class="ngx-datepicker__view-toggle"
+        (click)="toggleView.emit()"
+        [attr.aria-label]="'Change view, currently ' + monthLabel() + ' ' + year()"
+      >
+        <span class="ngx-datepicker__title">
+          {{ monthLabel() }} {{ year() }}
+        </span>
+        <ngx-icon name="CHEVRON_DOWN" class="ngx-datepicker__view-icon" />
+      </button>
+    </div>
 
-    <span class="ngx-datepicker__title" aria-live="polite">
-      {{ monthLabel() }} {{ year() }}
-    </span>
+    <div class="ngx-datepicker__header-nav">
+      <button
+        type="button"
+        class="ngx-datepicker__nav-btn"
+        aria-label="Previous month"
+        (click)="previousMonth.emit()"
+      >
+        <ngx-icon name="CHEVRON_LEFT" />
+      </button>
 
-    <button
-      type="button"
-      class="ngx-datepicker__nav-btn"
-      aria-label="Next month"
-       (click)="nextMonth.emit()"
-    >
-      <ngx-icon name="CHEVRON_RIGHT" />
-    </button>
+      <button
+        type="button"
+        class="ngx-datepicker__nav-btn"
+        aria-label="Next month"
+        (click)="nextMonth.emit()"
+      >
+        <ngx-icon name="CHEVRON_RIGHT" />
+      </button>
+    </div>
   `,
 })
 export class NgxCalendarHeaderComponent {
@@ -59,6 +71,7 @@ export class NgxCalendarHeaderComponent {
 
   readonly previousMonth = output<void>();
   readonly nextMonth = output<void>();
+  readonly toggleView = output<void>();
 
   private readonly locale = inject(NGX_DATE_LOCALE);
 

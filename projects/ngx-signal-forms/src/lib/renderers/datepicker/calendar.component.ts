@@ -17,6 +17,10 @@ import {
 } from "../../core/date-utils";
 import { NgxCalendarGridComponent } from "./calendar-grid.component";
 import { NgxCalendarHeaderComponent } from "./calendar-header.component";
+import { NgxMonthPickerComponent } from "./month-picker.component";
+import { NgxYearPickerComponent } from "./year-picker.component";
+
+type CalendarView = "calendar" | "month" | "year";
 
 /**
  * Calendar container — orchestrates header navigation, grid rendering,
@@ -38,7 +42,12 @@ import { NgxCalendarHeaderComponent } from "./calendar-header.component";
 @Component({
   selector: "ngx-calendar",
   standalone: true,
-  imports: [NgxCalendarHeaderComponent, NgxCalendarGridComponent],
+  imports: [
+    NgxCalendarHeaderComponent,
+    NgxCalendarGridComponent,
+    NgxMonthPickerComponent,
+    NgxYearPickerComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-datepicker__calendar",
@@ -53,22 +62,38 @@ import { NgxCalendarHeaderComponent } from "./calendar-header.component";
       [month]="viewMonth()"
       (previousMonth)="goToPreviousMonth()"
       (nextMonth)="goToNextMonth()"
+      (toggleView)="onToggleView()"
     />
-    <ngx-calendar-grid
-      [year]="viewYear()"
-      [month]="viewMonth()"
-      [selectedDate]="selectedDate()"
-      [focusedDate]="focusedDate()"
-      [minDate]="minDate()"
-      [maxDate]="maxDate()"
-      (datePicked)="onDatePicked($event)"
-    />
+
+    @if (view() === "calendar") {
+      <ngx-calendar-grid
+        [year]="viewYear()"
+        [month]="viewMonth()"
+        [selectedDate]="selectedDate()"
+        [focusedDate]="focusedDate()"
+        [minDate]="minDate()"
+        [maxDate]="maxDate()"
+        (datePicked)="onDatePicked($event)"
+      />
+    } @else if (view() === "month") {
+      <ngx-month-picker
+        [currentMonth]="viewMonth()"
+        (monthSelected)="onMonthSelected($event)"
+      />
+    } @else if (view() === "year") {
+      <ngx-year-picker
+        [currentYear]="viewYear()"
+        (yearSelected)="onYearSelected($event)"
+      />
+    }
   `,
 })
 export class NgxCalendarComponent {
   readonly selectedDate = input<CalendarDate | null>(null);
   readonly minDate = input<CalendarDate | null>(null);
   readonly maxDate = input<CalendarDate | null>(null);
+
+  protected readonly view = signal<CalendarView>("calendar");
 
   private readonly grid = viewChild(NgxCalendarGridComponent);
 
@@ -106,12 +131,39 @@ export class NgxCalendarComponent {
   /**
    * Sync the view to the selected date when the popup opens.
    * Called by the parent renderer after opening.
+   * Resets view to 'calendar'.
    */
   syncView(date: CalendarDate | null): void {
     const d = date ?? today();
     this.viewYear.set(d.year);
     this.viewMonth.set(d.month);
     this.focusedDate.set(d);
+    this.view.set("calendar");
+  }
+
+  protected onToggleView(): void {
+    const current = this.view();
+    if (current === "calendar") {
+      this.view.set("year");
+    } else {
+      this.view.set("calendar");
+    }
+  }
+
+  protected onMonthSelected(month: number): void {
+    this.viewMonth.set(month);
+    this.view.set("calendar");
+    // Update focused date to same day in new month
+    const focused = this.focusedDate();
+    this.focusedDate.set({ ...focused, month });
+  }
+
+  protected onYearSelected(year: number): void {
+    this.viewYear.set(year);
+    this.view.set("month");
+    // Update focused date to same day in new year
+    const focused = this.focusedDate();
+    this.focusedDate.set({ ...focused, year });
   }
 
   // ── Navigation ──────────────────────────────────────────────────────────────

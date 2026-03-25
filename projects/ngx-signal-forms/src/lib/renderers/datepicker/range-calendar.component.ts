@@ -18,34 +18,27 @@ import {
 } from "../../core/date-utils";
 import { NgxCalendarHeaderComponent } from "./calendar-header.component";
 import { NgxRangeCalendarGridComponent } from "./range-calendar-grid.component";
+import { NgxMonthPickerComponent } from "./month-picker.component";
+import { NgxYearPickerComponent } from "./year-picker.component";
 
 /** Selection phase for range picking. */
 type RangePhase = "pick-start" | "pick-end";
 
+type CalendarView = "calendar" | "month" | "year";
+
 /**
  * Range calendar container — orchestrates header navigation, grid rendering,
  * keyboard navigation, and two-step date range selection.
- *
- * Selection flow:
- *   1. First click sets `rangeStart` (phase → `pick-end`).
- *   2. Second click sets `rangeEnd` and emits `rangePicked`.
- *   3. If the user clicks before the start, it restarts selection.
- *
- * ```html
- * <ngx-range-calendar
- *   [rangeStart]="start"
- *   [rangeEnd]="end"
- *   [minDate]="min"
- *   [maxDate]="max"
- *   (rangePicked)="onRange($event)"
- *   (closed)="close()"
- * />
- * ```
  */
 @Component({
   selector: "ngx-range-calendar",
   standalone: true,
-  imports: [NgxCalendarHeaderComponent, NgxRangeCalendarGridComponent],
+  imports: [
+    NgxCalendarHeaderComponent,
+    NgxRangeCalendarGridComponent,
+    NgxMonthPickerComponent,
+    NgxYearPickerComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-datepicker__calendar",
@@ -60,40 +53,48 @@ type RangePhase = "pick-start" | "pick-end";
       [month]="viewMonth()"
       (previousMonth)="goToPreviousMonth()"
       (nextMonth)="goToNextMonth()"
+      (toggleView)="onToggleView()"
     />
-    <ngx-range-calendar-grid
-      [year]="viewYear()"
-      [month]="viewMonth()"
-      [rangeStart]="pendingStart()"
-      [rangeEnd]="pendingEnd()"
-      [hoverDate]="hoverDate()"
-      [focusedDate]="focusedDate()"
-      [minDate]="minDate()"
-      [maxDate]="maxDate()"
-      (datePicked)="onDatePicked($event)"
-      (dateHovered)="onDateHovered($event)"
-    />
-    <div class="ngx-daterange__hint" aria-live="polite">
-      {{ phaseHint() }}
-    </div>
+    @if (view() === "calendar") {
+      <ngx-range-calendar-grid
+        [year]="viewYear()"
+        [month]="viewMonth()"
+        [rangeStart]="pendingStart()"
+        [rangeEnd]="pendingEnd()"
+        [hoverDate]="hoverDate()"
+        [focusedDate]="focusedDate()"
+        [minDate]="minDate()"
+        [maxDate]="maxDate()"
+        (datePicked)="onDatePicked($event)"
+        (dateHovered)="onDateHovered($event)"
+      />
+      <div class="ngx-daterange__hint" aria-live="polite">
+        {{ phaseHint() }}
+      </div>
+    } @else if (view() === "month") {
+      <ngx-month-picker
+        [currentMonth]="viewMonth()"
+        (monthSelected)="onMonthSelected($event)"
+      />
+    } @else if (view() === "year") {
+      <ngx-year-picker
+        [currentYear]="viewYear()"
+        (yearSelected)="onYearSelected($event)"
+      />
+    }
   `,
 })
 export class NgxRangeCalendarComponent {
-  /** Initial start date (from existing value). */
   readonly rangeStart = input<CalendarDate | null>(null);
-  /** Initial end date (from existing value). */
   readonly rangeEnd = input<CalendarDate | null>(null);
   readonly minDate = input<CalendarDate | null>(null);
   readonly maxDate = input<CalendarDate | null>(null);
-  /** Accessible label for the dialog. */
   readonly ariaLabel = input<string>("Choose date range");
 
-  /** Emits when the user has completed a range. */
   readonly rangePicked = output<{
     readonly start: CalendarDate;
     readonly end: CalendarDate;
   }>();
-  /** Emits on Escape — parent must close the popup. */
   readonly closed = output<void>();
 
   private readonly grid = viewChild(NgxRangeCalendarGridComponent);
@@ -101,13 +102,10 @@ export class NgxRangeCalendarComponent {
   constructor() {
     effect(() => {
       const date = this.focusedDate();
-      // We use a small timeout to ensure the grid has rendered the new date
-      // before we try to focus it.
       setTimeout(() => this.grid()?.focusDate(date), 0);
     });
   }
 
-  /** Manually focuses the currently focused date cell. */
   focusFocusedDate(): void {
     const focused = this.focusedDate();
     this.grid()?.focusDate(focused);
@@ -115,29 +113,22 @@ export class NgxRangeCalendarComponent {
 
   // ── View state ───────────────────────────────────────────────────────────────
 
+  protected readonly view = signal<CalendarView>("calendar");
   protected readonly viewYear = signal(today().year);
   protected readonly viewMonth = signal(today().month);
   protected readonly focusedDate = signal<CalendarDate>(today());
   protected readonly hoverDate = signal<CalendarDate | null>(null);
 
-  /** Current selection phase. */
   private readonly phase = signal<RangePhase>("pick-start");
-  /** The provisional start while the user picks the end. */
   protected readonly pendingStart = signal<CalendarDate | null>(null);
-  /** The provisional end (set on second click). */
   protected readonly pendingEnd = signal<CalendarDate | null>(null);
 
-  /** Hint text shown below the grid. */
   protected readonly phaseHint = computed((): string =>
     this.phase() === "pick-start"
       ? "Click to set the start date"
       : "Click to set the end date",
   );
 
-  /**
-   * Sync the view when the popup opens.
-   * Called by the parent renderer after opening.
-   */
   syncView(start: CalendarDate | null, end: CalendarDate | null): void {
     const d = start ?? today();
     this.viewYear.set(d.year);
@@ -146,9 +137,31 @@ export class NgxRangeCalendarComponent {
     this.pendingStart.set(start);
     this.pendingEnd.set(end);
     this.phase.set(start && !end ? "pick-end" : "pick-start");
+    this.view.set("calendar");
   }
 
-  // ── Navigation ───────────────────────────────────────────────────────────────
+  protected onToggleView(): void {
+    const current = this.view();
+    if (current === "calendar") {
+      this.view.set("year");
+    } else {
+      this.view.set("calendar");
+    }
+  }
+
+  protected onMonthSelected(month: number): void {
+    this.viewMonth.set(month);
+    this.view.set("calendar");
+    const focused = this.focusedDate();
+    this.focusedDate.set({ ...focused, month });
+  }
+
+  protected onYearSelected(year: number): void {
+    this.viewYear.set(year);
+    this.view.set("month");
+    const focused = this.focusedDate();
+    this.focusedDate.set({ ...focused, year });
+  }
 
   protected goToPreviousMonth(): void {
     this.navigateMonth(-1);
@@ -169,8 +182,6 @@ export class NgxRangeCalendarComponent {
     this.focusedDate.set(newFocused);
   }
 
-  // ── Date interaction ─────────────────────────────────────────────────────────
-
   protected onDatePicked(date: CalendarDate): void {
     this.focusedDate.set(date);
 
@@ -181,12 +192,10 @@ export class NgxRangeCalendarComponent {
     } else {
       const start = this.pendingStart();
       if (!start) {
-        // Shouldn't happen but recover gracefully
         this.pendingStart.set(date);
         this.phase.set("pick-end");
         return;
       }
-      // Normalise so start <= end
       const [s, e] =
         compareDates(start, date) <= 0 ? [start, date] : [date, start];
       this.pendingStart.set(s);
@@ -200,8 +209,6 @@ export class NgxRangeCalendarComponent {
       this.hoverDate.set(date);
     }
   }
-
-  // ── Keyboard navigation ──────────────────────────────────────────────────────
 
   protected onKeydown(event: KeyboardEvent): void {
     const focused = this.focusedDate();
@@ -258,7 +265,6 @@ export class NgxRangeCalendarComponent {
         this.viewYear.set(next.year);
         this.viewMonth.set(next.month);
       }
-      // Update hover preview when navigating during pick-end phase
       if (this.phase() === "pick-end") {
         this.hoverDate.set(next);
       }

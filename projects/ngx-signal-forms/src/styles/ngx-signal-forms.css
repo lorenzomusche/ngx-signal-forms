@@ -82,7 +82,7 @@ input[type="date"]:focus,
     /* Typography */
     --ngx-label-font-weight: 600;
     --ngx-label-font-size: 0.875rem;
-    --ngx-input-line-height: 1.5;
+    --ngx-input-line-height: 1.25rem;
 
     /* Inputs — M3 Filled style */
     --ngx-input-padding: 0.625rem 0.75rem;

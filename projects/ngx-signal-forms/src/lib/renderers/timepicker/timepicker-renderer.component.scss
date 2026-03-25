@@ -209,11 +209,13 @@
     position: absolute;
     width: var(--tp-num-size);
     height: var(--tp-num-size);
+    aspect-ratio: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 0.9rem;
     font-weight: 500;
+    line-height: 1;
     color: var(--tp-on-primary-container);
     // Must be above the hand ::after circle (z-index 2) for text to render on top
     z-index: 10;
@@ -246,9 +248,10 @@
         content: "";
         position: absolute;
         top: calc(var(--tp-num-size) / -2);
-        left: calc(var(--tp-num-size) / -2 + 2px);
+        left: calc(var(--tp-num-size) / -2 + 1px); /* Perfectly center on 2px hand */
         width: var(--tp-num-size);
         height: var(--tp-num-size);
+        aspect-ratio: 1;
         background-color: var(--tp-primary);
         border-radius: 50%;
         z-index: 2;
