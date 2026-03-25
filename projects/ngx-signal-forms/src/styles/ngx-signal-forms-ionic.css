@@ -10,13 +10,13 @@
  *   - https://ionicframework.com/docs/api/input
  */
 
-@import './ngx-signal-forms.css';
+@import '@ngx-signals/forms/styles/ngx-signal-forms.css';
 
 :root {
     /* Base Palette — Ionic Defaults */
     --ion-color-primary: #3880ff;
     --ion-color-primary-rgb: 56, 128, 255;
-    
+
     --ion-color-danger: #eb445a;
     --ion-color-success: #2dd36f;
     --ion-color-medium: #92949c;
@@ -30,14 +30,15 @@
 
     /* Text fields — Ionic "Solid" style (Material Design look) */
     --ngx-input-padding: 0.75rem 1rem;
-    --ngx-input-border: none; /* We will use border-bottom manually */
+    --ngx-input-border: none;
+    /* We will use border-bottom manually */
     --ngx-input-border-radius: 4px 4px 0 0;
     --ngx-input-bg: var(--ion-color-light);
     --ngx-input-color: var(--ion-color-dark);
     --ngx-input-placeholder-color: var(--ion-color-medium);
     --ngx-input-icon-color: var(--ion-color-medium);
     --ngx-input-focus-color: var(--ion-color-primary);
-    
+
     /* Focus uses box-shadow to animate the bottom border */
     --ngx-input-focus-shadow: 0 2px 0 0 var(--ion-color-primary);
 
@@ -63,7 +64,8 @@
     --ngx-toggle-thumb-color: #fff;
     --ngx-toggle-thumb-color-checked: #fff;
     --ngx-toggle-bg: #e0e0e0;
-    --ngx-toggle-bg-checked: var(--ion-color-success); /* Ionic toggles often default to success green */
+    --ngx-toggle-bg-checked: var(--ion-color-success);
+    /* Ionic toggles often default to success green */
     --ngx-toggle-border: none;
     --ngx-toggle-border-checked: none;
     --ngx-toggle-transition: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
@@ -73,8 +75,9 @@
     --ngx-chip-height: 2rem;
     --ngx-chip-padding: 0 0.75rem;
     --ngx-chip-font-size: 0.8125rem;
-    --ngx-chip-border-radius: 1rem; /* pill shape */
-    --ngx-chip-border: 1px solid rgba(0,0,0,0.08);
+    --ngx-chip-border-radius: 1rem;
+    /* pill shape */
+    --ngx-chip-border: 1px solid rgba(0, 0, 0, 0.08);
     --ngx-chip-bg: var(--ion-color-light);
     --ngx-chip-color: var(--ion-color-dark);
     --ngx-chip-selected-bg: rgba(var(--ion-color-primary-rgb), 0.15);
@@ -85,20 +88,20 @@
     --ngx-chip-hover-bg: #e4e5e9;
     --ngx-chip-hover-color: var(--ion-color-dark);
     --ngx-chip-selected-hover-bg: rgba(var(--ion-color-primary-rgb), 0.25);
-    
+
     /* Overlay dropddowns — Mobile action-sheet inspired */
     --ngx-select-dropdown-bg: #ffffff;
-    --ngx-select-dropdown-border: 1px solid rgba(0,0,0,0.05);
+    --ngx-select-dropdown-border: 1px solid rgba(0, 0, 0, 0.05);
     --ngx-select-dropdown-border-radius: 12px;
-    --ngx-select-dropdown-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.05);
-    
+    --ngx-select-dropdown-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+
     /* Datepicker styling */
     --ngx-datepicker-cell-size: 2.25rem;
     --ngx-datepicker-cell-border-radius: 50%;
     --ngx-datepicker-selected-bg: var(--ion-color-primary);
     --ngx-datepicker-selected-color: #fff;
     --ngx-datepicker-today-ring: 2px solid var(--ion-color-primary);
-    
+
     /* Layout */
     --ngx-renderer-margin-bottom: 0.5rem;
 }
@@ -131,7 +134,8 @@
 .ngx-renderer select:hover:not(:disabled):not(:focus),
 .ngx-select__trigger:hover:not(:disabled):not(:focus),
 .ngx-datepicker__input:hover:not(:disabled):not(:focus) {
-    background-color: #e9eaec; /* Slightly darker than light */
+    background-color: #e9eaec;
+    /* Slightly darker than light */
 }
 
 /* Focus replaces the bottom border with a primary colored inner shadow */
@@ -154,6 +158,7 @@
 .ngx-datepicker__input[aria-invalid="true"] {
     border-bottom-color: var(--ngx-error-color);
 }
+
 .ngx-renderer input[aria-invalid="true"]:focus,
 .ngx-renderer textarea[aria-invalid="true"]:focus,
 .ngx-renderer select[aria-invalid="true"]:focus,
@@ -179,19 +184,23 @@
 .ngx-renderer .ngx-label {
     color: var(--ion-color-medium);
 }
+
 .ngx-renderer.ngx-floating-label .ngx-label--filled {
-    color: var(--ion-color-medium); /* Keeps gray unless focused */
+    color: var(--ion-color-medium);
+    /* Keeps gray unless focused */
 }
 
 /* Ensure the datepicker buttons align correctly with the flat border */
-.ngx-datepicker__input-group > input {
+.ngx-datepicker__input-group>input {
     border-bottom: 1px solid var(--ion-color-medium) !important;
 }
-.ngx-datepicker__input-group > input:focus {
+
+.ngx-datepicker__input-group>input:focus {
     box-shadow: var(--ngx-input-focus-shadow);
     border-bottom-color: var(--ion-color-primary) !important;
 }
-.ngx-datepicker__input-group > button {
+
+.ngx-datepicker__input-group>button {
     background: var(--ngx-input-bg);
     border: none;
     border-bottom: 1px solid var(--ion-color-medium);
@@ -199,7 +208,7 @@
 
 /* ─── Checkbox & Toggle Shadows ───────────────────────────────────────────── */
 .ngx-toggle__thumb {
-    box-shadow: 0 3px 12px rgba(0,0,0,0.16), 0 3px 1px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16), 0 3px 1px rgba(0, 0, 0, 0.1);
 }
 
 .ngx-checkbox input[type="checkbox"]:focus-visible+span::before {

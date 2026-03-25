@@ -27,10 +27,10 @@
             "dom"
         ],
         "paths": {
-            "ngx-signal-forms": [
+            "@ngx-signals/forms": [
                 "projects/ngx-signal-forms/src/public-api.ts"
             ],
-            "ngx-signal-forms/styles/*": [
+            "@ngx-signals/forms/styles/*": [
                 "projects/ngx-signal-forms/src/styles/*"
             ]
         }
