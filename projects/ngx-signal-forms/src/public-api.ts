@@ -116,6 +116,8 @@ export { NgxRadioGroupComponent } from "./lib/renderers/radio/radio-group-render
 export { NgxSliderComponent } from "./lib/renderers/slider/slider-renderer.component";
 export { NgxFileComponent } from "./lib/renderers/file/file-renderer.component";
 export { NgxSegmentedButtonComponent } from "./lib/renderers/segmented-button/segmented-button-renderer.component";
+export { NgxColorsComponent } from "./lib/renderers/colors/colors-renderer.component";
+
 
 // Timepicker (Material 3)
 export { NgxTimepickerComponent } from "./lib/renderers/timepicker";

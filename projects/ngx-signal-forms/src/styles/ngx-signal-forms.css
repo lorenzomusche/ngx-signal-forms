@@ -79,6 +79,11 @@ input[type="date"]:focus,
 /* ─── Custom Properties (theming API) ─────────────────────────────────────── */
 
 :root {
+    /* ─── Mode configuration ─────────────────────────────────────────────── */
+    --ngx-scheme: light;
+    --ngx-base-bg: #ffffff;
+    --ngx-base-content: #18181b;
+
     /* ─── Key Palette (theming API) ────────────────────────────────────────── */
     --ngx-primary: #4361ee;
     --ngx-on-primary: #ffffff;
@@ -86,25 +91,26 @@ input[type="date"]:focus,
     --ngx-on-error: #ffffff;
 
     /* ─── Dynamic Tints (Mathematical derivation from Key Palette) ────────── */
-    --ngx-surface: color-mix(in srgb, var(--ngx-primary), white 96%);
-    --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), white 93%);
-    --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), white 88%);
-    --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), white 82%);
+    --ngx-surface: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 96%);
+    --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 92%);
+    --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 88%);
+    --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 82%);
 
     --ngx-primary-container: var(--ngx-surface-container);
     --ngx-on-primary-container: var(--ngx-primary);
 
-    --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 40%);
-    --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 60%);
+    --ngx-outline: color-mix(in srgb, var(--ngx-base-content), transparent 50%);
+    --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 40%);
+    --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 60%);
 
-    --ngx-on-surface: color-mix(in srgb, var(--ngx-primary), black 80%);
-    --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-primary), black 40%);
+    --ngx-on-surface: var(--ngx-base-content);
+    --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-base-content), transparent 40%);
 
-    --ngx-error-container: color-mix(in srgb, var(--ngx-error), white 94%);
+    --ngx-error-container: color-mix(in srgb, var(--ngx-error), var(--ngx-base-bg) 94%);
     --ngx-on-error-container: var(--ngx-error);
 
-    --ngx-disabled-bg: rgba(24, 24, 27, 0.04);
-    --ngx-disabled-color: rgba(24, 24, 27, 0.38);
+    --ngx-disabled-bg: color-mix(in srgb, var(--ngx-base-content), transparent 94%);
+    --ngx-disabled-color: color-mix(in srgb, var(--ngx-base-content), transparent 60%);
 
     /* ─── Typography & Shared Spacing ─────────────────────────────────────── */
     --ngx-label-font-weight: 600;
@@ -203,8 +209,6 @@ input[type="date"]:focus,
     /* ─── Date Picker & Range ────────────────────────────────────────────── */
     --ngx-datepicker-cell-size: 2.25rem;
     --ngx-datepicker-cell-border-radius: 50%;
-
-
     --ngx-datepicker-cell-font-size: 0.875rem;
     --ngx-datepicker-today-ring: 1px solid currentColor;
     --ngx-datepicker-selected-bg: var(--ngx-primary);
@@ -223,6 +227,9 @@ input[type="date"]:focus,
     --ngx-daterange-input-width: 7.75rem;
     --ngx-daterange-input-padding: 0 calc(var(--ngx-daterange-input-width) / 20);
     --ngx-daterange-sep-padding: 0 calc(var(--ngx-daterange-input-width) / 16);
+    --ngx-daterange-in-range-bg: color-mix(in srgb, var(--ngx-datepicker-selected-bg), transparent 88%);
+    --ngx-daterange-endpoint-bg: var(--ngx-datepicker-selected-bg);
+    --ngx-daterange-endpoint-color: var(--ngx-datepicker-selected-color);
 
     /* ─── Timepicker (Derived) ────────────────────────────────────────────── */
     --ngx-tp-primary: var(--ngx-primary);
@@ -236,6 +243,103 @@ input[type="date"]:focus,
 
     --ngx-overlay-backdrop-bg: rgba(0, 0, 0, 0.4);
 }
+
+/* ─── Color Picker ─────────────────────────────────────────────────────── */
+
+.ngx-colors-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ngx-colors-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ngx-color-swatch {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    border: 2px solid var(--ngx-outline-subtle);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.15s, border-color 0.15s;
+    background-color: var(--color);
+}
+
+.ngx-color-swatch:hover {
+    transform: scale(1.1);
+    border-color: var(--ngx-outline);
+}
+
+.ngx-color-swatch--active {
+    transform: scale(1.1);
+    border-color: var(--ngx-primary);
+    box-shadow: 0 0 0 2px var(--ngx-base-bg), 0 0 0 4px var(--ngx-primary);
+}
+
+.ngx-colors-custom {
+    display: flex;
+    align-items: center;
+}
+
+.ngx-color-input-native {
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.ngx-color-input-native::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.ngx-color-input-native::-webkit-color-swatch {
+    border: 1px solid var(--ngx-outline-variant);
+    border-radius: 4px;
+}
+
+.ngx-color-input-text {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0 0.75rem;
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: var(--ngx-on-surface);
+    outline: none;
+}
+
+.ngx-renderer--colors.disabled .ngx-color-swatch {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    :root {
+        --ngx-scheme: dark;
+        --ngx-base-bg: #09090b;
+        --ngx-base-content: #fafafa;
+        
+        --ngx-surface: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 92%);
+        --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 88%);
+        --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 80%);
+        --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 70%);
+
+        --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 60%);
+        --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 40%);
+        --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-base-content), transparent 30%);
+        
+        --ngx-overlay-backdrop-bg: rgba(0, 0, 0, 0.6);
+    }
+}
+
 
 /* ─── Renderer Layout ─────────────────────────────────────────────────────── */
 

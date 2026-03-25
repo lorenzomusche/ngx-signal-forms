@@ -34,14 +34,20 @@ import {
   NgxTextareaComponent,
   NgxTextComponent,
   NgxTimepickerComponent,
-  NgxToggleComponent
+  NgxToggleComponent,
+  NgxColorsComponent,
 } from "@ngx-signals/forms";
+import { inject, effect } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
+
 
 interface DesignSystemForm extends Record<string, unknown> {
-  // theme: "default" | "material" | "ios" | "ionic";
+  theme: "default" | "material" | "ios" | "ionic";
+  primaryColor: string;
   density: number;
   floating: boolean;
 }
+
 
 interface ContactForm extends Record<string, unknown> {
   firstName: string;
@@ -86,6 +92,7 @@ interface ContactForm extends Record<string, unknown> {
     NgxSliderComponent,
     NgxFileComponent,
     NgxSegmentedButtonComponent,
+    NgxColorsComponent,
     NgxPrefixDirective,
     NgxSuffixDirective,
     NgxSupportingTextDirective,
@@ -135,25 +142,32 @@ interface ContactForm extends Record<string, unknown> {
                <ngx-form #designSystemForm
           [adapter]="designSystemAdapter"
           [ngxFloatingLabels]="designSystemConfig().floating"
-          [ngxFloatingLabelsDensity]="designSystemConfig().density"
         >
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <ngx-control-toggle
-                  name="floating"
-                  label="Interactive Floating Labels"
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start;">
+                 <ngx-control-colors
+                  name="primaryColor"
+                  label="Brand Primary Color"
+                  ngxInlineErrors
                 />
-              </div>
-              <div [class.disabled]="!designSystemForm.getValue()['floating']" style="display: grid; grid-template-columns: 1fr; gap: 1rem; justify-items: start;">
-                <!-- <ngx-control-select
+                
+                <ngx-control-select
                   name="theme"
-                  label="Pick a UI Theme"
+                  label="Design System Theme"
                   [options]="themeOptions"
+                  ngxInlineErrors
                 >
                   <ng-template ngxOption let-opt>
                     {{ opt.label }}
                   </ng-template>
-                </ngx-control-select> -->
+                </ngx-control-select>
+              </div>
 
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: center; margin-top: 1rem;">
+                <ngx-control-toggle
+                  name="floating"
+                  label="Interactive Floating Labels"
+                />
+                
                 <ngx-control-segmented
                   name="density"
                   label="Layout Density"
@@ -367,10 +381,15 @@ interface ContactForm extends Record<string, unknown> {
 })
 export class AppComponent {
 
+  private readonly document = inject(DOCUMENT);
+
   constructor() {
-    /* const document = inject(DOCUMENT);
     effect(() => {
-      const theme = this.designSystemConfig().theme;
+      const config = this.designSystemConfig();
+      const theme = config.theme;
+      const primaryColor = config.primaryColor;
+
+      // ── Update Theme Stylesheet ──
       const link = this.document.getElementById("ngx-theme-link") as HTMLLinkElement;
       if (link) {
         const filename =
@@ -379,15 +398,22 @@ export class AppComponent {
             : `ngx-signal-forms-${theme}.css`;
         link.href = `styles/${filename}`;
       }
-    }); */
+
+      // ── Update Primary Color Variable ──
+      // This triggers all color-mix calculations in ngx-signal-forms.css
+      this.document.documentElement.style.setProperty("--ngx-primary", primaryColor);
+    });
   }
+
   // ── Form model (writable signal) ────────────────────────────────────────────
 
   private readonly designSystemModel = signal<DesignSystemForm>({
-    // theme: "default",
+    theme: "default",
+    primaryColor: "#4361ee",
     density: -2,
     floating: false,
   });
+
 
   private readonly model = signal<ContactForm>({
     firstName: "lorenzo",
@@ -453,10 +479,12 @@ export class AppComponent {
 
   /** Configuration derived from the form model for reactive binding */
   readonly designSystemConfig = computed(() => ({
-    // theme: this.adapter.getField("theme")!()?.value() as "default" | "material" | "ios" | "ionic",
+    theme: this.designSystemAdapter.getField("theme")!()?.value() as DesignSystemForm["theme"],
+    primaryColor: this.designSystemAdapter.getField("primaryColor")!()?.value() as string,
     density: this.designSystemAdapter.getField("density")!()?.value() as number,
     floating: this.designSystemAdapter.getField("floating")!()?.value() as boolean,
   }));
+
 
   // ── Select / multiselect options ────────────────────────────────────────────
 
