@@ -1050,16 +1050,20 @@
 
 /* ─── Color Picker — M3 Filled Style ─────────────────────────────────────── */
 
-/* ─── Color Picker — M3 Filled Style ─────────────────────────────────────── */
-
 .ngx-renderer--colors .ngx-input-wrapper {
-    height: var(--ngx-floating-input-height, var(--ngx-input-height)) !important;
+    height: 2.75rem !important;
     background-color: var(--ngx-surface-container-highest);
     border-radius: var(--ngx-input-border-radius);
     border-bottom: 1px solid var(--ngx-on-surface-variant);
     transition: background 0.2s, border-color 0.2s;
     padding: 0 !important;
     display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box;
+}
+
+.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-input-wrapper {
+    height: var(--ngx-floating-input-height, var(--ngx-input-height)) !important;
 }
 
 
