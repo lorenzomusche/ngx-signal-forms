@@ -77,15 +77,21 @@ type CalendarView = "calendar" | "month" | "year";
       />
     } @else if (view() === "month") {
       <ngx-month-picker
+        [viewYear]="viewYear()"
+        [minDate]="minDate()"
+        [maxDate]="maxDate()"
         [currentMonth]="viewMonth()"
         (monthSelected)="onMonthSelected($event)"
       />
     } @else if (view() === "year") {
       <ngx-year-picker
         [currentYear]="viewYear()"
+        [minDate]="minDate()"
+        [maxDate]="maxDate()"
         (yearSelected)="onYearSelected($event)"
       />
     }
+
   `,
 })
 export class NgxCalendarComponent {

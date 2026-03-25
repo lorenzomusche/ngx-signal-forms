@@ -1,10 +1,14 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
   input,
   output,
+  viewChildren,
 } from "@angular/core";
+import { CalendarDate } from "../../core/date-utils";
 
 @Component({
   selector: "ngx-year-picker",
@@ -15,9 +19,11 @@ import {
     <div class="ngx-datepicker__year-grid">
       @for (yearNum of years(); track $index) {
         <button
+          #yearBtn
           type="button"
           class="ngx-datepicker__year-cell"
           [class.ngx-datepicker__year-cell--selected]="currentYear() === yearNum"
+          [disabled]="isYearDisabled(yearNum)"
           (click)="yearSelected.emit(yearNum)"
         >
           {{ yearNum }}
@@ -26,17 +32,51 @@ import {
     </div>
   `,
 })
-export class NgxYearPickerComponent {
+export class NgxYearPickerComponent implements AfterViewInit {
   readonly currentYear = input.required<number>();
+  readonly minDate = input<CalendarDate | null>(null);
+  readonly maxDate = input<CalendarDate | null>(null);
   readonly yearSelected = output<number>();
 
+  private readonly yearButtons = viewChildren<ElementRef<HTMLButtonElement>>("yearBtn");
+
+  ngAfterViewInit(): void {
+    // Scroll to the current year on init
+    setTimeout(() => {
+        const btns = this.yearButtons();
+        const years = this.years();
+        const selectedIndex = years.findIndex(y => y === this.currentYear());
+        if (selectedIndex !== -1 && btns[selectedIndex]) {
+            btns[selectedIndex].nativeElement.scrollIntoView({ block: 'center', behavior: 'instant' });
+        }
+    }, 0);
+  }
+
+
   protected readonly years = computed(() => {
+
+    const min = this.minDate()?.year ?? 1920;
+    const max = this.maxDate()?.year ?? 2120;
+
+    // Ensure we at least show a decent range around the current year
     const cur = this.currentYear();
-    const start = Math.floor(cur / 10) * 10 - 20; // 24 years centered
+    const startYear = Math.min(min, cur - 100, 1920);
+    const endYear = Math.max(max, cur + 100, 2120);
+
     const result: number[] = [];
-    for (let i = 0; i < 24; i++) {
-       result.push(start + i);
+    for (let i = startYear; i <= endYear; i++) {
+       result.push(i);
     }
     return result;
   });
+
+
+  protected isYearDisabled(year: number): boolean {
+    const min = this.minDate();
+    const max = this.maxDate();
+    if (min && year < min.year) return true;
+    if (max && year > max.year) return true;
+    return false;
+  }
 }
+

@@ -2305,3 +2305,10 @@ button.ngx-chip:hover {
     color: var(--ngx-on-primary) !important;
     font-weight: 600;
 }
+
+.ngx-datepicker__month-cell:disabled,
+.ngx-datepicker__year-cell:disabled {
+    opacity: var(--ngx-datepicker-disabled-opacity, 0.25);
+    cursor: not-allowed;
+    background: transparent !important;
+}
