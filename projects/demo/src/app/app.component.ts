@@ -410,7 +410,7 @@ export class AppComponent {
 
   private readonly designSystemModel = signal<DesignSystemForm>({
     theme: "material",
-    primaryColor: "#3d3d3dff",
+    primaryColor: "#18181b",
     density: -3,
     floating: false,
   });
