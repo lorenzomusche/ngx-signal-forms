@@ -149,7 +149,7 @@ input[type="date"]:focus,
     --ngx-chip-selected-border: 1px solid var(--ngx-input-focus-color);
     /* Datepicker selected-bg starts with the same color as chip-selected-bg, but is independent */
     --ngx-datepicker-selected-bg: var(--ngx-input-focus-color);
-    --ngx-daterange-input-width: 6.5rem;
+    --ngx-daterange-input-width: 7.75rem;
     --ngx-daterange-input-padding: 0 calc(var(--ngx-daterange-input-width) / 20);
     --ngx-daterange-sep-padding: 0 calc(var(--ngx-daterange-input-width) / 16);
     --ngx-chip-max-width: 10rem;
