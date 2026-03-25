@@ -246,73 +246,215 @@ input[type="date"]:focus,
 
 /* ─── Color Picker ─────────────────────────────────────────────────────── */
 
-.ngx-colors-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+/* ─── Color Picker ─────────────────────────────────────────────────────── */
+
+.ngx-colors {
+    position: relative;
+    width: 100%;
 }
 
-.ngx-colors-presets {
+.ngx-colors .ngx-input-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    height: var(--ngx-input-height) !important;
+    padding: 0 !important;
+}
+
+.ngx-input-wrapper__inliner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 0.25rem 0 1rem;
+    box-sizing: border-box;
+}
+
+
+.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-input-wrapper__inliner {
+    padding-top: var(--ngx-fl-pad-top);
+    align-items: center;
+}
+
+.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-colors__hex-input {
+    padding: 0 !important;
+    height: 100% !important;
+    line-height: normal !important;
+}
+
+
+
+.ngx-colors__primary-picker {
+    position: relative;
+    width: 2rem;
+    height: 1.25rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+
+
+
+.ngx-colors__preview-swatch {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    border: 1px solid var(--ngx-outline-variant);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.ngx-colors__primary-picker:hover .ngx-colors__preview-swatch {
+    transform: scale(1.05);
+}
+
+.ngx-colors__toggle-area {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.5rem;
+}
+
+.ngx-colors__arrow--open {
+    transform: rotate(180deg);
+}
+
+.ngx-colors__native-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0 !important;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border: none;
+    z-index: 2;
+}
+
+.ngx-colors__hex-input {
+    flex: 1;
+    min-width: 0;
+}
+
+
+
+
+
+
+
+
+.ngx-colors__native-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.ngx-colors__native-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 3px;
+}
+
+.ngx-colors__hex-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.ngx-colors__swatch-toggle {
+    width: 2.5rem;
+    height: var(--ngx-input-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--ngx-on-surface-variant);
+    transition: color 0.2s, transform 0.2s;
+}
+
+.ngx-colors__swatch-toggle:hover {
+    color: var(--ngx-primary);
+}
+
+.ngx-colors--open .ngx-colors__swatch-toggle {
+    color: var(--ngx-primary);
+    transform: rotate(180deg);
+}
+
+.ngx-colors__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--ngx-surface);
+    border: 1px solid var(--ngx-outline-variant);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2),
+        0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    padding: 1.25rem;
+    margin-top: 8px;
+    min-width: 300px;
+    display: block;
+}
+
+.ngx-colors__dropdown--above {
+    bottom: 100%;
+    top: auto;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.ngx-colors__dropdown--overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 2rem);
+    max-width: 320px;
+    margin: 0;
+    z-index: 9999;
+}
+
+
+
+.ngx-colors__dropdown-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ngx-on-surface-variant);
+    margin-bottom: 0.75rem;
+}
+
+.ngx-colors__presets {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.625rem;
 }
 
 .ngx-color-swatch {
     width: 1.75rem;
     height: 1.75rem;
-    border-radius: 50%;
+    border-radius: 4px;
     border: 2px solid var(--ngx-outline-subtle);
     cursor: pointer;
     padding: 0;
-    transition: transform 0.15s, border-color 0.15s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: var(--color);
 }
 
 .ngx-color-swatch:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
     border-color: var(--ngx-outline);
+    border-radius: 8px;
 }
 
 .ngx-color-swatch--active {
-    transform: scale(1.1);
+    transform: scale(1.15);
     border-color: var(--ngx-primary);
-    box-shadow: 0 0 0 2px var(--ngx-base-bg), 0 0 0 4px var(--ngx-primary);
-}
-
-.ngx-colors-custom {
-    display: flex;
-    align-items: center;
-}
-
-.ngx-color-input-native {
-    width: 2.25rem;
-    height: 2.25rem;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.ngx-color-input-native::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-
-.ngx-color-input-native::-webkit-color-swatch {
-    border: 1px solid var(--ngx-outline-variant);
-    border-radius: 4px;
-}
-
-.ngx-color-input-text {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 0 0.75rem;
-    font-family: monospace;
-    font-size: 0.9rem;
-    color: var(--ngx-on-surface);
-    outline: none;
+    border-radius: 8px;
+    box-shadow: 0 0 0 2px var(--ngx-surface), 0 0 0 4px var(--ngx-primary);
 }
 
 .ngx-renderer--colors.disabled .ngx-color-swatch {
@@ -320,13 +462,16 @@ input[type="date"]:focus,
     opacity: 0.5;
 }
 
+
+
+
 @media (prefers-color-scheme: dark) {
 
     :root {
         --ngx-scheme: dark;
         --ngx-base-bg: #09090b;
         --ngx-base-content: #fafafa;
-        
+
         --ngx-surface: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 92%);
         --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 88%);
         --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 80%);
@@ -335,7 +480,7 @@ input[type="date"]:focus,
         --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 60%);
         --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 40%);
         --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-base-content), transparent 30%);
-        
+
         --ngx-overlay-backdrop-bg: rgba(0, 0, 0, 0.6);
     }
 }
@@ -2380,7 +2525,8 @@ button.ngx-chip:hover {
     padding: 0.5rem 0.75rem;
     background: transparent;
     border: none;
-    border-radius: 0.5rem; /* Coherent with chip-style rounded corners */
+    border-radius: 0.5rem;
+    /* Coherent with chip-style rounded corners */
     color: var(--ngx-on-surface);
     font-family: inherit;
     font-size: var(--ngx-datepicker-cell-font-size, 0.875rem);

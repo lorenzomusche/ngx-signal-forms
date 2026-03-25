@@ -83,7 +83,7 @@
     --ngx-outline: color-mix(in srgb, var(--ngx-primary), black 20%);
     --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 40%);
     --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 60%);
-    
+
     --ngx-disabled-bg: rgba(15, 23, 42, 0.04);
     --ngx-disabled-color: rgba(15, 23, 42, 0.38);
 
@@ -1033,4 +1033,171 @@
     border-bottom-color: var(--ngx-input-focus-color);
     box-shadow: none;
     outline: none;
+}
+
+/* ─── Color Picker — M3 Filled Style ─────────────────────────────────────── */
+
+/* ─── Color Picker — M3 Filled Style ─────────────────────────────────────── */
+
+.ngx-renderer--colors .ngx-input-wrapper {
+    height: var(--ngx-floating-input-height, var(--ngx-input-height)) !important;
+    background-color: var(--ngx-surface-container-highest);
+    border-radius: var(--ngx-input-border-radius);
+    border-bottom: 1px solid var(--ngx-on-surface-variant);
+    transition: background 0.2s, border-color 0.2s;
+    padding: 0 !important;
+    display: flex !important;
+}
+
+
+.ngx-renderer--colors:hover .ngx-input-wrapper {
+    background-color: var(--ngx-surface-container-highest-hover);
+    border-bottom-color: var(--ngx-on-surface);
+}
+
+.ngx-renderer--colors.ngx-renderer--open .ngx-input-wrapper,
+.ngx-renderer--colors:focus-within .ngx-input-wrapper {
+    border-bottom-color: var(--ngx-primary);
+    box-shadow: inset 0 -2px 0 0 var(--ngx-primary);
+}
+
+.ngx-input-wrapper__inliner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    transition: padding-top 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-input-wrapper__inliner {
+    padding-top: var(--ngx-fl-pad-top);
+}
+
+.ngx-colors__primary-picker {
+    position: relative;
+    width: 2.25rem;
+    height: 1.125rem;
+    margin-right: 0.75rem !important;
+    flex-shrink: 0;
+}
+
+.ngx-colors__preview-swatch {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    /* M3 extra-small shape */
+    border: none !important;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.ngx-colors__native-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0 !important;
+    cursor: pointer;
+    border: none;
+    margin: 0;
+    padding: 0;
+    z-index: 2;
+}
+
+.ngx-colors__hex-input {
+    flex: 1;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    font-size: var(--ngx-input-font-size) !important;
+    color: var(--ngx-input-color) !important;
+    height: auto !important;
+    font-family: inherit !important;
+}
+
+.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-colors__hex-input {
+    padding: 0 !important;
+    height: 100% !important;
+}
+
+
+.ngx-colors__toggle-area {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 2.5rem;
+    margin-right: -0.75rem;
+    /* Compensate for wrapper padding */
+}
+
+.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-colors__toggle-area {
+    padding-bottom: 0.625rem !important;
+    align-items: flex-end !important;
+    box-sizing: border-box;
+}
+
+.ngx-colors__preview-swatch {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    /* M3 extra-small shape */
+    border: none !important;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+
+.ngx-colors__arrow--open {
+    transform: rotate(180deg);
+}
+
+.ngx-colors__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--ngx-surface-container-high);
+    border: none;
+    box-shadow: var(--ngx-shadow-depth-3);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 8px;
+    display: block;
+}
+
+.ngx-colors__dropdown--above {
+    bottom: 100%;
+    top: auto;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.ngx-colors__dropdown--overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 3rem);
+    max-width: 340px;
+    margin: 0;
+    z-index: 9999;
+}
+
+
+
+.ngx-colors__dropdown-header {
+    color: var(--ngx-primary);
+    font-weight: 700;
+}
+
+.ngx-color-swatch {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    /* M3 squircle-like */
 }

@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from "@angular/core";
 import {
   createSignalFormAdapter,
   NgxCheckboxComponent,
+  NgxColorsComponent,
   NgxConditionalOptionsDirective,
   NgxDatePickerComponent,
   NgxDateRange,
@@ -35,10 +37,7 @@ import {
   NgxTextComponent,
   NgxTimepickerComponent,
   NgxToggleComponent,
-  NgxColorsComponent,
 } from "@ngx-signals/forms";
-import { inject, effect } from "@angular/core";
-import { DOCUMENT } from "@angular/common";
 
 
 interface DesignSystemForm extends Record<string, unknown> {
@@ -110,9 +109,10 @@ interface ContactForm extends Record<string, unknown> {
       <section style="margin-bottom: 2rem;">
           <details 
             class="playground-accordion"
-            style="margin-bottom: 2rem; border-radius: 12px; border: 1px solid var(--ngx-outline-variant); background: var(--ngx-surface-container); overflow: hidden;"
+            style="margin-bottom: 2rem; border-radius: 12px; border: 1px solid var(--ngx-outline-variant); background: var(--ngx-surface-container);"
             [open]="false"
           >
+
             <summary style="padding: 1rem 1.25rem; list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; background: var(--ngx-surface); font-size: 0.8125rem; font-weight: 700; color: var(--ngx-primary); transition: background 0.2s;">
               <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <span style="font-size: 1rem;">🎨</span>
@@ -409,9 +409,9 @@ export class AppComponent {
   // ── Form model (writable signal) ────────────────────────────────────────────
 
   private readonly designSystemModel = signal<DesignSystemForm>({
-    theme: "default",
-    primaryColor: "#4361ee",
-    density: -2,
+    theme: "material",
+    primaryColor: "#3d3d3dff",
+    density: -3,
     floating: false,
   });
 
