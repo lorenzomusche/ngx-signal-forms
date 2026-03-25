@@ -100,7 +100,7 @@ interface ContactForm extends Record<string, unknown> {
     NgxOptionDirective
   ],
   template: `
-    <div class="demo-card">
+    <main class="demo-card">
       <h1>ngx-signal-forms Demo</h1>
       <p class="subtitle">
         A declarative, type-safe, reactive form system built on Angular Signals.
@@ -377,7 +377,7 @@ interface ContactForm extends Record<string, unknown> {
           </div>
         }
       </section>
-    </div>
+    </main>
   `,
 })
 export class AppComponent {
