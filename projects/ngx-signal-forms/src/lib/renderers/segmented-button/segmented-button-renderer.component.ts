@@ -3,6 +3,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input, InputSigna
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
+import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxSelectOption } from "../../core/types";
 
 /**
@@ -11,7 +12,7 @@ import { NgxSelectOption } from "../../core/types";
 @Component({
   selector: "ngx-control-segmented",
   standalone: true,
-  imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent],
+  imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent, NgxIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 
     class: "ngx-renderer ngx-renderer--segmented", 
@@ -48,9 +49,7 @@ import { NgxSelectOption } from "../../core/types";
           [attr.aria-disabled]="isDisabled()"
         >
           @if (value() === opt.value) {
-            <svg class="ngx-segmented__check" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
+            <ngx-icon name="CHECKMARK" class="ngx-segmented__check" />
           }
           <span class="ngx-segmented__text">{{ opt.label }}</span>
         </button>

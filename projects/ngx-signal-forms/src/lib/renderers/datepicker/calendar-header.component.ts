@@ -7,6 +7,7 @@ import {
   output,
 } from "@angular/core";
 import { NGX_DATE_LOCALE } from "../../core/date-locale";
+import { NgxIconComponent } from "../../control/ngx-icon.component";
 
 /**
  * Calendar header — displays the current month/year label and
@@ -24,6 +25,7 @@ import { NGX_DATE_LOCALE } from "../../core/date-locale";
 @Component({
   selector: "ngx-calendar-header",
   standalone: true,
+  imports: [NgxIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "ngx-datepicker__header" },
   template: `
@@ -31,11 +33,9 @@ import { NGX_DATE_LOCALE } from "../../core/date-locale";
       type="button"
       class="ngx-datepicker__nav-btn"
       aria-label="Previous month"
-      (click)="previousMonth.emit()"
+       (click)="previousMonth.emit()"
     >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M15 18l-6-6 6-6" />
-      </svg>
+      <ngx-icon name="CHEVRON_LEFT" />
     </button>
 
     <span class="ngx-datepicker__title" aria-live="polite">
@@ -46,11 +46,9 @@ import { NGX_DATE_LOCALE } from "../../core/date-locale";
       type="button"
       class="ngx-datepicker__nav-btn"
       aria-label="Next month"
-      (click)="nextMonth.emit()"
+       (click)="nextMonth.emit()"
     >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M9 6l6 6-6 6" />
-      </svg>
+      <ngx-icon name="CHEVRON_RIGHT" />
     </button>
   `,
 })

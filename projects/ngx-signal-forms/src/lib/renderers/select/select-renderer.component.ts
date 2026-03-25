@@ -14,6 +14,7 @@ import {
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
+import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxOptionDirective } from "../../control/option.directive";
 import { NgxOptionsOverlayControl } from "../../core/options-overlay-control.directive";
 import { filterOptionsByQuery } from "../../core/options-utils";
@@ -34,6 +35,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
     NgTemplateOutlet,
     NgxControlLabelComponent,
     NgxErrorListComponent,
+    NgxIconComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -97,11 +99,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
             } @else {
               <span class="ngx-select__placeholder">{{ placeholder() }}</span>
             }
-            <span class="ngx-select__arrow" aria-hidden="true">
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-              </svg>
-            </span>
+            <ngx-icon name="CHEVRON_DOWN" class="ngx-select__arrow" />
           </button>
           @if (suffix(); as s) {
             <div class="ngx-input-suffix">
@@ -198,11 +196,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
               </option>
             }
           </select>
-          <span class="ngx-select__arrow" aria-hidden="true">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
-          </span>
+            <ngx-icon name="CHEVRON_DOWN" class="ngx-select__arrow" />
           @if (suffix(); as s) {
             <div class="ngx-input-suffix">
               <ng-container [ngTemplateOutlet]="s.template" />

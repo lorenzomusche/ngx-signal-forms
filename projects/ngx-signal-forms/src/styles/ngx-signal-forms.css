@@ -1215,6 +1215,7 @@ textarea:has(+ .ngx-input-suffix) {
     align-items: center;
     justify-content: center;
     gap: 0;
+    position: relative;
     height: var(--ngx-chip-height);
     max-width: var(--ngx-chip-max-width);
     padding: var(--ngx-chip-padding);
@@ -1229,19 +1230,25 @@ textarea:has(+ .ngx-input-suffix) {
     user-select: none;
     white-space: nowrap;
     transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
-    --ngx-chip-check-reserve: 1.25em;
 }
 
-.ngx-chip:not(.ngx-chip--counter)::before,
-.ngx-chip:not(.ngx-chip--counter)::after {
+.ngx-chip--centered {
+    --ngx-chip-w: 0.65rem;
+}
+
+.ngx-chip--centered::before,
+.ngx-chip--centered::after {
     content: '';
-    width: calc(var(--ngx-chip-check-reserve) / 2);
+    width: var(--ngx-chip-w);
     flex-shrink: 0;
     transition: width var(--ngx-chip-transition);
 }
 
-.ngx-chip--selected:not(.ngx-chip--counter)::before,
-.ngx-chip--selected:not(.ngx-chip--counter)::after {
+.ngx-chip--centered.ngx-chip--selected::before {
+    width: calc(var(--ngx-chip-w) * 2);
+}
+
+.ngx-chip--centered.ngx-chip--selected::after {
     width: 0;
 }
 
@@ -1250,14 +1257,10 @@ button.ngx-chip:hover {
     color: var(--ngx-chip-selected-color);
 }
 
-.ngx-chip__label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 .ngx-chip__check {
-    width: 0;
+    position: absolute;
+    left: 0.75rem;
+    width: 1em;
     height: 1em;
     flex-shrink: 0;
     fill: none;
@@ -1267,14 +1270,26 @@ button.ngx-chip:hover {
     stroke-linejoin: round;
     opacity: 0;
     visibility: hidden;
-    transition: width var(--ngx-chip-transition), opacity var(--ngx-chip-transition), margin var(--ngx-chip-transition);
+    transform: scale(0.5);
+    transition: opacity var(--ngx-chip-transition), transform var(--ngx-chip-transition), visibility var(--ngx-chip-transition);
 }
 
 .ngx-chip--selected .ngx-chip__check {
-    width: 1em;
     opacity: 1;
     visibility: visible;
-    margin-right: 0.25em;
+    transform: scale(1);
+}
+
+.ngx-chip__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: transform var(--ngx-chip-transition);
+}
+
+.ngx-chip--centered.ngx-chip--selected .ngx-chip__label {
+    /* Stabilizza la posizione dell'etichetta senza trasformazioni che potrebbero intaccare altre modalità */
+    transform: none;
 }
 
 .ngx-chip--selected {

@@ -14,6 +14,7 @@ import {
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
+import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxOptionDirective } from "../../control/option.directive";
 import { NgxOptionsOverlayControl } from "../../core/options-overlay-control.directive";
 import { filterOptionsByQuery } from "../../core/options-utils";
@@ -31,6 +32,7 @@ import { NgxOptionsControl } from "../../core/types";
     NgxControlLabelComponent,
     NgxErrorListComponent,
     NgTemplateOutlet,
+    NgxIconComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -67,10 +69,7 @@ import { NgxOptionsControl } from "../../core/types";
             (click)="openOverlay()"
             aria-label="Search options"
           >
-            <svg viewBox="0 0 20 20" aria-hidden="true">
-              <circle cx="8.5" cy="8.5" r="5.5" />
-              <line x1="12.5" y1="12.5" x2="17" y2="17" />
-            </svg>
+            <ngx-icon name="SEARCH" />
           </button>
         }
       </div>
@@ -113,9 +112,7 @@ import { NgxOptionsControl } from "../../core/types";
                 (click)="decrement(opt.value)"
                 aria-label="Decrease"
               >
-                <svg viewBox="0 0 12 12" aria-hidden="true">
-                  <line x1="3" y1="6" x2="9" y2="6" />
-                </svg>
+                <ngx-icon name="MINUS" />
               </button>
               <span class="ngx-chip__label">{{ opt.label }}</span>
               <span class="ngx-chip__count">&times;{{ countOf(opt.value) }}</span>
@@ -126,16 +123,13 @@ import { NgxOptionsControl } from "../../core/types";
                 (click)="increment(opt.value)"
                 aria-label="Increase"
               >
-                <svg viewBox="0 0 12 12" aria-hidden="true">
-                  <line x1="3" y1="6" x2="9" y2="6" />
-                  <line x1="6" y1="3" x2="6" y2="9" />
-                </svg>
+                <ngx-icon name="PLUS" />
               </button>
             </div>
           } @else {
             <button
               type="button"
-              class="ngx-chip"
+              class="ngx-chip ngx-chip--centered"
               [class.ngx-chip--selected]="isSelected(opt.value)"
               [disabled]="isDisabled()"
               [title]="opt.label"
@@ -143,13 +137,7 @@ import { NgxOptionsControl } from "../../core/types";
               (click)="onToggle(opt.value)"
               (blur)="markAsTouched()"
             >
-              <svg
-                class="ngx-chip__check"
-                viewBox="0 0 18 18"
-                aria-hidden="true"
-              >
-                <polyline points="3.5 9.5 7 13 14.5 5.5" />
-              </svg>
+              <ngx-icon name="CHECKMARK" class="ngx-chip__check" />
               <span class="ngx-chip__label">{{ opt.label }}</span>
             </button>
           }
@@ -193,9 +181,7 @@ import { NgxOptionsControl } from "../../core/types";
                   [disabled]="countOf(opt.value) === 0"
                   aria-label="Decrease"
                 >
-                  <svg viewBox="0 0 12 12" aria-hidden="true">
-                    <line x1="3" y1="6" x2="9" y2="6" />
-                  </svg>
+                  <ngx-icon name="MINUS" />
                 </button>
                 <span class="ngx-chip__label">{{
                   opt.label
@@ -209,26 +195,17 @@ import { NgxOptionsControl } from "../../core/types";
                   (click)="increment(opt.value)"
                   aria-label="Increase"
                 >
-                  <svg viewBox="0 0 12 12" aria-hidden="true">
-                    <line x1="3" y1="6" x2="9" y2="6" />
-                    <line x1="6" y1="3" x2="6" y2="9" />
-                  </svg>
+                  <ngx-icon name="PLUS" />
                 </button>
               </div>
             } @else {
               <button
                 type="button"
-                class="ngx-chip"
+                class="ngx-chip ngx-chip--centered"
                 [class.ngx-chip--selected]="isSelected(opt.value)"
                 (click)="onOverlaySelect(opt.value)"
               >
-                <svg
-                  class="ngx-chip__check"
-                  viewBox="0 0 18 18"
-                  aria-hidden="true"
-                >
-                  <polyline points="3.5 9.5 7 13 14.5 5.5" />
-                </svg>
+                <ngx-icon name="CHECKMARK" class="ngx-chip__check" />
                 <span class="ngx-chip__label">{{ opt.label }}</span>
               </button>
             }

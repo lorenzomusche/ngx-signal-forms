@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { NgxIconComponent } from "./ngx-icon.component";
 
 /**
  * Inline error icon with hover/focus tooltip.
@@ -14,6 +15,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 @Component({
   selector: "ngx-inline-error-icon",
   standalone: true,
+  imports: [NgxIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "ngx-control__inline-errors",
@@ -22,15 +24,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
     tabindex: "0",
   },
   template: `
-    <svg
-      class="ngx-control__inline-errors-icon"
-      viewBox="0 0 20 20"
-      aria-hidden="true"
-    >
-      <path
-        d="M10 2L1 18h18L10 2zm0 12a1 1 0 110 2 1 1 0 010-2zm-1-7h2v5h-2V7z"
-      />
-    </svg>
+    <ngx-icon name="ERROR" class="ngx-control__inline-errors-icon" style="vertical-align: middle; margin-top: -1px; width: 0.85em; height: 0.85em;" />
     <span class="ngx-control__inline-errors-tooltip">{{ errorText() }}</span>
   `,
 })

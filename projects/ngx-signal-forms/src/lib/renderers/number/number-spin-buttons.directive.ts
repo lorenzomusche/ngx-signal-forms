@@ -1,4 +1,5 @@
 import { Directive, ElementRef, input, OnInit, Renderer2 } from "@angular/core";
+import { NGX_ICONS } from "../../core/icons";
 
 /**
  * @description
@@ -42,7 +43,8 @@ export class NgxNumberSpinButtonsDirective implements OnInit {
     upBtn.type = "button";
     upBtn.tabIndex = -1;
     upBtn.setAttribute("aria-label", "Incrementa");
-    upBtn.innerHTML = `<svg width='1em' height='1em' viewBox='0 0 16 16'><polyline points='4,10 8,6 12,10' stroke='currentColor' stroke-width='2' fill='none' stroke-linecap='round'/></svg>`;
+    const upIcon = NGX_ICONS.SPIN_UP;
+    upBtn.innerHTML = `<svg width='1em' height='1em' viewBox='${upIcon.viewBox}' fill='none' xmlns='http://www.w3.org/2000/svg'>${upIcon.content}</svg>`;
     this.renderer.setStyle(upBtn, "position", "absolute");
     this.renderer.setStyle(upBtn, "right", "0.25em");
     this.renderer.setStyle(upBtn, "top", "0.15em");
@@ -60,7 +62,8 @@ export class NgxNumberSpinButtonsDirective implements OnInit {
     downBtn.type = "button";
     downBtn.tabIndex = -1;
     downBtn.setAttribute("aria-label", "Decrementa");
-    downBtn.innerHTML = `<svg width='1em' height='1em' viewBox='0 0 16 16'><polyline points='4,6 8,10 12,6' stroke='currentColor' stroke-width='2' fill='none' stroke-linecap='round'/></svg>`;
+    const downIcon = NGX_ICONS.SPIN_DOWN;
+    downBtn.innerHTML = `<svg width='1em' height='1em' viewBox='${downIcon.viewBox}' fill='none' xmlns='http://www.w3.org/2000/svg'>${downIcon.content}</svg>`;
     this.renderer.setStyle(downBtn, "position", "absolute");
     this.renderer.setStyle(downBtn, "right", "0.25em");
     this.renderer.setStyle(downBtn, "bottom", "0.15em");

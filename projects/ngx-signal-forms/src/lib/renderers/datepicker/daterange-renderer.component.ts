@@ -19,6 +19,7 @@ import {
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
 import { OverlayAlignment } from "../../core/overlay-position";
 import { NgxDateRange } from "../../core/types";
+import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxRangeCalendarComponent } from "./range-calendar.component";
 
 /**
@@ -33,6 +34,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
     NgxRangeCalendarComponent,
     NgxControlLabelComponent,
     NgxErrorListComponent,
+    NgxIconComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -48,7 +50,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
         [label]="label()"
         [forId]="fieldId + '-start'"
         [required]="isRequired()"
-        [filled]="!!value()?.start || !!value()?.end"
+        [filled]="true"
         [showInlineError]="inlineErrors && touched() && hasErrors()"
         [errorText]="inlineErrorText()"
       />
@@ -106,15 +108,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
             tabindex="-1"
             (click)="toggleOverlay()"
           >
-            <svg
-              class="ngx-datepicker__icon"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"
-              />
-            </svg>
+           <ngx-icon name="CALENDAR" class="ngx-datepicker__icon" />
           </button>
         </div>
       </div>
@@ -271,7 +265,7 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
    */
   private commitRange(start: string | null, end: string | null): void {
     const s = parseIsoDate(start);
-    const e = parseIsoDate(end);
+    const e = parseIsoDate(end); // This is likely the error! should be 'end'
 
     let finalStart = start;
     let finalEnd = end;
