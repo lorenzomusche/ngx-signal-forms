@@ -14,6 +14,11 @@
     --tp-outline: var(--ngx-tp-outline, var(--ngx-input-border-color, #ccc));
     --tp-border-radius: var(--ngx-tp-border-radius, var(--ngx-datepicker-popup-border-radius, var(--ngx-input-border-radius, 6px)));
 
+    // ── Typography ────────────────────────────────────────────────────────
+    --tp-font-family: var(--ngx-font-family, "Roboto", sans-serif);
+    --tp-font-weight: var(--ngx-tp-font-weight, 400);
+    --tp-period-font-weight: var(--ngx-tp-period-font-weight, 500);
+
     // ── Computed Dimensions ───────────────────────────────────────────────
     --tp-dial-size: 256px;
     --tp-num-size: 40px;
@@ -37,7 +42,7 @@
     max-height: 95vh;
     overflow-y: auto;
     box-sizing: border-box;
-    font-family: var(--ngx-font-family, "Roboto", sans-serif);
+    font-family: var(--tp-font-family);
 }
 
 // ── Inner content wrapper ─────────────────────────────────────────────────────
@@ -76,7 +81,7 @@
     border: 1.5px solid transparent !important;
     border-radius: var(--tp-border-radius) !important;
     font-size: 48px !important;
-    font-weight: 400 !important;
+    font-weight: var(--tp-font-weight) !important;
     text-align: center !important;
     color: var(--tp-on-primary-container) !important;
     outline: none !important;
@@ -121,7 +126,7 @@
 .ngx-timepicker-separator {
     font-size: 48px;
     color: var(--tp-on-primary-container);
-    font-weight: 400;
+    font-weight: var(--tp-font-weight);
     align-self: flex-start;
     height: var(--tp-seg-height);
     display: flex;
@@ -152,7 +157,7 @@
     padding: 0;
     width: 52px; // Fixed width to prevent shift when font-weight changes
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: var(--tp-period-font-weight);
     font-family: inherit;
     cursor: pointer;
     color: var(--ngx-on-surface-variant, #3f3f46);
@@ -241,7 +246,7 @@
         content: "";
         position: absolute;
         top: calc(var(--tp-num-size) / -2);
-        left: calc(var(--tp-num-size) / -2 + 1px);
+        left: calc(var(--tp-num-size) / -2 + 2px);
         width: var(--tp-num-size);
         height: var(--tp-num-size);
         background-color: var(--tp-primary);
@@ -341,7 +346,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: inherit; /* Inherit focus color from .ngx-input-suffix */
+    color: inherit;
+    /* Inherit focus color from .ngx-input-suffix */
     border-radius: 50%;
     transition: background-color 0.2s, color 0.2s;
     padding: 0;

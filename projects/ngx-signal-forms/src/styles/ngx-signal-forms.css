@@ -480,11 +480,6 @@ textarea:has(+ .ngx-input-suffix) {
     /* Rimosso per coerenza con il padding dell'input */
 }
 
-.ngx-renderer.ngx-floating-label .ngx-input-suffix {
-    padding-right: 1rem;
-    padding-left: 0.25rem;
-}
-
 /* 3. Horizontal Shift Logic */
 /* Quando presente un prefisso, l'input assorbe la spaziatura anziché raddoppiarla col prefisso */
 .ngx-renderer.ngx-floating-label .ngx-input-wrapper:has(.ngx-input-prefix) input,
@@ -1162,8 +1157,15 @@ textarea:has(+ .ngx-input-suffix) {
 }
 
 @keyframes ngx-segmented-check-pop {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* ─── Multiselect (Chips + Overlay) ────────────────────────────────────────── */

@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600&family=Roboto:wght@400;500&display=swap');
+@import './ngx-signal-forms.css';
+
 /*
  * ngx-signal-forms — Modern Neutral Theme
  *
@@ -8,7 +11,15 @@
  *   @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
  */
 
-@import './ngx-signal-forms.css';
+:root {
+    --ngx-font-family: "Roboto", system-ui, -apple-system, sans-serif;
+}
+
+.ngx-renderer,
+.ngx-timepicker-container,
+.ngx-datepicker__popup {
+    font-family: var(--ngx-font-family);
+}
 
 /*
  * Color Tokens — High-Contrast Neutral (Zinc)
@@ -32,43 +43,55 @@
 /* ─── Custom property overrides ───────────────────────────────────────────── */
 
 :root {
-    /* Typography — M3 label-large (500, 14sp, 0.1sp tracking) */
-    --ngx-label-font-weight: 500;
-    --ngx-label-font-size: 0.75rem;
+    /* M3 Shapes */
+    --ngx-corner-extra-small: 4px;
+    --ngx-corner-small: 8px;
+    --ngx-corner-medium: 12px;
+    --ngx-corner-full: 100px;
 
-    /* Filled text fields — M3 spec: 4dp top corners, 16dp padding
-       Use padding-bottom to compensate for the 3px indicator so
-       border-width changes cause zero layout shift.                          */
-    --ngx-input-padding: 0.625rem 0.75rem calc(0.625rem + 2px);
+    /* Typography */
+    --ngx-font-family: "Outfit", "Inter", "Roboto", system-ui, -apple-system, sans-serif;
+    --ngx-label-font-weight: var(--ngx-font-weight-medium);
+    --ngx-label-font-size: 0.875rem;
+    --ngx-font-weight-regular: 400;
+    --ngx-font-weight-medium: 500;
+    --ngx-font-weight-semibold: 600;
+
+    /* Timepicker specific typography */
+    --ngx-tp-font-weight: var(--ngx-font-weight-regular);
+    --ngx-tp-period-font-weight: var(--ngx-font-weight-medium);
+
+    /* Filled text fields — M3 spec: 4dp top corners, 16dp horizontal padding */
+    --ngx-input-padding: 0.625rem 1rem calc(0.625rem + 2px);
     --ngx-input-border: none;
     --ngx-input-border-color: transparent;
-    --ngx-input-border-radius: 0;
+    --ngx-input-border-radius: var(--ngx-corner-extra-small) var(--ngx-corner-extra-small) 0 0;
     --ngx-input-color: #18181b;
     --ngx-input-placeholder-color: #71717a;
     --ngx-input-font-size: 0.9375rem;
     --ngx-input-focus-color: #18181b;
     --ngx-input-focus-shadow: none;
 
-    /* Errors — red-600, body-small (12sp) */
+    /* Errors — M3 body-small (12sp) */
     --ngx-error-color: #dc2626;
-    --ngx-error-font-size: 0.6875rem;
+    --ngx-error-font-size: 0.75rem;
     --ngx-error-line-height: 1.33;
     --ngx-error-focus-shadow: none;
+    --ngx-tooltip-border-radius: var(--ngx-corner-extra-small);
 
-    /* Checkbox — custom styled, 18dp, rounded */
+    /* Checkbox — M3 18dp, 2px rounded */
     --ngx-checkbox-size: 1.125rem;
     --ngx-checkbox-accent: #18181b;
     --ngx-checkbox-checkmark-color: #fff;
     --ngx-checkbox-border: 2px solid #71717a;
-    --ngx-checkbox-border-radius: 0;
+    --ngx-checkbox-border-radius: 2px;
     --ngx-checkbox-gap: 0.5rem;
     --ngx-checkbox-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
 
-    /* Toggle (Switch) — track 52×32dp
-       Unchecked handle: 20dp, checked: 24dp. */
+    /* Toggle (Switch) — track 52×32dp */
     --ngx-toggle-width: 3.25rem;
     --ngx-toggle-height: 2rem;
-    --ngx-toggle-thumb-size: 1.25rem;
+    --ngx-toggle-thumb-size: 1rem;
     --ngx-toggle-thumb-size-checked: 1.5rem;
     --ngx-toggle-thumb-offset: 0.25rem;
     --ngx-toggle-thumb-color: #71717a;
@@ -81,13 +104,13 @@
     --ngx-toggle-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
 
     /* Multiselect — filter chips */
-    --ngx-multiselect-padding: 0.25rem 0.75rem;
+    --ngx-multiselect-padding: 0.25rem 1rem;
     --ngx-multiselect-max-height: 5.5rem;
     --ngx-chip-height: 1.75rem;
-    --ngx-chip-padding: 0 0.625rem;
+    --ngx-chip-padding: 0 0.75rem;
     --ngx-chip-gap: 0.375rem;
     --ngx-chip-font-size: 0.8125rem;
-    --ngx-chip-border-radius: 0.5rem;
+    --ngx-chip-border-radius: var(--ngx-corner-small);
     --ngx-chip-border: 1px solid #d4d4d8;
     --ngx-chip-bg: transparent;
     --ngx-chip-color: #3f3f46;
@@ -107,16 +130,15 @@
     /* Custom Select dropdown — M3 menu surface */
     --ngx-select-dropdown-bg: #f4f4f5;
     --ngx-select-dropdown-border: none;
-    --ngx-select-dropdown-border-radius: 0;
-    --ngx-select-dropdown-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15),
-        0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --ngx-select-dropdown-border-radius: var(--ngx-corner-extra-small);
+    --ngx-select-dropdown-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     --ngx-select-dropdown-max-height: calc(var(--ngx-multiselect-max-height) + 40px);
-    --ngx-select-option-padding: 0.5rem 0.75rem;
+    --ngx-select-option-padding: 0.625rem 1rem;
     --ngx-select-option-hover-bg: rgba(24, 24, 27, 0.08);
     --ngx-select-option-hover-color: inherit;
     --ngx-select-option-selected-bg: rgba(24, 24, 27, 0.12);
     --ngx-select-option-selected-color: inherit;
-    --ngx-select-option-selected-weight: 500;
+    --ngx-select-option-selected-weight: var(--ngx-font-weight-medium);
 
     /* Surface & semantic colors (M3-like tokens) */
     --ngx-surface: #fff;
@@ -130,6 +152,16 @@
     --ngx-outline-subtle: #d4d4d8;
     --ngx-disabled-bg: rgba(24, 24, 27, 0.04);
     --ngx-disabled-color: rgba(24, 24, 27, 0.38);
+
+    /* DatePicker & TimePicker standard surfaces */
+    --ngx-datepicker-popup-bg: var(--ngx-surface-container);
+    --ngx-datepicker-popup-border: 1px solid var(--ngx-outline-variant);
+    --ngx-datepicker-popup-border-radius: var(--ngx-corner-medium);
+    --ngx-datepicker-popup-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+
+    /* Timepicker Dial overrides — ensure contrast and shape */
+    --ngx-tp-surface-variant: var(--ngx-surface-container-highest);
+    --ngx-tp-outline: var(--ngx-outline-variant);
 
     --ngx-renderer-gap: 0.375rem;
     --ngx-renderer-margin-bottom: 1rem;
@@ -156,6 +188,7 @@
     background-color: var(--ngx-surface-container-highest);
     color: var(--ngx-input-color);
     border-bottom: 1px solid var(--ngx-on-surface-variant);
+    border-radius: var(--ngx-input-border-radius);
     padding-bottom: calc(0.625rem + 2px);
     transition: border-color 0.2s cubic-bezier(0.2, 0, 0, 1),
         background 0.2s, color 0.2s;
@@ -222,7 +255,7 @@
     color: var(--ngx-input-color);
     border: none;
     border-bottom: 1px solid var(--ngx-on-surface-variant);
-    border-radius: 0;
+    border-radius: var(--ngx-input-border-radius);
     padding-bottom: calc(0.625rem + 2px);
 }
 
@@ -412,7 +445,7 @@
 
 .ngx-slider-value {
     color: var(--ngx-on-surface);
-    font-weight: 500;
+    font-weight: var(--ngx-font-weight-medium);
 }
 
 /* Slider State Layer */
@@ -449,7 +482,7 @@
 
 .ngx-file-name {
     color: var(--ngx-on-surface);
-    font-weight: 500;
+    font-weight: var(--ngx-font-weight-medium);
 }
 
 .ngx-file-clear {
@@ -505,7 +538,7 @@
     margin-right: -1px;
     color: var(--ngx-on-surface-variant);
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: var(--ngx-font-weight-medium);
     border-radius: 0;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
@@ -520,7 +553,7 @@
 .ngx-segmented__button--selected {
     background: var(--ngx-surface-container-highest);
     color: var(--ngx-on-surface);
-    font-weight: 500;
+    font-weight: var(--ngx-font-weight-medium);
     box-shadow: none;
     /* M3 outlined has no shadow */
 }
@@ -575,9 +608,8 @@
 .ngx-multiselect-overlay__panel {
     background: var(--ngx-surface);
     border: 1px solid var(--ngx-outline-subtle);
-    border-radius: 0;
-    box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15),
-        0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    border-radius: var(--ngx-select-dropdown-border-radius);
+    box-shadow: var(--ngx-select-dropdown-shadow);
 }
 
 .ngx-multiselect-overlay__input {
@@ -600,8 +632,8 @@
 
 .ngx-control__inline-errors-tooltip {
     letter-spacing: 0.025em;
-    border-radius: 0;
-    font-size: 0.6875rem;
+    border-radius: var(--ngx-tooltip-border-radius);
+    font-size: var(--ngx-error-font-size);
 }
 
 /* ─── Block errors — M3 supporting text spec: 4dp top padding ─────────────── */
@@ -617,14 +649,11 @@
     padding-top: 0.25rem;
 }
 
-/* ─── Date Picker — M3 filled style ──────────────────────────────────────── */
+/* ─── Date Picker & Time Picker — M3 Style Tweaks ──────────────────────── */
 
+/* We keep popup properties in the main :root to avoid conflicts.
+   Here we only override component-specific tokens if needed. */
 :root {
-    --ngx-datepicker-popup-bg: var(--ngx-surface-container);
-    --ngx-datepicker-popup-border: none;
-    --ngx-datepicker-popup-border-radius: 0;
-    --ngx-datepicker-popup-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15),
-        0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --ngx-datepicker-selected-bg: #18181b;
     --ngx-datepicker-selected-color: #fff;
     --ngx-datepicker-hover-bg: rgba(24, 24, 27, 0.08);
@@ -637,7 +666,7 @@
     color: var(--ngx-input-color);
     border: none;
     border-bottom: 1px solid var(--ngx-on-surface-variant);
-    border-radius: 0;
+    border-radius: var(--ngx-input-border-radius);
     padding-bottom: calc(0.625rem + 2px);
 }
 
@@ -670,7 +699,7 @@
 .ngx-datepicker__toggle {
     background: var(--ngx-surface-container-highest);
     border: none;
-    border-radius: 0;
+    border-radius: 50%;
     color: var(--ngx-on-surface-variant);
 }
 
@@ -695,17 +724,6 @@
     --ngx-daterange-in-range-bg: var(--ngx-surface-container-highest);
     --ngx-daterange-endpoint-bg: #18181b;
     --ngx-daterange-endpoint-color: #fff;
-
-    /* Timepicker — material/neutral palette overrides
-       primary-container uses the zinc-100 tint, same visual weight as
-       --ngx-select-option-selected-bg in this theme.                        */
-    --ngx-tp-primary: var(--ngx-input-focus-color);
-    --ngx-tp-on-primary: #ffffff;
-    --ngx-tp-primary-container: var(--ngx-select-option-selected-bg);
-    --ngx-tp-on-primary-container: var(--ngx-on-surface);
-    --ngx-tp-surface: var(--ngx-surface-container);
-    --ngx-tp-surface-variant: var(--ngx-surface-container-highest);
-    --ngx-tp-outline: var(--ngx-outline);
 }
 
 
@@ -719,11 +737,11 @@
     background: var(--ngx-surface-container-highest);
     border: none;
     border-bottom: 1px solid var(--ngx-on-surface-variant);
-    border-radius: 0;
+    border-radius: var(--ngx-input-border-radius);
 }
 
 .ngx-daterange__group .ngx-daterange__input:first-of-type {
-    border-radius: 0;
+    border-radius: var(--ngx-input-border-radius);
 }
 
 /* Container focus: thick indicator on the whole group */
