@@ -849,24 +849,9 @@
     /* Stable height to prevent shift */
 }
 
-.ngx-datepicker__header-nav {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
 .ngx-datepicker__nav-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 48px;
     height: 48px;
-    background: transparent;
-    border: none;
-    border-radius: 50%;
-    color: var(--ngx-on-surface-variant);
-    cursor: pointer;
-    transition: background 0.2s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .ngx-datepicker__nav-btn ngx-icon {
@@ -876,121 +861,24 @@
     font-size: 24px;
 }
 
-.ngx-datepicker__nav-btn:hover {
-    background: var(--ngx-surface-container-highest-hover);
-}
-
 .ngx-datepicker__title {
-    color: var(--ngx-on-surface);
-    font-size: 0.875rem;
-    font-weight: var(--ngx-font-weight-medium);
     min-width: 140px;
-    /* Stable width for month/year label */
+    text-align: center;
 }
 
 .ngx-datepicker__view-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     padding: 8px 12px;
-    background: transparent;
-    border: none;
-    border-radius: 100px;
-    color: var(--ngx-on-surface);
-    font-family: inherit;
-    font-size: 0.875rem;
-    font-weight: var(--ngx-font-weight-medium);
-    cursor: pointer;
-    transition: background 0.2s;
 }
 
-.ngx-datepicker__view-toggle:hover {
-    background: var(--ngx-surface-container-highest-hover);
-}
-
-.ngx-datepicker__view-icon {
-    font-size: 1.25rem;
-    opacity: 0.7;
-    display: block;
-    width: 20px;
-    height: 20px;
-}
 
 /* ─── Month/Year Picker Grids ────────────────────────────────────────────── */
 
-.ngx-datepicker__month-picker {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    padding: 12px;
-}
-
-.ngx-datepicker__year-picker {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    padding: 12px;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
 .ngx-datepicker__month-cell,
 .ngx-datepicker__year-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    padding: 8px;
-    background: transparent;
-    border: none;
-    border-radius: 24px;
-    /* Fully rounded pill */
-    color: var(--ngx-on-surface);
-    font-family: inherit;
-    font-size: 0.875rem;
-    font-weight: var(--ngx-font-weight-regular);
-    cursor: pointer;
-    transition: background 0.2s cubic-bezier(0.2, 0, 0, 1),
-        color 0.2s cubic-bezier(0.2, 0, 0, 1);
-    position: relative;
-    outline: none;
-}
-
-.ngx-datepicker__month-cell:hover,
-.ngx-datepicker__year-cell:hover {
-    background: var(--ngx-surface-container-highest-hover);
-}
-
-.ngx-datepicker__month-cell:focus-visible,
-.ngx-datepicker__year-cell:focus-visible {
-    box-shadow: 0 0 0 2px var(--ngx-primary);
-}
-
-.ngx-datepicker__cell--selected,
-.ngx-datepicker__month-cell--selected,
-.ngx-datepicker__year-cell--selected {
-    background: var(--ngx-datepicker-selected-bg) !important;
-    color: var(--ngx-datepicker-selected-color) !important;
-    font-weight: var(--ngx-font-weight-medium);
-}
-
-.ngx-datepicker__month-cell,
-.ngx-datepicker__year-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     min-height: 48px;
     padding: 0 12px;
-    background: transparent;
-    border: none;
-    border-radius: 24px;
-    color: var(--ngx-on-surface);
-    font-family: inherit;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: background 0.2s;
-    outline: none;
 }
+
 
 .ngx-datepicker__cell--today:not(.ngx-datepicker__cell--selected) {
     box-shadow: inset 0 0 0 1px var(--ngx-datepicker-today-color);

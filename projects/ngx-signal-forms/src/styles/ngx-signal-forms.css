@@ -96,13 +96,13 @@ input[type="date"]:focus,
 
     --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 40%);
     --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 60%);
-    
+
     --ngx-on-surface: color-mix(in srgb, var(--ngx-primary), black 80%);
     --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-primary), black 40%);
 
     --ngx-error-container: color-mix(in srgb, var(--ngx-error), white 94%);
     --ngx-on-error-container: var(--ngx-error);
-    
+
     --ngx-disabled-bg: rgba(24, 24, 27, 0.04);
     --ngx-disabled-color: rgba(24, 24, 27, 0.38);
 
@@ -203,6 +203,8 @@ input[type="date"]:focus,
     /* ─── Date Picker & Range ────────────────────────────────────────────── */
     --ngx-datepicker-cell-size: 2.25rem;
     --ngx-datepicker-cell-border-radius: 50%;
+
+
     --ngx-datepicker-cell-font-size: 0.875rem;
     --ngx-datepicker-today-ring: 1px solid currentColor;
     --ngx-datepicker-selected-bg: var(--ngx-primary);
@@ -1926,13 +1928,9 @@ button.ngx-chip:hover {
     padding-bottom: 0.25rem;
 }
 
-.ngx-datepicker__title {
-    flex: 1;
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.875rem;
-    user-select: none;
-}
+
+
+
 
 .ngx-datepicker__nav-btn {
     display: inline-flex;
@@ -1950,8 +1948,54 @@ button.ngx-chip:hover {
 }
 
 .ngx-datepicker__nav-btn:hover {
-    background: var(--ngx-surface-container);
+    background: var(--ngx-datepicker-hover-bg);
 }
+
+.ngx-datepicker__header-label {
+    display: flex;
+    align-items: center;
+}
+
+.ngx-datepicker__header-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.ngx-datepicker__view-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: 100px;
+    color: var(--ngx-on-surface);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.ngx-datepicker__view-toggle:hover {
+    background: var(--ngx-datepicker-hover-bg);
+}
+
+.ngx-datepicker__view-icon {
+    display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+    opacity: 0.7;
+}
+
+.ngx-datepicker__title {
+    color: var(--ngx-on-surface);
+    font-weight: 600;
+    font-size: 0.875rem;
+    user-select: none;
+}
+
 
 .ngx-datepicker__nav-btn svg {
     width: 1.25rem;
@@ -2051,9 +2095,10 @@ button.ngx-chip:hover {
        • In-range band uses primary-container — approximated as
          selected-bg at 12 % opacity so it automatically follows
          whichever theme palette is active.                                   */
-    --ngx-daterange-in-range-bg: var(--ngx-datepicker-selected-bg);
+    --ngx-daterange-in-range-bg: color-mix(in srgb, var(--ngx-datepicker-selected-bg), transparent 88%);
     --ngx-daterange-endpoint-bg: var(--ngx-datepicker-selected-bg);
     --ngx-daterange-endpoint-color: var(--ngx-datepicker-selected-color);
+
 }
 
 /*
@@ -2204,4 +2249,59 @@ button.ngx-chip:hover {
 .ngx-datepicker__input-group {
     outline: none !important;
     box-shadow: none !important;
+}
+
+/* ─── Month & Year Picker ─────────────────────────────────────────────────── */
+
+.ngx-datepicker__month-picker,
+.ngx-datepicker__year-picker {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding: var(--ngx-datepicker-popup-padding);
+}
+
+.ngx-datepicker__year-picker {
+    max-height: 280px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.ngx-datepicker__month-cell,
+.ngx-datepicker__year-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: 0.5rem; /* Coherent with chip-style rounded corners */
+    color: var(--ngx-on-surface);
+    font-family: inherit;
+    font-size: var(--ngx-datepicker-cell-font-size, 0.875rem);
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    outline: none;
+}
+
+
+.ngx-datepicker__month-cell:hover,
+.ngx-datepicker__year-cell:hover {
+    background: var(--ngx-surface-container-highest-hover);
+    color: var(--ngx-on-surface);
+}
+
+.ngx-datepicker__month-cell:focus-visible,
+.ngx-datepicker__year-cell:focus-visible {
+    background: var(--ngx-surface-container-highest-hover);
+    outline: 2px solid var(--ngx-primary);
+    outline-offset: -2px;
+}
+
+.ngx-datepicker__month-cell--selected,
+.ngx-datepicker__year-cell--selected {
+    background: var(--ngx-primary) !important;
+    color: var(--ngx-on-primary) !important;
+    font-weight: 600;
 }
