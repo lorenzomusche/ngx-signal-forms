@@ -95,7 +95,7 @@
     --ngx-chip-selected-color: #fff;
     --ngx-chip-selected-border: 1px solid #18181b;
     --ngx-chip-max-width: 11rem;
-    --ngx-chip-transition: 0.1s ease-out;
+    --ngx-chip-transition: 0.15s ease;
 
     /* Chip hover/selected hover */
     --ngx-chip-hover-bg: rgba(24, 24, 27, 0.06);
@@ -469,28 +469,26 @@
     gap: 0.5rem;
 }
 
-.ngx-chip--removable::after {
-    content: '×';
-    font-size: 1.125rem;
-    font-weight: 400;
-    line-height: 1;
-    opacity: 0.7;
-    transition: opacity 0.2s;
+/* Base ngx-chip logic from ngx-signal-forms.css is now inherited.
+   We only keep material-specific overrides here. */
+.ngx-chip {
+    border-color: var(--ngx-outline-variant);
 }
 
-.ngx-chip--removable:hover::after {
-    opacity: 1;
+.ngx-chip:hover:not(.ngx-chip--selected):not(:disabled) {
+    background-color: var(--ngx-surface-container-highest-hover);
+    border-color: var(--ngx-outline);
 }
 
-/* Segmented Button — Theme-aware styling */
+/* Segmented Button — Material 3 (M3) Outlined Specification */
 .ngx-segmented {
     display: inline-flex;
-    gap: 0;
-    border-radius: 0;
-    border: 1px solid var(--ngx-segmented-border);
-    overflow: hidden;
     background: transparent;
     padding: 0;
+    border-radius: 100px;
+    border: 1px solid var(--ngx-outline-variant);
+    overflow: hidden;
+    gap: 1px;
     width: fit-content;
 }
 
@@ -499,47 +497,43 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0;
-    border: none;
-    border-right: 1px solid var(--ngx-segmented-border);
-    margin-right: -1px;
-    padding: 0.625rem 1rem;
+    padding: 0.625rem 1.125rem;
     min-height: 2.5rem;
     background: transparent;
-    color: var(--ngx-on-surface);
+    border: none;
+    border-right: 1px solid var(--ngx-outline-variant);
+    margin-right: -1px;
+    color: var(--ngx-on-surface-variant);
     font-size: 0.875rem;
     font-weight: 500;
+    border-radius: 0;
     cursor: pointer;
-    transition: background 0.1s, color 0.1s;
+    transition: background 0.2s, color 0.2s;
     white-space: nowrap;
-    box-sizing: border-box;
 }
 
-.ngx-segmented__button--last {
+.ngx-segmented__button:last-of-type {
     border-right: none;
     margin-right: 0;
 }
 
 .ngx-segmented__button--selected {
-    background: var(--ngx-segmented-btn-bg-selected);
-    color: var(--ngx-segmented-btn-color-selected);
-    z-index: 1;
-}
-
-.ngx-segmented__button--selected:hover {
-    background: var(--ngx-segmented-btn-bg-selected-hover);
+    background: var(--ngx-surface-container-highest);
+    color: var(--ngx-on-surface);
+    font-weight: 500;
+    box-shadow: none;
+    /* M3 outlined has no shadow */
 }
 
 .ngx-segmented__button:hover:not(.ngx-segmented__button--selected):not(:disabled) {
-    background: var(--ngx-segmented-btn-bg-hover);
+    background: var(--ngx-surface-container-highest-hover);
+    color: var(--ngx-on-surface);
 }
 
 .ngx-segmented__check {
-    width: 1.125rem;
-    height: 1.125rem;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2.5;
+    width: 1rem;
+    height: 1rem;
+    animation: ngx-segmented-check-pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* ─── Custom Checkbox — high-contrast neutral ─────────────────────────────── */
