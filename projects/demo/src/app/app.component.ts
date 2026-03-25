@@ -110,34 +110,35 @@ interface ContactForm extends Record<string, unknown> {
       <section style="margin-bottom: 2rem;">
           <details 
             class="playground-accordion"
-            style="margin-bottom: 2rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.08); background: #fafafa; overflow: hidden;"
+            style="margin-bottom: 2rem; border-radius: 12px; border: 1px solid var(--ngx-outline-variant); background: var(--ngx-surface-container); overflow: hidden;"
             [open]="false"
           >
-            <summary style="padding: 0.75rem 1.25rem; list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; background: #fff; font-size: 0.8125rem; font-weight: 600; color: #4361ee; transition: background 0.2s;">
+            <summary style="padding: 1rem 1.25rem; list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; background: var(--ngx-surface); font-size: 0.8125rem; font-weight: 700; color: var(--ngx-primary); transition: background 0.2s;">
               <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <span style="font-size: 1rem;">🛠️</span>
+                <span style="font-size: 1rem;">🎨</span>
                 <span>Design System Inspector</span>
               </div>
-              <div style="font-size: 0.65rem; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em;">Click to toggle configuration</div>
+              <div style="font-size: 0.65rem; color: var(--ngx-on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;">Configurazione Real-time</div>
             </summary>
 
             <div 
               class="demo-config" 
-              style="padding: 1.25rem; background: #fff; border-top: 1px solid var(--ngx-outline-subtle); position: relative;"
+              style="padding: 1.5rem; background: var(--ngx-surface); border-top: 1px solid var(--ngx-outline-variant); position: relative;"
             >
               <!-- Decorative accent bar -->
-              <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #4361ee, #7209b7);"></div>
+              <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--ngx-primary);"></div>
               
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
                 <div style="padding-right: 1.5rem;">
-                  <h4 style="margin: 0 0 0.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ngx-input-focus-color); font-weight: 700;">
+                  <h4 style="margin: 0 0 0.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ngx-primary); font-weight: 800;">
                     Real-time Theme Engine
                   </h4>
-                  <p style="margin: 0; font-size: 0.8125rem; color: var(--ngx-on-surface-variant); opacity: 0.8;">
-                    Instantly modify the visual experience
+                  <p style="margin: 0; font-size: 0.8125rem; color: var(--ngx-on-surface-variant);">
+                    Modifica istantaneamente l'esperienza visiva
                   </p>
                 </div>
               </div>
+
 
                <ngx-form #designSystemForm
           [adapter]="designSystemAdapter"

@@ -1,25 +1,5 @@
 /* ─── Library theme — Modern Neutral ───────────────────────────────────────── */
 @use 'sass:color';
-@use 'color-scheme' as ngx;
-
-/* Apply a custom color scheme — change the color to theme the entire form */
-$primary: #3a3a3a;
-
-/* @include ngx.color-scheme($primary, $settings: (prefer-light-text: true));
-@include ngx.color-scheme-dark($primary, $settings: (prefer-light-text: true)); */
-
-/*
- * Available themes:
- *  '@ngx-signals/forms/styles/ngx-signal-forms.css';           – Default
- *  '@ngx-signals/forms/styles/ngx-signal-forms-material.css';  – Material 3
- *
- * To customise, override any --ngx-* variable:
- *
- * :root {
- *   --ngx-input-focus-color: hotpink;
- *   --ngx-error-color: orangered;
- * }
- */
 
 /* ─── Reset & Base ─────────────────────────────────────────────────────────── */
 
@@ -30,124 +10,125 @@ $primary: #3a3a3a;
 }
 
 body {
-    font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.5;
-    color: color.mix(#000, $primary, 80%);
-    background: #ffffff;
+    color: var(--ngx-on-surface);
+    background: var(--ngx-base-bg);
     margin: 0;
     padding: 1.5rem;
-}
-
-@media (prefers-color-scheme: dark) {
-    body {
-        color: color.mix(#fff, $primary, 90%);
-        background: color.mix(#000, $primary, 92%);
-    }
+    transition: background 0.3s, color 0.3s;
 }
 
 /* ─── Demo Layout ─────────────────────────────────────────────────────────── */
 
 .demo-card {
-    max-width: 560px;
+    max-width: 600px;
     margin: 0 auto;
-    background: #ffffff;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    background: var(--ngx-surface);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 
+                0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--ngx-outline-variant);
 }
 
 .demo-card h1 {
-    margin: 0 0 0.125rem;
-    font-size: 1.25rem;
-    font-weight: 400;
-    color: color.mix(#000, $primary, 80%);
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ngx-primary);
 }
 
 .demo-card p.subtitle {
-    margin: 0 0 1rem;
-    color: color.mix(#000, $primary, 40%);
-    font-size: 0.8125rem;
-    letter-spacing: 0.016em;
+    margin: 0 0 1.5rem;
+    color: var(--ngx-on-surface-variant);
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
 }
 
 @media (prefers-color-scheme: dark) {
     .demo-card {
-        background: color.mix(#000, $primary, 85%);
-        box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-    }
-
-    .demo-card h1 {
-        color: color.mix(#fff, $primary, 90%);
-    }
-
-    .demo-card p.subtitle {
-        color: color.mix(#fff, $primary, 60%);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
     }
 }
-
-/* ─── Buttons — M3 filled button: 40dp height, 100dp corner, label-large ─── */
 
 /* ─── Form Row — side-by-side controls ─────────────────────────────────────── */
 
 .form-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    gap: 1rem;
     align-items: start;
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ─── Buttons ──────────────────────────────────────────────────────────────── */
 
 button[type="submit"] {
-    margin-top: 0.25rem;
-    padding: 0.5rem 1.25rem;
-    min-height: 2.25rem;
+    margin-top: 1rem;
+    padding: 0.75rem 2rem;
+    min-height: 2.75rem;
     border: none;
-    border-radius: 100px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: 0.006em;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s cubic-bezier(0.2, 0, 0, 1),
-        box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+    background: var(--ngx-primary);
+    color: var(--ngx-on-primary);
+    width: 100%;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--ngx-primary), transparent 70%);
 }
 
-button[type="submit"]:hover {
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3),
-        0 1px 3px 1px rgba(0, 0, 0, 0.15);
+button[type="submit"]:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--ngx-primary), transparent 60%);
+    filter: brightness(1.1);
+}
+
+button[type="submit"]:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 button[type="submit"]:disabled {
-    box-shadow: none;
+    opacity: 0.5;
     cursor: not-allowed;
+    background: var(--ngx-disabled-bg);
+    color: var(--ngx-disabled-color);
+    box-shadow: none;
 }
 
 /* ─── Submit result ────────────────────────────────────────────────────── */
 
 .submit-result {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    background: color.mix(#fff, $primary, 90%);
-    border: 1px solid color.mix(#fff, $primary, 60%);
-    border-radius: 8px;
-    font-size: 0.8125rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--ngx-surface-container);
+    border: 1px solid var(--ngx-outline-variant);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .submit-result pre {
-    margin: 0.5rem 0 0;
+    margin: 0.75rem 0 0;
     white-space: pre-wrap;
     font-size: 0.8rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    color: var(--ngx-on-surface);
 }
 
 .disabled {
     opacity: 0.5;
     pointer-events: none;
-}
-
-@media (prefers-color-scheme: dark) {
-    .submit-result {
-        background: color.mix(#000, $primary, 78%);
-        border-color: color.mix(#000, $primary, 55%);
-        color: color.mix(#fff, $primary, 90%);
-    }
 }
