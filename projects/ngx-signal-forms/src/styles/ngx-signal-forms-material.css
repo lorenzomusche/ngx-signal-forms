@@ -8,7 +8,7 @@
  *   @import 'ngx-signal-forms/styles/ngx-signal-forms-material.css';
  */
 
-@import '@ngx-signals/forms/styles/ngx-signal-forms.css';
+@import './ngx-signal-forms.css';
 
 /*
  * Color Tokens — High-Contrast Neutral (Zinc)
