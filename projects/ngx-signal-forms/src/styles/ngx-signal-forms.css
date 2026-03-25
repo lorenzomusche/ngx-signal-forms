@@ -265,13 +265,14 @@ input[type="date"]:focus,
     align-items: center;
     width: 100%;
     height: 100%;
-    padding: 0 0.25rem 0 1rem;
+    padding: 0 0.25rem 0 0.75rem;
     box-sizing: border-box;
 }
 
 
 .ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-input-wrapper__inliner {
     padding-top: var(--ngx-fl-pad-top);
+    padding-left: 1rem;
     align-items: center;
 }
 
@@ -399,7 +400,19 @@ input[type="date"]:focus,
     padding: 1.25rem;
     margin-top: 8px;
     min-width: 300px;
+    display: none;
+}
+
+.ngx-colors--open .ngx-colors__dropdown {
     display: block;
+    position: fixed;
+    top: var(--ngx-overlay-top, auto);
+    bottom: var(--ngx-overlay-bottom, auto);
+    left: var(--ngx-overlay-left, auto);
+    right: var(--ngx-overlay-right, auto);
+    width: var(--ngx-overlay-width, 300px);
+    margin: 0;
+    margin-top: 4px; /* Slight anchor gap */
 }
 
 .ngx-colors__dropdown--above {
@@ -515,7 +528,6 @@ input[type="date"]:focus,
     /* Bottom indicator via box-shadow — never causes layout shift */
     box-shadow: inset 0 -1px 0 0 var(--ngx-outline-variant);
     transition: background-color 0.2s, box-shadow 0.2s;
-    overflow: hidden;
 }
 
 /* For textareas, align decorators to the top */
@@ -1674,6 +1686,17 @@ button.ngx-chip:hover {
     overflow: hidden;
 }
 
+.ngx-renderer--open .ngx-multiselect-overlay__panel:not(.ngx-multiselect-overlay__panel--overlay) {
+    position: fixed;
+    top: var(--ngx-overlay-top, auto);
+    bottom: var(--ngx-overlay-bottom, auto);
+    left: var(--ngx-overlay-left, auto);
+    right: var(--ngx-overlay-right, auto);
+    width: var(--ngx-overlay-width, auto);
+    margin: 0;
+    margin-top: 4px;
+}
+
 .ngx-multiselect-overlay__panel--above {
     top: auto;
     bottom: 100%;
@@ -1830,7 +1853,7 @@ button.ngx-chip:hover {
 
 .ngx-select__dropdown {
     position: absolute;
-    z-index: 100;
+    z-index: 1000;
     top: 100%;
     left: 0;
     right: 0;
@@ -1840,6 +1863,17 @@ button.ngx-chip:hover {
     border-radius: var(--ngx-select-dropdown-border-radius);
     box-shadow: var(--ngx-select-dropdown-shadow);
     overflow: hidden;
+}
+
+.ngx-renderer--open .ngx-select__dropdown:not(.ngx-select__dropdown--overlay) {
+    position: fixed;
+    top: var(--ngx-overlay-top, auto);
+    bottom: var(--ngx-overlay-bottom, auto);
+    left: var(--ngx-overlay-left, auto);
+    right: var(--ngx-overlay-right, auto);
+    width: var(--ngx-overlay-width, auto);
+    margin: 0;
+    margin-top: 4px;
 }
 
 .ngx-select__dropdown--above {
@@ -2118,7 +2152,7 @@ button.ngx-chip:hover {
 
 .ngx-datepicker__popup {
     position: absolute;
-    z-index: 100;
+    z-index: 1000;
     top: 100%;
     left: 0;
     margin-top: 0.25rem;
@@ -2131,6 +2165,18 @@ button.ngx-chip:hover {
     max-height: 90vh;
     overflow-y: auto;
     box-sizing: border-box;
+}
+
+.ngx-renderer--open .ngx-datepicker__popup:not(.ngx-datepicker__popup--overlay),
+.ngx-renderer--open .ngx-timepicker__popup:not(.ngx-timepicker__popup--overlay) {
+    position: fixed;
+    top: var(--ngx-overlay-top, auto);
+    bottom: var(--ngx-overlay-bottom, auto);
+    left: var(--ngx-overlay-left, auto);
+    right: var(--ngx-overlay-right, auto);
+    width: var(--ngx-overlay-width, auto);
+    margin: 0;
+    margin-top: 4px;
 }
 
 .ngx-datepicker__popup--above {

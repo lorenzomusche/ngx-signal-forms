@@ -27,8 +27,8 @@ body {
     background: var(--ngx-surface);
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 
-                0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
+        0 8px 10px -6px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--ngx-outline-variant);
 }
 
@@ -116,8 +116,15 @@ button[type="submit"]:disabled {
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .submit-result pre {
@@ -131,4 +138,8 @@ button[type="submit"]:disabled {
 .disabled {
     opacity: 0.5;
     pointer-events: none;
+}
+
+.playground-accordion {
+    overflow: hidden;
 }

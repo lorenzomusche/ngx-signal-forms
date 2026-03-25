@@ -34,6 +34,19 @@
     background: var(--ngx-datepicker-popup-bg);
     border-radius: var(--ngx-datepicker-popup-border-radius);
     box-shadow: var(--ngx-datepicker-popup-shadow);
+    z-index: 1000;
+}
+
+.ngx-renderer--open .ngx-datepicker__popup:not(.ngx-datepicker__popup--modal):not(.ngx-datepicker__popup--overlay),
+.ngx-renderer--open .ngx-timepicker__popup:not(.ngx-timepicker__popup--overlay) {
+    position: fixed !important;
+    top: var(--ngx-overlay-top, auto);
+    bottom: var(--ngx-overlay-bottom, auto);
+    left: var(--ngx-overlay-left, auto);
+    right: var(--ngx-overlay-right, auto);
+    width: var(--ngx-overlay-width, 360px);
+    margin: 0;
+    margin-top: 4px;
 }
 
 /*
@@ -1167,7 +1180,19 @@
     border-radius: 16px;
     padding: 1.5rem;
     margin-top: 8px;
+    display: none;
+}
+
+.ngx-colors--open .ngx-colors__dropdown {
     display: block;
+    position: fixed;
+    top: var(--ngx-overlay-top, auto);
+    bottom: var(--ngx-overlay-bottom, auto);
+    left: var(--ngx-overlay-left, auto);
+    right: var(--ngx-overlay-right, auto);
+    width: var(--ngx-overlay-width, 300px);
+    margin: 0;
+    margin-top: 4px;
 }
 
 .ngx-colors__dropdown--above {

@@ -16,6 +16,14 @@ export type OverlayAlignment = "left" | "right";
 export interface ComputedPosition {
   readonly position: OverlayPosition;
   readonly alignment: OverlayAlignment;
+  /** Viewport coordinates for fixed positioning fallback. */
+  readonly coords: {
+    readonly top?: number | undefined;
+    readonly bottom?: number | undefined;
+    readonly left?: number | undefined;
+    readonly right?: number | undefined;
+    readonly width: number;
+  };
 }
 
 /** Configuration for overlay positioning. */
@@ -81,13 +89,29 @@ export function computeOverlayPosition(
       for (const align of alignments) {
         const fitsHorizontal = align === "left" ? fitsLeft : fitsRight;
         if (fitsHorizontal) {
-          return { position: pos, alignment: align };
+          return {
+            position: pos,
+            alignment: align,
+            coords: {
+              width: rect.width,
+              top: pos === "below" ? rect.bottom : undefined,
+              bottom: pos === "above" ? window.innerHeight - rect.top : undefined,
+              left: align === "left" ? rect.left : undefined,
+              right: align === "right" ? window.innerWidth - rect.right : undefined,
+            },
+          };
         }
       }
     }
   }
 
   // Fallback to Centered Overlay
-  return { position: "overlay", alignment: "left" };
+  return {
+    position: "overlay",
+    alignment: "left",
+    coords: {
+      width: rect.width,
+    },
+  };
 }
 
