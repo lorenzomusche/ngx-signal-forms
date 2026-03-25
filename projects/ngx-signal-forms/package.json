@@ -39,14 +39,20 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "style": "./styles/ngx-signal-forms.css",
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "esm2022": "./esm2022/ngx-signal-forms.mjs",
+      "import": "./fesm2022/ngx-signal-forms.mjs",
       "esm": "./esm2022/ngx-signal-forms.mjs",
       "default": "./fesm2022/ngx-signal-forms.mjs"
-    }
+    },
+    "./style": "./styles/ngx-signal-forms.css",
+    "./styles/*": "./styles/*"
   },
   "main": "fesm2022/ngx-signal-forms.mjs",
   "module": "fesm2022/ngx-signal-forms.mjs",
