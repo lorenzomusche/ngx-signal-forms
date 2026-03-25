@@ -35,7 +35,7 @@ import {
   NgxTextComponent,
   NgxTimepickerComponent,
   NgxToggleComponent
-} from "ngx-signal-forms";
+} from "@ngx-signals/forms";
 
 interface DesignSystemForm extends Record<string, unknown> {
   // theme: "default" | "material" | "ios" | "ionic";
