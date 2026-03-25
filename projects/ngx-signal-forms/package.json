@@ -47,15 +47,15 @@
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "import": "./fesm2022/ngx-signal-forms.mjs",
-      "esm": "./esm2022/ngx-signal-forms.mjs",
-      "default": "./fesm2022/ngx-signal-forms.mjs"
+      "import": "./fesm2022/ngx-signals-forms.mjs",
+      "esm": "./esm2022/ngx-signals-forms.mjs",
+      "default": "./fesm2022/ngx-signals-forms.mjs"
     },
     "./style": "./styles/ngx-signal-forms.css",
     "./styles/*": "./styles/*"
   },
-  "main": "fesm2022/ngx-signal-forms.mjs",
-  "module": "fesm2022/ngx-signal-forms.mjs",
+  "main": "fesm2022/ngx-signals-forms.mjs",
+  "module": "fesm2022/ngx-signals-forms.mjs",
   "typings": "index.d.ts",
   "publishConfig": {
     "access": "public"
