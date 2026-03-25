@@ -10,7 +10,7 @@
  *   - https://ionicframework.com/docs/api/input
  */
 
-@import '@ngx-signals/forms/styles/ngx-signal-forms.css';
+@import './ngx-signal-forms.css';
 
 :root {
     /* Base Palette — Ionic Defaults */

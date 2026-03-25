@@ -24,7 +24,7 @@
  *   See _color-scheme-ios.scss for full API docs.
  */
 
-@import '@ngx-signals/forms/styles/ngx-signal-forms.css';
+@import './ngx-signal-forms.css';
 
 /*
  * Color Tokens — iOS System Colors
