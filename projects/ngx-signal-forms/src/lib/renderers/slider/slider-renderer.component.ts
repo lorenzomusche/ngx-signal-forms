@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
@@ -60,22 +60,38 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
     }
   `,
 })
-export class NgxSliderComponent extends NgxBaseControl<number> {
+export class NgxSliderComponent extends NgxBaseControl<number> implements AfterViewInit {
   readonly min       = input<number>(0);
   readonly max       = input<number>(100);
   readonly step      = input<number>(1);
   readonly showValue = input<boolean>(true);
 
+  @ViewChild('rangeInput') private rangeInput!: ElementRef<HTMLInputElement>;
+
   protected readonly fieldId = `ngx-control-slider-${NgxBaseControl.nextId()}`;
 
+  ngAfterViewInit(): void {
+    this.updateFillPct(this.value() ?? this.min(), this.min(), this.max());
+  }
+
   protected onInput(event: Event): void {
-    const val = Number((event.target as HTMLInputElement).value);
+    const input = event.target as HTMLInputElement;
+    const val = Number(input.value);
     this.setValue(val);
+    this.updateFillPct(val, this.min(), this.max());
   }
 
   protected onChange(event: Event): void {
-    const val = Number((event.target as HTMLInputElement).value);
+    const input = event.target as HTMLInputElement;
+    const val = Number(input.value);
     this.setValue(val);
     this.markAsDirty();
+    this.updateFillPct(val, this.min(), this.max());
+  }
+
+  private updateFillPct(value: number, min: number, max: number): void {
+    if (!this.rangeInput) return;
+    const pct = max !== min ? ((value - min) / (max - min)) * 100 : 0;
+    this.rangeInput.nativeElement.style.setProperty('--ngx-slider-fill-pct', `${pct}%`);
   }
 }

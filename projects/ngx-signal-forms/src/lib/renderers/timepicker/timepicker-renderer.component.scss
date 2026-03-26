@@ -20,18 +20,18 @@
     --tp-period-font-weight: var(--ngx-tp-period-font-weight, 500);
 
     // ── Computed Dimensions ───────────────────────────────────────────────
-    --tp-dial-size: 256px;
+    --tp-dial-size: var(--ngx-signal-form-comp-time-picker-clock-dial-size, 256px);
     --tp-num-size: 40px;
     --tp-hand-length: calc(var(--tp-dial-size) / 2 - (var(--tp-num-size) / 2) - 8px);
 
-    // ── Segment / Box Dimensions (Shared between Input/Dial) ──────────────
-    --tp-seg-width: 96px;
-    --tp-seg-height: 72px;
+    // ── Segment / Box Dimensions (M3: 96×80px) ────────────────────────────
+    --tp-seg-width: var(--ngx-signal-form-comp-time-picker-input-segment-width, 96px);
+    --tp-seg-height: var(--ngx-signal-form-comp-time-picker-input-segment-height, 80px);
     --tp-header-seg-width: var(--tp-seg-width);
 
-    background-color: var(--tp-surface);
-    border: 1px solid var(--tp-outline);
-    border-radius: var(--tp-border-radius);
+    background-color: var(--ngx-signal-form-comp-time-picker-container-color, var(--tp-surface));
+    border: none;
+    border-radius: var(--ngx-signal-form-comp-time-picker-container-shape, var(--tp-border-radius));
     box-shadow: var(--ngx-datepicker-popup-shadow, var(--ngx-select-dropdown-shadow, 0 4px 12px rgba(0, 0, 0, 0.12)));
     padding: 24px;
     display: flex;
@@ -77,10 +77,13 @@
 .ngx-timepicker-segment-input {
     width: var(--tp-seg-width) !important;
     height: var(--tp-seg-height) !important;
-    background-color: var(--tp-surface-variant) !important;
+    /* M3: surface-container-highest background */
+    background-color: var(--ngx-signal-form-comp-time-picker-input-container-color, var(--tp-surface-variant)) !important;
     border: 1.5px solid transparent !important;
-    border-radius: var(--tp-border-radius) !important;
-    font-size: 48px !important;
+    /* M3: small shape = 8px */
+    border-radius: var(--ngx-signal-form-comp-time-picker-input-container-shape, var(--tp-border-radius)) !important;
+    /* M3: display-medium = 45px */
+    font-size: 45px !important;
     font-weight: var(--tp-font-weight) !important;
     text-align: center !important;
     color: var(--tp-on-primary-container) !important;
@@ -105,7 +108,7 @@
     }
 
     &:hover:not(:disabled) {
-        background-color: var(--ngx-datepicker-hover-bg, rgba(0, 0, 0, 0.06));
+        background-color: color-mix(in srgb, var(--ngx-signal-form-comp-time-picker-input-container-color, var(--tp-surface-variant)), var(--ngx-on-surface, #000) 8%) !important;
     }
 }
 
@@ -124,7 +127,7 @@
 }
 
 .ngx-timepicker-separator {
-    font-size: 48px;
+    font-size: 45px; /* M3: matches display-medium segment font */
     color: var(--tp-on-primary-container);
     font-weight: var(--tp-font-weight);
     align-self: flex-start;
@@ -138,8 +141,9 @@
 .ngx-timepicker-period-toggle {
     display: flex;
     flex-direction: column;
-    border: 1.5px solid var(--tp-outline);
-    border-radius: var(--tp-border-radius);
+    /* M3: outline color + small shape */
+    border: 1.5px solid var(--ngx-signal-form-comp-time-picker-period-outline-color, var(--tp-outline));
+    border-radius: var(--ngx-signal-form-comp-time-picker-input-container-shape, var(--tp-border-radius));
     overflow: hidden;
     height: var(--tp-seg-height);
 }
@@ -164,7 +168,7 @@
     transition: background-color 0.15s, color 0.15s;
 
     &:first-child {
-        border-bottom: 1.5px solid var(--tp-outline);
+        border-bottom: 1.5px solid var(--ngx-signal-form-comp-time-picker-period-outline-color, var(--tp-outline));
     }
 
     &--selected {
@@ -189,7 +193,7 @@
 .ngx-timepicker-dial {
     width: var(--tp-dial-size);
     height: var(--tp-dial-size);
-    background-color: var(--tp-surface-variant);
+    background-color: var(--ngx-signal-form-comp-time-picker-clock-dial-container-color, var(--tp-surface-variant));
     border-radius: 50%;
     position: relative;
     display: flex;

@@ -35,6 +35,7 @@
                         "browser": "projects/demo/src/main.ts",
                         "tsConfig": "projects/demo/tsconfig.app.json",
                         "styles": [
+                            "projects/ngx-signal-forms/src/styles/ngx-signal-forms-m3-base.css",
                             "projects/demo/src/styles.scss"
                         ],
                         "assets": [

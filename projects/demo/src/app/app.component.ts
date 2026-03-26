@@ -402,19 +402,18 @@ export class AppComponent {
 
       // ── Update Primary Color Variable ──
       // This triggers all color-mix calculations in ngx-signal-forms.css
-      this.document.documentElement.style.setProperty("--ngx-primary", primaryColor);
+      this.document.documentElement.style.setProperty("--ngx-signal-form-sys-color-primary", primaryColor);
     });
   }
 
   // ── Form model (writable signal) ────────────────────────────────────────────
 
   private readonly designSystemModel = signal<DesignSystemForm>({
-    theme: "material",
+    theme: "default",
     primaryColor: "#18181b",
     density: -3,
     floating: false,
   });
-
 
   private readonly model = signal<ContactForm>({
     firstName: "lorenzo",
