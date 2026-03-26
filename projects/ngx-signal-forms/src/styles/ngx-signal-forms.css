@@ -3,9 +3,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.75em;
+    width: var(--ngx-spin-btn-size);
     height: 1.25em;
-    border-radius: 4px;
+    border-radius: var(--ngx-spin-btn-border-radius);
     color: var(--ngx-input-icon-color);
     background: transparent;
     border: none;
@@ -26,7 +26,7 @@
 
 .ngx-spin-btn:hover,
 .ngx-spin-btn:focus {
-    background: var(--ngx-surface-container-highest-hover, #d4d4d8);
+    background: var(--ngx-spin-btn-hover-bg);
     color: var(--ngx-input-focus-color);
 }
 
@@ -90,9 +90,12 @@ input[type="date"]:focus,
     --ngx-error: #e63946;
     --ngx-on-error: #ffffff;
 
-    /* ─── Dynamic Tints (Mathematical derivation from Key Palette) ────────── */
+    /* ─── M3 Surface Elevation Scale ───────────────────────────────────────── */
     --ngx-surface: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 96%);
+    --ngx-surface-container-lowest: var(--ngx-base-bg);
+    --ngx-surface-container-low: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 95%);
     --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 92%);
+    --ngx-surface-container-high: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 89%);
     --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 88%);
     --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 82%);
 
@@ -112,16 +115,30 @@ input[type="date"]:focus,
     --ngx-disabled-bg: color-mix(in srgb, var(--ngx-base-content), transparent 94%);
     --ngx-disabled-color: color-mix(in srgb, var(--ngx-base-content), transparent 60%);
 
+    /* ─── M3 Shape Scale ──────────────────────────────────────────────────── */
+    --ngx-corner-none: 0px;
+    --ngx-corner-extra-small: 4px;
+    --ngx-corner-small: 8px;
+    --ngx-corner-medium: 12px;
+    --ngx-corner-large: 16px;
+    --ngx-corner-extra-large: 28px;
+    --ngx-corner-full: 9999px;
+
+    /* ─── Elevation Shadows (M3 Tonal Elevation) ───────────────────────────── */
+    --ngx-shadow-depth-1: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --ngx-shadow-depth-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --ngx-shadow-depth-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+
     /* ─── Typography & Shared Spacing ─────────────────────────────────────── */
     --ngx-label-font-weight: 600;
     --ngx-label-font-size: 0.875rem;
     --ngx-input-line-height: 1.25rem;
-    --ngx-input-font-size: 0.95rem;
-    --ngx-input-padding: 0.625rem 0.75rem;
-    --ngx-input-border-radius: 4px 4px 0 0;
-    --ngx-input-height: 2.5rem;
+    --ngx-input-font-size: 0.9375rem;
+    --ngx-input-padding: 0.625rem 1rem calc(0.625rem + 2px);
+    --ngx-input-border-radius: var(--ngx-corner-extra-small) var(--ngx-corner-extra-small) 0 0;
+    --ngx-input-height: 3.5rem;
     --ngx-renderer-gap: 0.375rem;
-    --ngx-renderer-margin-bottom: .5rem;
+    --ngx-renderer-margin-bottom: 1rem;
 
     /* ─── Inputs ──────────────────────────────────────────────────────────── */
     --ngx-input-bg: var(--ngx-surface-container-highest);
@@ -142,39 +159,46 @@ input[type="date"]:focus,
     --ngx-error-font-size: var(--ngx-helper-font-size);
     --ngx-error-line-height: var(--ngx-helper-line-height);
     --ngx-error-focus-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
+    --ngx-tooltip-border-radius: var(--ngx-corner-extra-small);
 
-    /* ─── Checkbox ────────────────────────────────────────────────────────── */
+    /* ─── Checkbox — M3 spec: 18dp, extra-small corner ────────────────────── */
     --ngx-checkbox-size: 1.125rem;
     --ngx-checkbox-accent: var(--ngx-primary);
     --ngx-checkbox-checkmark-color: var(--ngx-on-primary);
     --ngx-checkbox-border: 2px solid var(--ngx-outline);
-    --ngx-checkbox-border-radius: 3px;
+    --ngx-checkbox-border-radius: var(--ngx-corner-extra-small);
     --ngx-checkbox-gap: 0.5rem;
     --ngx-checkbox-transition: 0.15s ease;
 
-    /* ─── Toggle (Switch) ─────────────────────────────────────────────────── */
-    --ngx-toggle-width: 2.75rem;
-    --ngx-toggle-height: 1.5rem;
-    --ngx-toggle-thumb-size: 1.125rem;
-    --ngx-toggle-thumb-size-checked: var(--ngx-toggle-thumb-size);
-    --ngx-toggle-thumb-offset: 0.1875rem;
-    --ngx-toggle-thumb-color: var(--ngx-on-primary);
+    /* ─── Toggle (Switch) — M3 spec: 52×32dp track, 16dp/24dp thumb ────────── */
+    --ngx-toggle-width: 3.25rem;
+    --ngx-toggle-height: 2rem;
+    --ngx-toggle-thumb-size: 1rem;
+    --ngx-toggle-thumb-size-checked: 1.5rem;
+    --ngx-toggle-thumb-offset: 0.25rem;
+    --ngx-toggle-thumb-color: var(--ngx-outline);
     --ngx-toggle-thumb-color-checked: var(--ngx-on-primary);
-    --ngx-toggle-bg: var(--ngx-outline-variant);
+    --ngx-toggle-bg: var(--ngx-surface-container-highest);
     --ngx-toggle-bg-checked: var(--ngx-primary);
-    --ngx-toggle-border: none;
-    --ngx-toggle-border-checked: none;
+    --ngx-toggle-border: 2px solid var(--ngx-outline);
+    --ngx-toggle-border-checked: 2px solid var(--ngx-primary);
     --ngx-toggle-gap: 0.5rem;
-    --ngx-toggle-transition: 0.2s ease;
+    --ngx-toggle-transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
 
-    /* ─── Chips & Multiselect ─────────────────────────────────────────────── */
+    /* ─── Slider — M3 spec: 4dp track, 20dp thumb ─────────────────────────── */
+    --ngx-slider-track-height: 4px;
+    --ngx-slider-thumb-size: 1.25rem;
+    --ngx-slider-track-color: var(--ngx-outline-variant);
+    --ngx-slider-thumb-color: var(--ngx-input-focus-color);
+
+    /* ─── Chips & Multiselect — M3 spec: 32dp height, small corner ─────────── */
     --ngx-multiselect-padding: 0.25rem 0;
     --ngx-multiselect-max-height: none;
-    --ngx-chip-height: 1.75rem;
+    --ngx-chip-height: 2rem;
     --ngx-chip-padding: 0 0.625rem;
     --ngx-chip-gap: 0.375rem;
     --ngx-chip-font-size: 0.8125rem;
-    --ngx-chip-border-radius: 0.5rem;
+    --ngx-chip-border-radius: var(--ngx-corner-small);
     --ngx-chip-border: 1px solid var(--ngx-outline-variant);
     --ngx-chip-bg: transparent;
     --ngx-chip-color: inherit;
@@ -192,8 +216,8 @@ input[type="date"]:focus,
     /* ─── Select & Dropdown ───────────────────────────────────────────────── */
     --ngx-select-dropdown-bg: var(--ngx-surface);
     --ngx-select-dropdown-border: var(--ngx-input-border);
-    --ngx-select-dropdown-border-radius: var(--ngx-input-border-radius);
-    --ngx-select-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --ngx-select-dropdown-border-radius: var(--ngx-corner-extra-small);
+    --ngx-select-dropdown-shadow: var(--ngx-shadow-depth-2);
     --ngx-select-dropdown-max-height: 15rem;
     --ngx-select-option-padding: 0.5rem 0.75rem;
     --ngx-select-option-hover-bg: var(--ngx-surface-container);
@@ -206,6 +230,27 @@ input[type="date"]:focus,
     --ngx-select-border-subtle: var(--ngx-outline-subtle);
     --ngx-select-no-results-color: var(--ngx-outline);
 
+    /* ─── File Upload ─────────────────────────────────────────────────────── */
+    --ngx-file-container-radius: var(--ngx-corner-small);
+    --ngx-file-button-radius: var(--ngx-corner-full);
+    --ngx-file-container-bg: var(--ngx-surface-container-low);
+    --ngx-file-container-border: 1px dashed var(--ngx-outline-variant);
+
+    /* ─── Segmented Button ────────────────────────────────────────────────── */
+    --ngx-segmented-border-radius: var(--ngx-corner-full);
+    --ngx-segmented-height: 2.5rem;
+
+    /* ─── Color Picker ────────────────────────────────────────────────────── */
+    --ngx-color-swatch-size: 1.75rem;
+    --ngx-color-swatch-radius: var(--ngx-corner-small);
+    --ngx-color-dropdown-radius: var(--ngx-corner-medium);
+    --ngx-color-dropdown-shadow: var(--ngx-shadow-depth-3);
+
+    /* ─── Number Spin Buttons ─────────────────────────────────────────────── */
+    --ngx-spin-btn-size: 1.75rem;
+    --ngx-spin-btn-border-radius: var(--ngx-corner-extra-small);
+    --ngx-spin-btn-hover-bg: var(--ngx-surface-container-highest-hover);
+
     /* ─── Date Picker & Range ────────────────────────────────────────────── */
     --ngx-datepicker-cell-size: 2.25rem;
     --ngx-datepicker-cell-border-radius: 50%;
@@ -217,12 +262,14 @@ input[type="date"]:focus,
     --ngx-datepicker-outside-opacity: 0.35;
     --ngx-datepicker-disabled-opacity: 0.25;
     --ngx-datepicker-header-gap: 0.25rem;
-    --ngx-datepicker-nav-btn-size: 2rem;
+    --ngx-datepicker-nav-btn-size: 2.5rem;
     --ngx-datepicker-popup-padding: 0.5rem;
-    --ngx-datepicker-popup-bg: var(--ngx-select-dropdown-bg);
-    --ngx-datepicker-popup-border: var(--ngx-select-dropdown-border);
-    --ngx-datepicker-popup-border-radius: var(--ngx-select-dropdown-border-radius);
-    --ngx-datepicker-popup-shadow: var(--ngx-select-dropdown-shadow);
+    --ngx-datepicker-popup-bg: var(--ngx-surface);
+    --ngx-datepicker-popup-border: none;
+    --ngx-datepicker-popup-border-radius: var(--ngx-corner-medium);
+    --ngx-datepicker-popup-shadow: var(--ngx-shadow-depth-2);
+    --ngx-datepicker-modal-radius: var(--ngx-corner-extra-large);
+    --ngx-datepicker-modal-bg: var(--ngx-surface);
     --ngx-datepicker-icon-size: 1.5rem;
     --ngx-daterange-input-width: 7.75rem;
     --ngx-daterange-input-padding: 0 calc(var(--ngx-daterange-input-width) / 20);
@@ -243,8 +290,6 @@ input[type="date"]:focus,
 
     --ngx-overlay-backdrop-bg: rgba(0, 0, 0, 0.4);
 }
-
-/* ─── Color Picker ─────────────────────────────────────────────────────── */
 
 /* ─── Color Picker ─────────────────────────────────────────────────────── */
 
@@ -298,7 +343,7 @@ input[type="date"]:focus,
 .ngx-colors__preview-swatch {
     width: 100%;
     height: 100%;
-    border-radius: 6px;
+    border-radius: var(--ngx-color-swatch-radius);
     border: 1px solid var(--ngx-outline-variant);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
@@ -338,13 +383,6 @@ input[type="date"]:focus,
     z-index: 2;
 }
 
-.ngx-colors__hex-input {
-    flex: 1;
-    min-width: 0;
-}
-
-
-
 
 
 
@@ -356,7 +394,7 @@ input[type="date"]:focus,
 
 .ngx-colors__native-picker::-webkit-color-swatch {
     border: none;
-    border-radius: 3px;
+    border-radius: var(--ngx-corner-extra-small);
 }
 
 .ngx-colors__hex-input {
@@ -394,9 +432,8 @@ input[type="date"]:focus,
     z-index: 1000;
     background: var(--ngx-surface);
     border: 1px solid var(--ngx-outline-variant);
-    border-radius: 12px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2),
-        0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    border-radius: var(--ngx-color-dropdown-radius);
+    box-shadow: var(--ngx-color-dropdown-shadow);
     padding: 1.25rem;
     margin-top: 8px;
     min-width: 300px;
@@ -436,10 +473,10 @@ input[type="date"]:focus,
 
 
 .ngx-colors__dropdown-header {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: var(--ngx-helper-font-size);
+    font-weight: var(--ngx-label-font-weight);
+    text-transform: none;
+    letter-spacing: 0.006em;
     color: var(--ngx-on-surface-variant);
     margin-bottom: 0.75rem;
 }
@@ -451,9 +488,9 @@ input[type="date"]:focus,
 }
 
 .ngx-color-swatch {
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 4px;
+    width: var(--ngx-color-swatch-size);
+    height: var(--ngx-color-swatch-size);
+    border-radius: var(--ngx-color-swatch-radius);
     border: 2px solid var(--ngx-outline-subtle);
     cursor: pointer;
     padding: 0;
@@ -464,13 +501,11 @@ input[type="date"]:focus,
 .ngx-color-swatch:hover {
     transform: scale(1.15);
     border-color: var(--ngx-outline);
-    border-radius: 8px;
 }
 
 .ngx-color-swatch--active {
     transform: scale(1.15);
     border-color: var(--ngx-primary);
-    border-radius: 8px;
     box-shadow: 0 0 0 2px var(--ngx-surface), 0 0 0 4px var(--ngx-primary);
 }
 
@@ -490,7 +525,10 @@ input[type="date"]:focus,
         --ngx-base-content: #fafafa;
 
         --ngx-surface: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 92%);
+        --ngx-surface-container-lowest: var(--ngx-base-bg);
+        --ngx-surface-container-low: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 91%);
         --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 88%);
+        --ngx-surface-container-high: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 82%);
         --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 80%);
         --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), var(--ngx-base-bg) 70%);
 
@@ -1092,7 +1130,7 @@ textarea:has(+ .ngx-input-suffix) {
     background: var(--ngx-toggle-thumb-color);
     border-radius: 50%;
     transition: transform var(--ngx-toggle-transition), width var(--ngx-toggle-transition), height var(--ngx-toggle-transition), left var(--ngx-toggle-transition), background var(--ngx-toggle-transition);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--ngx-shadow-depth-1);
 }
 
 .ngx-toggle input:checked+.ngx-toggle__track {
@@ -1108,7 +1146,8 @@ textarea:has(+ .ngx-input-suffix) {
 }
 
 .ngx-toggle input:focus-visible+.ngx-toggle__track {
-    box-shadow: var(--ngx-input-focus-shadow);
+    outline: 2px solid var(--ngx-input-focus-color);
+    outline-offset: 2px;
 }
 
 .ngx-toggle input:disabled+.ngx-toggle__track {
@@ -1218,8 +1257,8 @@ textarea:has(+ .ngx-input-suffix) {
     flex: 1;
     -webkit-appearance: none;
     appearance: none;
-    height: 4px;
-    background: var(--ngx-outline-variant);
+    height: var(--ngx-slider-track-height);
+    background: var(--ngx-slider-track-color);
     outline: none;
     cursor: pointer;
     border-radius: 2px;
@@ -1228,18 +1267,18 @@ textarea:has(+ .ngx-input-suffix) {
 .ngx-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 18px;
-    height: 18px;
-    background: var(--ngx-input-focus-color);
+    width: var(--ngx-slider-thumb-size);
+    height: var(--ngx-slider-thumb-size);
+    background: var(--ngx-slider-thumb-color);
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.1s ease;
 }
 
 .ngx-slider::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    background: var(--ngx-input-focus-color);
+    width: var(--ngx-slider-thumb-size);
+    height: var(--ngx-slider-thumb-size);
+    background: var(--ngx-slider-thumb-color);
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -1272,11 +1311,11 @@ textarea:has(+ .ngx-input-suffix) {
 /* ─── Custom File Upload ──────────────────────────────────────────────────── */
 
 .ngx-file-container {
-    border: 1px dashed var(--ngx-outline-variant);
-    border-radius: 8px;
+    border: var(--ngx-file-container-border);
+    border-radius: var(--ngx-file-container-radius);
     padding: 1.5rem;
     transition: border-color 0.2s, background 0.2s;
-    background: var(--ngx-surface-container-low);
+    background: var(--ngx-file-container-bg);
 }
 
 .ngx-file-container--dragover {
@@ -1308,13 +1347,15 @@ textarea:has(+ .ngx-input-suffix) {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.5rem;
     background: var(--ngx-input-focus-color);
     color: var(--ngx-on-primary);
     border: none;
-    border-radius: 20px;
+    border-radius: var(--ngx-file-button-radius);
     cursor: pointer;
+    font-size: 0.875rem;
     font-weight: 500;
+    height: 2.5rem;
     transition: opacity 0.2s;
 }
 
@@ -1382,7 +1423,7 @@ textarea:has(+ .ngx-input-suffix) {
     display: inline-flex;
     background: var(--ngx-surface-container);
     padding: 0.25rem;
-    border-radius: 2rem;
+    border-radius: var(--ngx-segmented-border-radius);
     gap: 0.25rem;
     transition: background 0.2s;
 }
@@ -1395,7 +1436,7 @@ textarea:has(+ .ngx-input-suffix) {
     padding: 0.5rem 1.25rem;
     background: transparent;
     border: none;
-    border-radius: 1.75rem;
+    border-radius: calc(var(--ngx-segmented-border-radius) - 0.25rem);
     cursor: pointer;
     font-weight: 500;
     font-size: 0.875rem;
@@ -1540,9 +1581,10 @@ textarea:has(+ .ngx-input-suffix) {
     width: 0;
 }
 
-button.ngx-chip:hover {
-    background: var(--ngx-chip-selected-bg);
-    color: var(--ngx-chip-selected-color);
+button.ngx-chip:hover:not(.ngx-chip--selected):not(:disabled) {
+    background: var(--ngx-chip-hover-bg);
+    color: var(--ngx-chip-hover-color);
+    border-color: var(--ngx-chip-hover-border);
 }
 
 .ngx-chip__check {
@@ -1990,7 +2032,7 @@ button.ngx-chip:hover {
     bottom: calc(100% + 0.5rem);
     transform: translateX(-50%) scale(0.95);
     padding: 0.375rem 0.625rem;
-    border-radius: 4px;
+    border-radius: var(--ngx-tooltip-border-radius);
     background: var(--ngx-error-color);
     color: var(--ngx-on-error);
     font-size: var(--ngx-error-font-size);
@@ -2059,12 +2101,10 @@ button.ngx-chip:hover {
 .ngx-datepicker__input-group:focus-within::after {
     background: var(--ngx-input-focus-color);
     height: 3px;
+}
 
-    /* Hover animazione bordo coerente con focus */
-    .ngx-datepicker__input-group:hover::after {
-        background: var(--ngx-input-focus-color);
-        height: 3px;
-    }
+.ngx-datepicker__input-group:hover::after {
+    background: var(--ngx-on-surface-variant);
 }
 
 .ngx-datepicker__input {
@@ -2389,18 +2429,6 @@ button.ngx-chip:hover {
 
 /* ─── Date Range Picker ───────────────────────────────────────────────────── */
 
-:root {
-    /* M3 date-range-picker spec:
-       • Endpoints use primary (= selected-bg/color)
-       • In-range band uses primary-container — approximated as
-         selected-bg at 12 % opacity so it automatically follows
-         whichever theme palette is active.                                   */
-    --ngx-daterange-in-range-bg: color-mix(in srgb, var(--ngx-datepicker-selected-bg), transparent 88%);
-    --ngx-daterange-endpoint-bg: var(--ngx-datepicker-selected-bg);
-    --ngx-daterange-endpoint-color: var(--ngx-datepicker-selected-color);
-
-}
-
 /*
  * Range cells use a two-layer approach:
  *   • The cell itself shows the connecting band (in-range background).
@@ -2538,14 +2566,7 @@ button.ngx-chip:hover {
     border: none;
 }
 
-/* Focus ring for datepicker input group */
-.ngx-datepicker__input-group:focus-within {
-    outline: 2px solid var(--ngx-primary);
-    outline-offset: 2px;
-    border-radius: var(--ngx-input-border-radius);
-}
-
-/* Rimuove l'outline di default (highlight blu) sui campi data in focus */
+/* Rimuove l'outline di default su tutti i campi data */
 .ngx-datepicker__input-group {
     outline: none !important;
     box-shadow: none !important;
@@ -2576,8 +2597,7 @@ button.ngx-chip:hover {
     padding: 0.5rem 0.75rem;
     background: transparent;
     border: none;
-    border-radius: 0.5rem;
-    /* Coherent with chip-style rounded corners */
+    border-radius: var(--ngx-corner-small);
     color: var(--ngx-on-surface);
     font-family: inherit;
     font-size: var(--ngx-datepicker-cell-font-size, 0.875rem);
