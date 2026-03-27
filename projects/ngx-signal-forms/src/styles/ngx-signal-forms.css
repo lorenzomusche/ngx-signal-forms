@@ -1893,7 +1893,7 @@ button.ngx-chip:hover:not(.ngx-chip--selected):not(:disabled) {
 
 .ngx-control__errors {
     list-style: none;
-    padding: 0;
+    padding: 0 1rem;
     margin: 0;
     padding-top: var(--ngx-helper-padding-top);
 }

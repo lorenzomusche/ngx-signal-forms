@@ -262,7 +262,7 @@ export class NgxMultiselectComponent<TValue = string>
   });
 
   /** Pre-computed selection set for single-mode. */
-  protected readonly selectedSet = computed(() => new Set(this.value()));
+  protected readonly selectedSet = computed(() => new Set(this.value() ?? []));
 
   // ── Overlay hooks ───────────────────────────────────────────────────────────
 
@@ -289,7 +289,7 @@ export class NgxMultiselectComponent<TValue = string>
   }
 
   protected onToggle(optValue: TValue): void {
-    const current = this.value();
+    const current = this.value() ?? [];
     const next: ReadonlyArray<TValue> = current.includes(optValue)
       ? current.filter((v) => v !== optValue)
       : [...current, optValue];
@@ -304,12 +304,12 @@ export class NgxMultiselectComponent<TValue = string>
   }
 
   protected increment(optValue: TValue): void {
-    this.setValue([...this.value(), optValue]);
+    this.setValue([...(this.value() ?? []), optValue]);
     this.markAsDirty();
   }
 
   protected decrement(optValue: TValue): void {
-    const arr = [...this.value()];
+    const arr = [...(this.value() ?? [])];
     const idx = arr.indexOf(optValue);
     if (idx >= 0) {
       arr.splice(idx, 1);
@@ -327,8 +327,9 @@ export class NgxMultiselectComponent<TValue = string>
 
   protected onOverlaySelect(optValue: TValue): void {
     if (this.mode() === "single") {
-      if (!this.value().includes(optValue)) {
-        this.setValue([...this.value(), optValue]);
+      const current = this.value() ?? [];
+      if (!current.includes(optValue)) {
+        this.setValue([...current, optValue]);
         this.markAsDirty();
       }
       if (this.searchResults().length === 0) {

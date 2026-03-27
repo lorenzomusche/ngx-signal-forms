@@ -2,6 +2,12 @@
 
 All notable changes to the `ngx-signal-forms` library will be documented in this file.
 
+## [2.0.1] - 2026-03-27
+
+### Fixed
+- **Multiselect**: Added null checks to prevent errors when the form value is reset to null or undefined.
+- **Styles**: Adjusted padding of error messages to improve visual alignment with inputs.
+
 ## [2.0.0] - 2026-03-27
 
 ### Added

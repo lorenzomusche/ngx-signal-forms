@@ -41,7 +41,7 @@ import {
   NgxTextComponent,
   NgxTimepickerComponent,
   NgxToggleComponent,
-} from "@ngx-signals/forms-compiled";
+} from "@ngx-signals/forms";
 
 @Component({
   selector: "app-root",
