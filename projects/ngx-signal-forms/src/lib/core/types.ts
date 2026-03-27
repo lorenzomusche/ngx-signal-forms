@@ -118,6 +118,8 @@ export interface NgxFormState {
 
 export interface NgxFormAdapter<T extends object> {
   readonly state: NgxFormState;
+  /** Reactive signal that emits the current form value on every change. */
+  readonly value: Signal<T>;
   getValue(): T;
   getField<K extends keyof T>(name: K): NgxFieldRef<T[K]> | null;
   errorsFor(path: keyof T | string): Signal<ReadonlyArray<NgxFormError>>;
@@ -128,6 +130,12 @@ export interface NgxFormAdapter<T extends object> {
   ): Promise<void>;
   markAllTouched(): void;
   buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T>;
+  /** Merge partial values into the form without touching other fields. */
+  patchValue(partial: Partial<T>): void;
+  /** Replace the entire form value. */
+  setValue(value: T): void;
+  /** Reset all fields to their initial values and clear touched/dirty state. */
+  reset(): void;
 }
 
 // ─── Form Context (provided to child controls via DI) ─────────────────────────
