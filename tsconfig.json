@@ -32,6 +32,12 @@
             ],
             "@ngx-signals/forms/styles/*": [
                 "projects/ngx-signal-forms/src/styles/*"
+            ],
+            "@ngx-signals/forms-compiled": [
+                "node_modules/@ngx-signals/forms-compiled"
+            ],
+            "@ngx-signals/forms-compiled/*": [
+                "node_modules/@ngx-signals/forms-compiled/*"
             ]
         }
     },

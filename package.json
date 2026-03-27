@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "ng": "ng",
+    "setup": "npm i && npm run build:lib",
     "start": "ng serve demo",
-    "build:lib": "ng build ngx-signal-forms && rm -rf projects/ngx-signal-forms/dist/node_modules projects/ngx-signal-forms/dist/package-lock.json && cp README.md LICENSE projects/ngx-signal-forms/dist/",
+    "build:lib": "ng build ngx-signal-forms --configuration production && rm -rf projects/ngx-signal-forms/dist/node_modules projects/ngx-signal-forms/dist/package-lock.json && cp README.md LICENSE projects/ngx-signal-forms/dist/ && npx postcss 'projects/ngx-signal-forms/dist/styles/**/*.css' --dir 'projects/ngx-signal-forms/dist/styles' --use cssnano --no-map && find projects/ngx-signal-forms/dist/ -name '*.map' -delete",
+    "pack:analyze": "(cd projects/ngx-signal-forms/dist && npm pack && PKG=ngx-signals-forms-*.tgz && echo $PKG && echo '=== Uncompressed JS/CSS/TS ===' && tar tvf $PKG | grep -E 'package/(fesm2022/.*\\.mjs|styles/.*\\.css|types/.*\\.d\\.ts)$' | awk '{print $NF, $5/1024 \"KB\"; total+=$5} END {print \"TOTAL:\", total/1024 \"KB\"}' && echo '=== Tarball size ===' && du -sh $PKG && rm $PKG)",
     "build:demo": "ng build demo",
     "watch:lib": "ng build ngx-signal-forms --watch",
     "lint": "ng lint"
@@ -27,7 +29,11 @@
     "@angular-devkit/build-angular": "^21.0.0",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
+    "cssnano": "^7.1.3",
     "ng-packagr": "^21.0.0",
+    "postcss": "^8.5.8",
+    "postcss-cli": "^11.0.1",
+    "@ngx-signals/forms-compiled": "link:./projects/ngx-signal-forms/dist",
     "typescript": "~5.9.0"
   }
 }
