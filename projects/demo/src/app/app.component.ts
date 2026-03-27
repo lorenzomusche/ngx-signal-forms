@@ -433,9 +433,9 @@ export class AppComponent {
   };
 
   readonly initialContactValues = {
-    firstName: "lorenzo",
-    lastName: "muscherà",
-    email: "lorenzo.muschera@sonounamailinesistente.it",
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
     country: "it",
     province: "RM",
     provinceMs: ["RM"],
