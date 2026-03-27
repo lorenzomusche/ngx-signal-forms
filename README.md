@@ -44,22 +44,22 @@ npm install @ngx-signals/forms
 ```
 
 ### 2. Import Styles
-Add the library styles to your `angular.json` file. We recommend using the **base** and **material** styles for the full design experience:
+Add the library styles to your `angular.json` file. We recommend using the **base** and **default** styles for the full design experience:
 
 ```json
 "styles": [
   "src/styles.scss",
   "node_modules/@ngx-signals/forms/styles/base.css",
-  "node_modules/@ngx-signals/forms/styles/material.css"
+  "node_modules/@ngx-signals/forms/styles/default.css"
 ],
 ```
 
 Recommended combinations:
 - **Core (Required)**: `@ngx-signals/forms/styles/base.css`
+- **Minimalist**: `@ngx-signals/forms/styles/default.css`
 - **Material 3 Look**: `@ngx-signals/forms/styles/material.css`
 - **iOS Aesthetic**: `@ngx-signals/forms/styles/ios.css`
 - **Ionic Support**: `@ngx-signals/forms/styles/ionic.css`
-- **Minimalist**: `@ngx-signals/forms/styles/default.css`
 
 ---
 
