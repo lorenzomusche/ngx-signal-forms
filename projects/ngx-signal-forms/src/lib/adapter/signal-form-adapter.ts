@@ -104,6 +104,9 @@ export function createSignalFormAdapter<T extends object>(
 ): NgxFormAdapter<T> {
   const { model, schema, submitMode } = options;
 
+  // Capture initial value for reset()
+  const _initialValue = { ...model() };
+
   const requiredFields = new Set<string>();
 
   // ① Create FieldTree via Angular's form() — isolated here.
@@ -144,6 +147,9 @@ export function createSignalFormAdapter<T extends object>(
   const _submitting = signal(false);
   const _submitCount = signal(0);
   const _lastSubmitErrors = signal<ReadonlyArray<NgxFormError>>([]);
+
+  // ② Reactive value signal
+  const value = computed(() => model());
 
   // ③ Derived signals from all fields
   // Note: we use Object.keys(rawFieldTree) directly in computations to avoid circular init issues
@@ -323,22 +329,44 @@ export function createSignalFormAdapter<T extends object>(
     }
   }
 
-  function buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T> {
+  function buildSubmitEvent(snapshot: T): NgxFormSubmitEventInternal<T> {
     return {
-      value,
+      value: snapshot,
       valid: _valid(),
       errors: _lastSubmitErrors(),
       [RAW_FIELD_TREE_SYMBOL]: rawFieldTree,
     };
   }
 
+  function patchValue(partial: Partial<T>): void {
+    model.update(v => ({ ...v, ...partial }));
+  }
+
+  function setValue(newValue: T): void {
+    model.set(newValue);
+  }
+
+  function reset(): void {
+    model.set({ ..._initialValue } as T);
+    // Reset touched/dirty for all wrapped fields
+    fieldCache.forEach((ref) => {
+      const state = ref();
+      state.touched.set(false);
+      state.dirty.set(false);
+    });
+  }
+
   return {
     state,
+    value,
     getValue,
     getField,
     errorsFor,
     submit,
     markAllTouched,
     buildSubmitEvent,
+    patchValue,
+    setValue,
+    reset,
   };
 }

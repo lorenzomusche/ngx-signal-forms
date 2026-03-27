@@ -8,9 +8,10 @@ import {
   input,
   InputSignal,
   OnDestroy,
+  OnInit,
   Signal
 } from "@angular/core";
-import { NGX_FLOATING_LABELS, NGX_FORM_ADAPTER, NGX_INLINE_ERRORS } from "../core/tokens";
+import { NGX_DECLARATIVE_REGISTRY, NGX_FLOATING_LABELS, NGX_FORM_ADAPTER, NGX_INLINE_ERRORS } from "../core/tokens";
 import { NgxFieldError, NgxFieldState, NgxFormAdapter } from "../core/types";
 import { NgxPrefixDirective } from "./prefix.directive";
 import { NgxSuffixDirective } from "./suffix.directive";
@@ -31,7 +32,7 @@ let _nextFieldId = 0;
     "[class.ngx-renderer--touched]": "touched()",
   },
 })
-export abstract class NgxBaseControl<TValue = unknown> implements OnDestroy {
+export abstract class NgxBaseControl<TValue = unknown> implements OnInit, OnDestroy {
   protected readonly hostElement = inject(ElementRef<HTMLElement>);
   private prefixObserver?: ResizeObserver;
 
@@ -75,8 +76,18 @@ export abstract class NgxBaseControl<TValue = unknown> implements OnDestroy {
   /** Opt-in or opt-out of floating labels on a per-control basis, overriding the form-level directive. */
   public readonly floatingLabel = input<boolean | undefined>(undefined);
 
+  /**
+   * Optional initial value for declarative mode.
+   * Takes precedence over [formValue] set on the parent <ngx-form>.
+   */
+  readonly initialValue = input<unknown>(undefined);
+
   private readonly adapter: NgxFormAdapter<Record<string, unknown>> =
     inject<NgxFormAdapter<Record<string, unknown>>>(NGX_FORM_ADAPTER);
+
+  private readonly _declarativeRegistry = inject(NGX_DECLARATIVE_REGISTRY, {
+    optional: true,
+  });
 
   /** True when NgxInlineErrorsDirective is applied to this element. */
   protected readonly inlineErrors: boolean =
@@ -151,6 +162,7 @@ export abstract class NgxBaseControl<TValue = unknown> implements OnDestroy {
   protected readonly inlineErrorText: Signal<string> = computed(() =>
     this.errors()
       .map((e: NgxFieldError) => e.message)
+      .filter((msg) => !!msg && msg.trim() !== "")
       .join(", "),
   );
 
@@ -180,6 +192,13 @@ export abstract class NgxBaseControl<TValue = unknown> implements OnDestroy {
   /** Generate a unique ID for template label/input association. */
   protected static nextId(): number {
     return _nextFieldId++;
+  }
+
+  ngOnInit(): void {
+    const iv = this.initialValue();
+    if (this._declarativeRegistry && iv !== undefined) {
+      this._declarativeRegistry.setInitialValue(this.name(), iv);
+    }
   }
 
   ngOnDestroy(): void {

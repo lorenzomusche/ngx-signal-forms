@@ -1,6 +1,7 @@
 import { InjectionToken } from "@angular/core";
 import { NgxFormAdapter } from "./types";
 import { NgxOptionsControl } from "./types";
+import type { NgxDeclarativeRegistry } from "./declarative-form-adapter";
 
 /**
  * Scoped to NgxFormComponent via providers[].
@@ -32,3 +33,12 @@ export const NGX_OPTIONS_CONTROL = new InjectionToken<NgxOptionsControl<unknown>
 export const NGX_FLOATING_LABELS = new InjectionToken<
   import("../form/ngx-floating-labels.directive").NgxFloatingLabelsDirective
 >("NGX_FLOATING_LABELS");
+
+/**
+ * Provided by NgxFormComponent in declarative mode (no explicit [adapter] input).
+ * Validator directives inject this to register their rules on specific fields.
+ */
+export const NGX_DECLARATIVE_REGISTRY = new InjectionToken<NgxDeclarativeRegistry>(
+  "NGX_DECLARATIVE_REGISTRY",
+);
+
