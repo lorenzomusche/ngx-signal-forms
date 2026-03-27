@@ -28,32 +28,40 @@
     "@angular/core": ">=21.0.0",
     "@angular/common": ">=21.0.0",
     "@angular/forms": ">=21.0.0",
-    "rxjs": ">=7.0.0",
-    "tslib": ">=2.3.0"
+    "rxjs": ">=7.0.0"
   },
   "peerDependenciesMeta": {
     "rxjs": {
       "optional": false
     }
   },
+  "allowedNonPeerDependencies": [],
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": ">=2.3.0"
   },
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
-  ],
-  "style": "./styles/ngx-signal-forms.css",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./fesm2022/ngx-signals-forms.mjs",
-      "esm": "./esm2022/ngx-signals-forms.mjs",
-      "default": "./fesm2022/ngx-signals-forms.mjs"
+      "import": "./fesm2022/ngx-signal-forms.mjs"
     },
-    "./style": "./styles/ngx-signal-forms.css",
-    "./styles/*": "./styles/*"
+    "./styles/ionic.css": {
+      "default": "./styles/ngx-signal-forms-ionic.css"
+    },
+    "./styles/ios.css": {
+      "default": "./styles/ngx-signal-forms-ios.css"
+    },
+    "./styles/base.css": {
+      "default": "./styles/ngx-signal-forms-m3-base.css"
+    },
+    "./styles/material.css": {
+      "default": "./styles/ngx-signal-forms-material.css"
+    },
+    "./styles/default.css": {
+      "default": "./styles/ngx-signal-forms.css"
+    }
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "main": "fesm2022/ngx-signals-forms.mjs",
   "module": "fesm2022/ngx-signals-forms.mjs",
   "typings": "index.d.ts",
