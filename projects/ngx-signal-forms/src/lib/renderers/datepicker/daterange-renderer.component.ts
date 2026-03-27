@@ -19,7 +19,6 @@ import {
   parseIsoDate,
 } from "../../core/date-utils";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
-import { OverlayAlignment } from "../../core/overlay-position";
 import { NgxDateRange } from "../../core/types";
 import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxRangeCalendarComponent } from "./range-calendar.component";
@@ -71,7 +70,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
           (input)="onStartInput($event)"
           (blur)="onStartBlur($event)"
           (focus)="lastFocused.set('start')"
-          (keydown.arrowdown)="openOverlay(); $event.preventDefault()"
+          (keydown.arrowdown)="openOverlay($event); $event.preventDefault()"
           [attr.aria-invalid]="hasErrors()"
           [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
           [attr.aria-required]="ariaRequired()"
@@ -93,7 +92,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
           (input)="onEndInput($event)"
           (blur)="onEndBlur($event)"
           (focus)="lastFocused.set('end')"
-          (keydown.arrowdown)="openOverlay(); $event.preventDefault()"
+          (keydown.arrowdown)="openOverlay($event); $event.preventDefault()"
           [attr.aria-invalid]="hasErrors()"
           [attr.aria-disabled]="effectiveAriaDisabled()"
           [attr.aria-label]="(label() || 'Date range') + ' end'"
@@ -108,7 +107,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
             [disabled]="isDisabled()"
             aria-label="Open calendar"
             tabindex="-1"
-            (click)="toggleOverlay()"
+            (click)="toggleOverlay($event)"
           >
            <ngx-icon name="CALENDAR" class="ngx-datepicker__icon" />
           </button>
@@ -172,7 +171,6 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
 
   protected override readonly minSpace = 350;
   protected override readonly minWidth = 330;
-  protected override readonly preferredAlignment: OverlayAlignment = "right";
 
   protected readonly fieldId = `ngx-daterange-${NgxBaseControl.nextId()}`;
 

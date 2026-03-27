@@ -69,7 +69,7 @@ import { NgxCalendarComponent } from "./calendar.component";
           [value]="displayValue()"
           [disabled]="isDisabled()"
           readonly
-          (click)="toggleOverlay()"
+          (click)="toggleOverlay($event)"
           (blur)="markAsTouched()"
           [attr.aria-expanded]="open()"
           [attr.aria-haspopup]="'dialog'"
@@ -87,7 +87,7 @@ import { NgxCalendarComponent } from "./calendar.component";
                 type="button"
                 class="ngx-datepicker__toggle"
                 [disabled]="isDisabled()"
-                (click)="toggleOverlay()"
+                (click)="toggleOverlay($event)"
                 aria-label="Toggle calendar"
               >
                  <ngx-icon name="CALENDAR" class="ngx-datepicker__icon" />

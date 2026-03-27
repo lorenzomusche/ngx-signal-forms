@@ -63,7 +63,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
           (input)="onInputChange($event)"
           (focus)="onInputFocus($event)"
           (blur)="onInputBlur()"
-          (keydown.arrowdown)="openOverlay(); $event.preventDefault()"
+          (keydown.arrowdown)="openOverlay($event); $event.preventDefault()"
           [attr.aria-invalid]="hasErrors()"
           [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
           [attr.aria-required]="ariaRequired()"
@@ -83,7 +83,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
               [disabled]="isDisabled()"
               aria-label="Open time picker"
               tabindex="-1"
-              (click)="toggleOverlay()"
+              (click)="toggleOverlay($event)"
             >
               <ngx-icon name="CLOCK" class="ngx-timepicker__icon" />
             </button>

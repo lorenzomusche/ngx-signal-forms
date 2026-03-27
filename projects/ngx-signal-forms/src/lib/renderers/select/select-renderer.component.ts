@@ -86,7 +86,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
             [attr.aria-required]="ariaRequired() || isRequired()"
             [attr.aria-disabled]="effectiveAriaDisabled()"
             [attr.aria-label]="label() || null"
-            (click)="toggleOverlay()"
+            (click)="toggleOverlay($event)"
             (blur)="onBlur()"
           >
             @if (selectedOption(); as sel) {

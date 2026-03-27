@@ -7,7 +7,6 @@ import {
   ElementRef,
   forwardRef,
   input,
-  signal,
   TemplateRef,
   viewChild,
 } from "@angular/core";
@@ -46,6 +45,8 @@ import { NgxOptionsControl } from "../../core/types";
     "[class.ngx-inline-errors]": "inlineErrors",
     "[class.ngx-renderer--touched]": "touched()",
     "(document:keydown.escape)": "open() && closeOverlay()",
+    // onDocumentClick is overridden below to use the host element
+    // rather than the narrower #wrapper reference from NgxOverlayControl.
     "(document:click)": "onDocumentClick($event)",
   },
   template: `
@@ -66,7 +67,7 @@ import { NgxOptionsControl } from "../../core/types";
             type="button"
             class="ngx-multiselect__search-btn"
             [disabled]="isDisabled()"
-            (click)="openOverlay()"
+            (click)="toggleOverlay($event)"
             aria-label="Search options"
           >
             <ngx-icon name="SEARCH" />
@@ -151,7 +152,6 @@ import { NgxOptionsControl } from "../../core/types";
         class="ngx-multiselect-overlay__panel"
         [class.ngx-multiselect-overlay__panel--above]="position() === 'above'"
         [class.ngx-multiselect-overlay__panel--overlay]="position() === 'overlay'"
-        [style.top.px]="position() === 'above' || position() === 'overlay' ? null : panelTop()"
         (click)="$event.stopPropagation()"
         role="dialog"
         aria-modal="true"
@@ -228,6 +228,8 @@ import { NgxOptionsControl } from "../../core/types";
 export class NgxMultiselectComponent<TValue = string>
   extends NgxOptionsOverlayControl<ReadonlyArray<TValue>, TValue>
   implements NgxOptionsControl<TValue> {
+  protected override readonly minSpace = 80;
+
   readonly mode = input<"single" | "multi">("single");
 
   /** Custom option template provided via `<ng-template ngxOption>`. */
@@ -250,13 +252,10 @@ export class NgxMultiselectComponent<TValue = string>
   private readonly overlayInputRef =
     viewChild<ElementRef<HTMLInputElement>>("overlayInput");
 
-  /** Top offset in pixels — top edge of .ngx-multiselect__options relative to host. */
-  protected readonly panelTop = signal(0);
-
   /** Pre-computed count map for multi-mode. */
   protected readonly counts = computed(() => {
     const map = new Map<TValue, number>();
-    for (const v of this.value()) {
+    for (const v of this.value() ?? []) {
       map.set(v, (map.get(v) ?? 0) + 1);
     }
     return map;
@@ -269,16 +268,18 @@ export class NgxMultiselectComponent<TValue = string>
 
   protected override onBeforeOpen(): void {
     this.searchQuery.set("");
-    const host = this.hostRef.nativeElement as HTMLElement;
-    const optionsEl = host.querySelector(".ngx-multiselect__options");
-
-    if (optionsEl) {
-      const hostRect = host.getBoundingClientRect();
-      const optionsRect = optionsEl.getBoundingClientRect();
-      this.panelTop.set(optionsRect.top - hostRect.top);
-    }
-
     setTimeout(() => this.overlayInputRef()?.nativeElement.focus(), 0);
+  }
+
+  /**
+   * Override to check against the full host element rather than the narrow
+   * #wrapper (header div). The overlay panel is a DOM child of the host even
+   * when position:fixed, so host.contains() correctly excludes panel clicks.
+   */
+  protected override onDocumentClick(event: Event): void {
+    if (!this.hostRef.nativeElement.contains(event.target as Node)) {
+      this.closeOverlay();
+    }
   }
 
   // ── Single-mode helpers ─────────────────────────────────────────────────────

@@ -35,7 +35,11 @@ export type {
 } from "./lib/core/types";
 
 // ─── DI tokens ────────────────────────────────────────────────────────────────
-export { NGX_FORM_ADAPTER, NGX_INLINE_ERRORS } from "./lib/core/tokens";
+export {
+  NGX_DECLARATIVE_REGISTRY,
+  NGX_FORM_ADAPTER,
+  NGX_INLINE_ERRORS,
+} from "./lib/core/tokens";
 
 export { RAW_FIELD_TREE_SYMBOL } from "./lib/core/types";
 
@@ -64,9 +68,14 @@ export { computeOverlayPosition } from "./lib/core/overlay-position";
 export type {
   ComputedPosition,
   OverlayAlignment,
+  OverlayAnchor,
   OverlayPosition,
   OverlayPositionConfig,
 } from "./lib/core/overlay-position";
+
+// ─── Declarative adapter ──────────────────────────────────────────────────────
+export { NgxDeclarativeAdapter } from "./lib/core/declarative-form-adapter";
+export type { NgxDeclarativeRegistry } from "./lib/core/declarative-form-adapter";
 
 // ─── Adapter factory (sole consumer of @angular/forms/signals) ───────────────
 export { createSignalFormAdapter } from "./lib/adapter/signal-form-adapter";
@@ -139,6 +148,17 @@ export {
   pattern as ngxPattern,
   required as ngxRequired,
 } from "./lib/core/validators";
+
+// ─── Declarative validator directives ────────────────────────────────────────
+export {
+  NgxEmailDirective,
+  NgxMaxDirective,
+  NgxMaxLengthDirective,
+  NgxMinDirective,
+  NgxMinLengthDirective,
+  NgxPatternDirective,
+  NgxRequiredDirective,
+} from "./lib/validators/directives";
 
 // ─── Angular forms/signals validator re-exports (schema-level) ───────────────
 export {

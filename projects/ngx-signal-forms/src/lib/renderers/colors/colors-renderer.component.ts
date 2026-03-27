@@ -51,8 +51,8 @@ import { NgxOverlayControl } from "../../core/overlay-control.directive";
         
         <!-- Color Preview -->
         <div class="ngx-input-wrapper__inliner">
-        <div class="ngx-colors__primary-picker">
-          <div 
+        <div class="ngx-colors__primary-picker" (click)="toggleOverlay($event); $event.stopPropagation()">
+          <div
             class="ngx-colors__preview-swatch"
             [style.background-color]="value() || '#4361ee'"
           ></div>
@@ -62,7 +62,7 @@ import { NgxOverlayControl } from "../../core/overlay-control.directive";
             [value]="value() || '#4361ee'"
             [disabled]="isDisabled()"
             (input)="onInput($event)"
-            (click)="$event.stopPropagation()"
+            (click)="toggleOverlay($event); $event.stopPropagation(); $event.preventDefault()"
             class="ngx-colors__native-hidden"
           />
         </div>
@@ -81,7 +81,7 @@ import { NgxOverlayControl } from "../../core/overlay-control.directive";
         />
 
         <!-- Suffix: Presets Toggle -->
-        <div class="ngx-input-suffix ngx-colors__toggle-area" (click)="toggleOverlay(); $event.stopPropagation()">
+        <div class="ngx-input-suffix ngx-colors__toggle-area" (click)="toggleOverlay($event); $event.stopPropagation()">
           <ngx-icon name="CHEVRON_DOWN" class="ngx-select__arrow" [class.ngx-select__arrow--open]="open()" />
         </div>
 
