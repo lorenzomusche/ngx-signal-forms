@@ -157,6 +157,16 @@ import {
             </div>
           </details>
 
+          <div class="form-modifications">
+            <button class="ngx-button" type="button" (click)="contactForm.reset()">
+              Reset
+            </button>
+
+            <button class="ngx-button" type="button" (click)="patchContactForm(contactForm)">
+              Patch (name → Demo User)
+            </button>
+          </div>
+
           <ngx-form #contactForm
             [formValue]="initialContactValues"
             [ngxFloatingLabels]="designSystemConfig().floating"
@@ -356,14 +366,6 @@ import {
               } @else {
                 Submit
               }
-            </button>
-
-            <button type="button" (click)="contactForm.reset()">
-              Reset
-            </button>
-
-            <button type="button" (click)="patchContactForm(contactForm)">
-              Patch (name → Demo User)
             </button>
           </div>
         </ngx-form>

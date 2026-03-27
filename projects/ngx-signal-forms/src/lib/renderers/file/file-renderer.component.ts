@@ -1,8 +1,8 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, input, viewChild, ElementRef, signal, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, ElementRef, input, output, signal, viewChild } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
-import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
+import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 
 /**
  * File Upload renderer component.
@@ -53,7 +53,7 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
       <div class="ngx-file-content">
         <button
           type="button"
-          class="ngx-file-button"
+          class="ngx-button"
           (click)="fileInput.click()"
           [disabled]="isDisabled()"
         >
@@ -99,7 +99,7 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
   `,
 })
 export class NgxFileComponent extends NgxBaseControl<File | File[] | null> {
-  readonly accept   = input<string>("");
+  readonly accept = input<string>("");
   readonly multiple = input<boolean>(false);
   readonly fileSelected = output<File | File[] | null>();
 

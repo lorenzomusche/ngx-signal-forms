@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { booleanAttribute, ChangeDetectionStrategy, Component, input, InputSignalWithTransform } from "@angular/core";
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, InputSignalWithTransform } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
@@ -17,7 +17,8 @@ import { NgxSelectOption } from "../../core/types";
   host: { 
     class: "ngx-renderer ngx-renderer--segmented", 
     "[class.ngx-renderer--touched]": "touched()",
-    "[style.width]": "fullWidth() ? '100%' : 'fit-content'" 
+    "[style.width]": "fullWidth() ? '100%' : 'fit-content'",
+    "[style.--ngx-segments-count]": "segmentsCount()"
   },
   template: `
     <ngx-control-label
@@ -48,9 +49,12 @@ import { NgxSelectOption } from "../../core/types";
           [attr.aria-checked]="value() === opt.value"
           [attr.aria-disabled]="isDisabled()"
         >
-          @if (value() === opt.value) {
-            <ngx-icon name="CHECKMARK" class="ngx-segmented__check" />
-          }
+          <ngx-icon
+            name="CHECKMARK"
+            class="ngx-segmented__check"
+            [style.visibility]="value() === opt.value ? 'visible' : 'hidden'"
+            [attr.aria-hidden]="value() !== opt.value"
+          />
           <span class="ngx-segmented__text">{{ opt.label }}</span>
         </button>
       }
@@ -72,6 +76,8 @@ export class NgxSegmentedButtonComponent<TValue = any> extends NgxBaseControl<TV
   public readonly fullWidth: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 
   protected readonly fieldId = `ngx-control-segmented-${NgxBaseControl.nextId()}`;
+
+  protected readonly segmentsCount = computed(() => this.options().length);
 
   protected onSelect(value: TValue): void {
     if (this.isDisabled()) return;

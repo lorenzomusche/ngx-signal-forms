@@ -98,7 +98,9 @@ export interface SignalFormAdapterOptions<T extends object> {
   readonly submitMode: NgxSubmitMode;
 }
 
-/** Create a signal-driven form adapter from the given options. */
+/** Create a signal-driven form adapter from the given options. 
+ * @deprecated since 2.0.0, use the new declarative API instead
+*/
 export function createSignalFormAdapter<T extends object>(
   options: SignalFormAdapterOptions<T>,
 ): NgxFormAdapter<T> {
@@ -115,31 +117,31 @@ export function createSignalFormAdapter<T extends object>(
   // identify which field was marked required by comparing object identity.
   const rawFieldTree = (schema
     ? form(model, (pathTree: any) => {
-        // Wrap pathTree in a thin Proxy that records which property is accessed.
-        // The Proxy does NOT modify the returned value — it returns the REAL
-        // Angular FieldPathNode so all validators work without modification.
-        // ngxSchemaRequired reads `_lastAccessedKey` to identify the field name.
-        const tracked = new Proxy(pathTree, {
-          get(target, prop, receiver) {
-            if (typeof prop === "string") {
-              _lastAccessedKey = prop; // Record property name (e.g. 'firstName')
-            }
-            return Reflect.get(target, prop, receiver); // REAL value — unmodified
-          },
-        });
+      // Wrap pathTree in a thin Proxy that records which property is accessed.
+      // The Proxy does NOT modify the returned value — it returns the REAL
+      // Angular FieldPathNode so all validators work without modification.
+      // ngxSchemaRequired reads `_lastAccessedKey` to identify the field name.
+      const tracked = new Proxy(pathTree, {
+        get(target, prop, receiver) {
+          if (typeof prop === "string") {
+            _lastAccessedKey = prop; // Record property name (e.g. 'firstName')
+          }
+          return Reflect.get(target, prop, receiver); // REAL value — unmodified
+        },
+      });
 
-        const registry = new Set<string>();
-        _requiredRegistryStack.push(registry);
-        try {
-          schema(tracked); // user accesses tracked.firstName → key recorded
-        } finally {
-          _requiredRegistryStack.pop();
-          _lastAccessedKey = undefined; // Clean up
-        }
+      const registry = new Set<string>();
+      _requiredRegistryStack.push(registry);
+      try {
+        schema(tracked); // user accesses tracked.firstName → key recorded
+      } finally {
+        _requiredRegistryStack.pop();
+        _lastAccessedKey = undefined; // Clean up
+      }
 
-        // Merge into outer requiredFields
-        registry.forEach(k => requiredFields.add(k));
-      })
+      // Merge into outer requiredFields
+      registry.forEach(k => requiredFields.add(k));
+    })
     : form(model)) as unknown as Record<string, () => RawAngularFieldState>;
 
 

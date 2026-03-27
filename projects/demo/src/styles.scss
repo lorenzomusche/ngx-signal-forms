@@ -67,6 +67,13 @@ body {
     }
 }
 
+.form-modifications {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 0 0 20px 0;
+}
+
 /* ─── Buttons ──────────────────────────────────────────────────────────────── */
 
 button[type="submit"] {
