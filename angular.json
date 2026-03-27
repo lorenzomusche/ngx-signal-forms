@@ -35,21 +35,10 @@
                         "browser": "projects/demo/src/main.ts",
                         "tsConfig": "projects/demo/tsconfig.app.json",
                         "styles": [
-                            "projects/ngx-signal-forms/src/styles/ngx-signal-forms-m3-base.css",
+                            "@ngx-signals/forms-compiled/styles/base.css",
+                            "@ngx-signals/forms-compiled/styles/default.css",
                             "projects/demo/src/styles.scss"
-                        ],
-                        "assets": [
-                            {
-                                "glob": "**/*.css",
-                                "input": "projects/ngx-signal-forms/src/styles",
-                                "output": "styles"
-                            }
-                        ],
-                        "stylePreprocessorOptions": {
-                            "includePaths": [
-                                "projects/ngx-signal-forms/src/styles"
-                            ]
-                        }
+                        ]
                     },
                     "configurations": {
                         "production": {

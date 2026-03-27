@@ -20,7 +20,7 @@
     --ngx-signal-form-comp-date-picker-hover-bg: var(--ngx-signal-form-sys-color-surface-container-highest);
     --ngx-signal-form-comp-date-picker-selected-bg: var(--ngx-signal-form-sys-color-primary);
     --ngx-signal-form-comp-date-picker-selected-color: var(--ngx-signal-form-sys-color-on-primary);
-    --ngx-signal-form-comp-date-picker-in-range-bg: var(--ngx-signal-form-sys-color-primary-container);
+    --ngx-signal-form-comp-date-picker-in-range-bg: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 75%);
     --ngx-signal-form-comp-date-picker-endpoint-bg: var(--ngx-signal-form-sys-color-primary);
     --ngx-signal-form-comp-date-picker-endpoint-color: var(--ngx-signal-form-sys-color-on-primary);
     --ngx-signal-form-comp-date-picker-disabled-opacity: 0.25;
@@ -34,7 +34,7 @@
     --ngx-signal-form-sys-color-on-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
     --ngx-signal-form-sys-color-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #888 60%);
     --ngx-signal-form-sys-color-on-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 90%);
-    --ngx-signal-form-sys-color-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 90%);
+    --ngx-signal-form-sys-color-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
     --ngx-signal-form-sys-color-on-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
     --ngx-signal-form-sys-color-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #c96 60%);
     --ngx-signal-form-sys-color-on-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 90%);
@@ -193,7 +193,7 @@
     --ngx-signal-form-comp-date-picker-popup-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18);
     --ngx-signal-form-comp-date-picker-popup-bg: var(--ngx-signal-form-comp-date-picker-modal-container-color);
     /* Range */
-    --ngx-signal-form-comp-date-picker-in-range-bg: var(--ngx-signal-form-sys-color-primary-container);
+    --ngx-signal-form-comp-date-picker-in-range-bg: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 75%);
     --ngx-signal-form-comp-date-picker-endpoint-bg: var(--ngx-signal-form-sys-color-primary);
     --ngx-signal-form-comp-date-picker-endpoint-color: var(--ngx-signal-form-sys-color-on-primary);
     /* Input */

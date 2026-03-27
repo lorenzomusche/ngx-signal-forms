@@ -378,23 +378,10 @@
 // ── Popup Overlay ─────────────────────────────────────────────────────────────
 
 .ngx-timepicker__popup {
-    position: absolute;
-    top: 100%;
-    left: 0;
+    // Position is handled by the global CSS variable system
+    // (.ngx-renderer--open .ngx-timepicker__popup uses --ngx-overlay-* coords).
+    // Only z-index and the modal-center fallback are set here.
     z-index: 1000;
-    margin-top: 4px;
-
-    &--above {
-        top: auto;
-        bottom: 100%;
-        margin-top: 0;
-        margin-bottom: 4px;
-    }
-
-    &--right:not(&--overlay) {
-        left: auto;
-        right: 0;
-    }
 
     &--overlay {
         position: fixed;
