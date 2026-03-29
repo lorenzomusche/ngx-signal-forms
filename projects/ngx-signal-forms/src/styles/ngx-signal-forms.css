@@ -312,6 +312,12 @@ input[type="date"]:focus,
     --ngx-daterange-input-width: 10ch;
     --ngx-daterange-input-padding: 0 0.5rem;
     --ngx-daterange-sep-padding: 0 0.25rem;
+
+    /* ── Select Arrow ───────────────────────────────────────────────────────── */
+    --ngx-select-arrow-color: var(--ngx-on-surface-variant);
+
+    /* ── Multiselect Overlay ────────────────────────────────────────────────── */
+    --ngx-multiselect-overlay-bg: var(--ngx-surface);
 }
 
 /* ─── Color Picker ─────────────────────────────────────────────────────── */
@@ -1804,7 +1810,7 @@ button.ngx-chip:hover:not(.ngx-chip--selected):not(:disabled) {
     flex-direction: column;
     gap: 0;
     padding: 0;
-    background: var(--ngx-select-dropdown-bg);
+    background: var(--ngx-multiselect-overlay-bg);
     border: var(--ngx-select-dropdown-border);
     border-radius: var(--ngx-select-dropdown-border-radius);
     box-shadow: var(--ngx-select-dropdown-shadow);
@@ -1962,7 +1968,7 @@ button.ngx-chip:hover:not(.ngx-chip--selected):not(:disabled) {
     margin-left: 0.5rem;
     width: 1rem;
     height: 1rem;
-    color: var(--ngx-on-surface-variant);
+    color: var(--ngx-select-arrow-color);
     transition: transform 0.2s;
     flex-shrink: 0;
     display: flex;

@@ -6,6 +6,7 @@
     "ng": "ng",
     "setup": "npm i && npm run build:lib",
     "start": "ng serve demo",
+    "start:lib": "npm run build:lib && npm run start",
     "build:lib": "ng build ngx-signal-forms --configuration production && rm -rf projects/ngx-signal-forms/dist/node_modules projects/ngx-signal-forms/dist/package-lock.json && cp README.md LICENSE projects/ngx-signal-forms/dist/ && npx postcss 'projects/ngx-signal-forms/dist/styles/**/*.css' --dir 'projects/ngx-signal-forms/dist/styles' --use cssnano --no-map && find projects/ngx-signal-forms/dist/ -name '*.map' -delete",
     "pack:analyze": "(cd projects/ngx-signal-forms/dist && npm pack && PKG=ngx-signals-forms-*.tgz && echo $PKG && echo '=== Uncompressed JS/CSS/TS ===' && tar tvf $PKG | grep -E 'package/(fesm2022/.*\\.mjs|styles/.*\\.css|types/.*\\.d\\.ts)$' | awk '{print $NF, $5/1024 \"KB\"; total+=$5} END {print \"TOTAL:\", total/1024 \"KB\"}' && echo '=== Tarball size ===' && du -sh $PKG && rm $PKG)",
     "build:demo": "ng build demo",

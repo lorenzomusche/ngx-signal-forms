@@ -95,6 +95,17 @@
 
     /* ─── Segmented Button ─────────────────────────────────────────────────── */
     --ngx-segmented-btn-bg-selected-hover: color-mix(in srgb, var(--ngx-primary), white 8%);
+
+    /* ─── Error color bridge ────────────────────────────────────────────────── */
+    --ngx-error-color: var(--ngx-error);
+
+    /* ─── Select / Dropdown improvements ───────────────────────────────────── */
+    --ngx-select-option-hover-bg: color-mix(in srgb, var(--ngx-on-surface), transparent 92%);
+    --ngx-select-option-selected-bg: color-mix(in srgb, var(--ngx-on-surface), transparent 88%);
+    --ngx-select-dropdown-border-radius: var(--ngx-corner-small);
+
+    /* ─── Multiselect overlay ───────────────────────────────────────────────── */
+    --ngx-multiselect-overlay-bg: var(--ngx-surface-container);
 }
 
 /* ─── Global Font ─────────────────────────────────────────────────────────── */
@@ -102,7 +113,10 @@
 .ngx-renderer,
 .ngx-timepicker-container,
 .ngx-datepicker__popup,
-.ngx-datepicker__popup--modal {
+.ngx-datepicker__popup--modal,
+.ngx-multiselect-overlay__panel,
+.ngx-colors__dropdown,
+.ngx-select__dropdown {
     font-family: var(--ngx-font-family);
     box-sizing: border-box;
 }
@@ -1052,5 +1066,48 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* ─── Dark Mode — Zinc palette inversion ─────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* In dark mode, surface/container roles invert: dark bg, light text */
+        --ngx-surface: color-mix(in srgb, var(--ngx-primary), black 40%);
+        --ngx-surface-container-lowest: color-mix(in srgb, var(--ngx-primary), black 55%);
+        --ngx-surface-container-low: color-mix(in srgb, var(--ngx-primary), black 50%);
+        --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), black 45%);
+        --ngx-surface-container-high: color-mix(in srgb, var(--ngx-primary), black 36%);
+        --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), black 28%);
+        --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), black 18%);
+
+        --ngx-on-surface: color-mix(in srgb, var(--ngx-primary), white 90%);
+        --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-primary), white 68%);
+        --ngx-outline: color-mix(in srgb, var(--ngx-primary), white 55%);
+        --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 28%);
+        --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 14%);
+
+        --ngx-disabled-bg: rgba(255, 255, 255, 0.06);
+        --ngx-disabled-color: rgba(255, 255, 255, 0.38);
+
+        /* Error container in dark */
+        --ngx-error-container: color-mix(in srgb, var(--ngx-error), black 65%);
+        --ngx-on-error-container: color-mix(in srgb, var(--ngx-error), white 80%);
+
+        /* Select dropdown must be darker than surface */
+        --ngx-select-dropdown-bg: var(--ngx-surface-container);
+        --ngx-multiselect-overlay-bg: var(--ngx-surface-container);
+    }
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .ngx-renderer *,
+    .ngx-datepicker__popup--modal,
+    .ngx-timepicker-container {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
     }
 }

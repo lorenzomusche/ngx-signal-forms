@@ -52,6 +52,40 @@
 /* ─── Custom property overrides ───────────────────────────────────────────── */
 
 :root {
+    /* ─── iOS System Color Palette — Light Mode ────────────────────────────── */
+    /* These raw tokens are the single source of truth.                         */
+    /* Dark mode overrides ONLY these tokens (not every component rule).        */
+    --ngx-ios-blue:         #007AFF;
+    --ngx-ios-red:          #FF3B30;
+    --ngx-ios-green:        #34C759;
+    --ngx-ios-gray:         #8E8E93;
+    --ngx-ios-gray2:        #AEAEB2;
+    --ngx-ios-gray3:        #C7C7CC;
+    --ngx-ios-gray4:        #D1D1D6;
+    --ngx-ios-gray5:        #E5E5EA;
+    --ngx-ios-gray6:        #F2F2F7;
+    --ngx-ios-label:        #000000;
+    --ngx-ios-secondary-label: rgba(60, 60, 67, 0.6);
+    --ngx-ios-placeholder:  rgba(60, 60, 67, 0.3);
+    --ngx-ios-bg:           #FFFFFF;
+    --ngx-ios-secondary-bg: #F2F2F7;
+
+    /* ─── Liquid Glass Tokens ───────────────────────────────────────────────── */
+    /* bg = colore base fallback; il @supports block usa un gradiente reale    */
+    --ngx-ios-glass-bg:         rgba(255, 255, 255, 0.55);
+    --ngx-ios-glass-blur:       blur(40px) saturate(200%) brightness(1.08);
+    /* border: visibile anche su sfondo chiaro (0.5px top/left bianco, lato esterno scuro) */
+    --ngx-ios-glass-border:     0.5px solid rgba(255, 255, 255, 0.85);
+    /* shadow: più drammatica per dare profondità percettiva */
+    --ngx-ios-glass-shadow:     0 20px 48px rgba(0, 0, 0, 0.18),
+                                 0 8px 16px rgba(0, 0, 0, 0.10),
+                                 0 2px 4px rgba(0, 0, 0, 0.07);
+    /* inner-glow: speculare vivido in alto + bordi direzionali */
+    --ngx-ios-glass-inner-glow: inset 0 1.5px 0 rgba(255, 255, 255, 1),
+                                 inset 1px 0 0 rgba(255, 255, 255, 0.45),
+                                 inset -1px 0 0 rgba(0, 0, 0, 0.03),
+                                 inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+
     /* Typography — SF Pro, iOS body style (17pt), labels (15pt) */
     --ngx-label-font-weight: 400;
     --ngx-label-font-size: 0.9375rem;
@@ -59,27 +93,27 @@
     /* Text fields — iOS rounded rect style
        44pt minimum hit target, compact horizontal padding, 1px border */
     --ngx-input-padding: 0.5rem 0.75rem;
-    --ngx-input-border: 1px solid #C7C7CC;
-    --ngx-input-border-color: #C7C7CC;
+    --ngx-input-border: 1px solid var(--ngx-ios-gray3);
+    --ngx-input-border-color: var(--ngx-ios-gray3);
     --ngx-input-border-radius: 10px;
-    --ngx-input-color: #000;
-    --ngx-input-placeholder-color: rgba(60, 60, 67, 0.3);
+    --ngx-input-color: var(--ngx-ios-label);
+    --ngx-input-placeholder-color: var(--ngx-ios-placeholder);
     --ngx-input-font-size: 0.9375rem;
-    --ngx-input-icon-color: #8E8E93;
-    --ngx-input-focus-color: #007AFF;
+    --ngx-input-icon-color: var(--ngx-ios-gray);
+    --ngx-input-focus-color: var(--ngx-ios-blue);
     --ngx-input-focus-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.25);
 
     /* Errors — system red */
-    --ngx-error-color: #FF3B30;
+    --ngx-error-color: var(--ngx-ios-red);
     --ngx-error-font-size: 0.75rem;
     --ngx-error-line-height: 1.33;
     --ngx-error-focus-shadow: 0 0 0 3.5px rgba(255, 59, 48, 0.2);
 
     /* Checkbox — iOS-style rounded checkbox */
     --ngx-checkbox-size: 1.25rem;
-    --ngx-checkbox-accent: #007AFF;
-    --ngx-checkbox-checkmark-color: #fff;
-    --ngx-checkbox-border: 2px solid #C7C7CC;
+    --ngx-checkbox-accent: var(--ngx-ios-blue);
+    --ngx-checkbox-checkmark-color: var(--ngx-ios-bg);
+    --ngx-checkbox-border: 2px solid var(--ngx-ios-gray3);
     --ngx-checkbox-border-radius: 50%;
     --ngx-checkbox-gap: 0.5rem;
     --ngx-checkbox-transition: 0.2s ease;
@@ -91,10 +125,10 @@
     --ngx-toggle-thumb-size: 1.6875rem;
     --ngx-toggle-thumb-size-checked: 1.6875rem;
     --ngx-toggle-thumb-offset: 0.125rem;
-    --ngx-toggle-thumb-color: #fff;
-    --ngx-toggle-thumb-color-checked: #fff;
-    --ngx-toggle-bg: #E5E5EA;
-    --ngx-toggle-bg-checked: #34C759;
+    --ngx-toggle-thumb-color: var(--ngx-ios-bg);
+    --ngx-toggle-thumb-color-checked: var(--ngx-ios-bg);
+    --ngx-toggle-bg: var(--ngx-ios-gray5);
+    --ngx-toggle-bg-checked: var(--ngx-ios-green);
     --ngx-toggle-border: none;
     --ngx-toggle-border-checked: none;
     --ngx-toggle-gap: 0.625rem;
@@ -108,50 +142,51 @@
     --ngx-chip-gap: 0.375rem;
     --ngx-chip-font-size: 0.8125rem;
     --ngx-chip-border-radius: 1rem;
-    --ngx-chip-border: 1px solid #C7C7CC;
-    --ngx-chip-bg: #fff;
-    --ngx-chip-color: #000;
-    --ngx-chip-selected-bg: #007AFF;
-    --ngx-chip-selected-color: #fff;
-    --ngx-chip-selected-border: 1px solid #007AFF;
+    --ngx-chip-border: 1px solid var(--ngx-ios-gray3);
+    --ngx-chip-bg: var(--ngx-ios-bg);
+    --ngx-chip-color: var(--ngx-ios-label);
+    --ngx-chip-selected-bg: var(--ngx-ios-blue);
+    --ngx-chip-selected-color: var(--ngx-ios-bg);
+    --ngx-chip-selected-border: 1px solid var(--ngx-ios-blue);
     --ngx-chip-max-width: 11rem;
     --ngx-chip-transition: 0.2s ease;
 
     /* Chip hover/selected hover */
-    --ngx-chip-hover-bg: #F2F2F7;
-    --ngx-chip-hover-border: #AEAEB2;
-    --ngx-chip-hover-color: #000;
-    --ngx-chip-selected-hover-bg: #0063CC;
+    --ngx-chip-hover-bg: var(--ngx-ios-gray6);
+    --ngx-chip-hover-border: var(--ngx-ios-gray2);
+    --ngx-chip-hover-color: var(--ngx-ios-label);
+    --ngx-chip-selected-hover-bg: color-mix(in srgb, var(--ngx-ios-blue), black 22%);
     --ngx-chip-selected-hover-color: #fff;
 
     /* Custom Select dropdown — iOS action sheet / picker style */
-    --ngx-select-dropdown-bg: #fff;
-    --ngx-select-dropdown-border: 1px solid #E5E5EA;
+    --ngx-select-dropdown-bg: var(--ngx-ios-glass-bg);
+    --ngx-select-dropdown-border: var(--ngx-ios-glass-border);
     --ngx-select-dropdown-border-radius: 12px;
     --ngx-select-dropdown-shadow: 0 4px 24px rgba(0, 0, 0, 0.12),
         0 0 1px rgba(0, 0, 0, 0.08);
     --ngx-select-dropdown-max-height: calc(var(--ngx-multiselect-max-height) + 40px);
     --ngx-select-option-padding: 0.5rem 0.75rem;
-    --ngx-select-option-hover-bg: #F2F2F7;
-    --ngx-select-option-hover-color: #000;
-    --ngx-select-option-selected-bg: rgba(0, 122, 255, 0.1);
-    --ngx-select-option-selected-color: #007AFF;
+    --ngx-select-option-hover-bg: var(--ngx-ios-gray6);
+    --ngx-select-option-hover-color: var(--ngx-ios-label);
+    --ngx-select-option-selected-bg: color-mix(in srgb, var(--ngx-ios-blue), transparent 90%);
+    --ngx-select-option-selected-color: var(--ngx-ios-blue);
     --ngx-select-option-selected-weight: 600;
-    --ngx-select-placeholder-color: rgba(60, 60, 67, 0.3);
-    --ngx-select-arrow-color: #8E8E93;
-    --ngx-select-border-subtle: #E5E5EA;
-    --ngx-select-no-results-color: #8E8E93;
+    --ngx-select-placeholder-color: var(--ngx-ios-placeholder);
+    --ngx-select-arrow-color: var(--ngx-ios-gray);
+    --ngx-select-border-subtle: var(--ngx-ios-gray5);
+    --ngx-select-no-results-color: var(--ngx-ios-gray);
+    --ngx-multiselect-overlay-bg: var(--ngx-ios-glass-bg);
 
     /* Surface & semantic colors — iOS tokens */
-    --ngx-surface: #fff;
-    --ngx-surface-container: #F2F2F7;
-    --ngx-surface-container-highest: #E5E5EA;
-    --ngx-surface-container-highest-hover: #D1D1D6;
-    --ngx-on-surface: #000;
-    --ngx-on-surface-variant: rgba(60, 60, 67, 0.6);
-    --ngx-outline: #8E8E93;
-    --ngx-outline-variant: #AEAEB2;
-    --ngx-outline-subtle: #E5E5EA;
+    --ngx-surface: var(--ngx-ios-bg);
+    --ngx-surface-container: var(--ngx-ios-gray6);
+    --ngx-surface-container-highest: var(--ngx-ios-gray5);
+    --ngx-surface-container-highest-hover: var(--ngx-ios-gray4);
+    --ngx-on-surface: var(--ngx-ios-label);
+    --ngx-on-surface-variant: var(--ngx-ios-secondary-label);
+    --ngx-outline: var(--ngx-ios-gray);
+    --ngx-outline-variant: var(--ngx-ios-gray2);
+    --ngx-outline-subtle: var(--ngx-ios-gray5);
     --ngx-disabled-bg: rgba(120, 120, 128, 0.08);
     --ngx-disabled-color: rgba(60, 60, 67, 0.3);
 
@@ -159,35 +194,102 @@
     --ngx-datepicker-cell-size: 2.25rem;
     --ngx-datepicker-cell-border-radius: 50%;
     --ngx-datepicker-cell-font-size: 1rem;
-    --ngx-datepicker-today-ring: 2px solid #007AFF;
-    --ngx-datepicker-selected-bg: #007AFF;
-    --ngx-datepicker-selected-color: #fff;
-    --ngx-datepicker-hover-bg: rgba(0, 122, 255, 0.08);
+    --ngx-datepicker-today-ring: 2px solid var(--ngx-ios-blue);
+    --ngx-datepicker-selected-bg: var(--ngx-ios-blue);
+    --ngx-datepicker-selected-color: var(--ngx-ios-bg);
+    --ngx-datepicker-hover-bg: color-mix(in srgb, var(--ngx-ios-blue), transparent 92%);
     --ngx-datepicker-outside-opacity: 0.3;
     --ngx-datepicker-disabled-opacity: 0.2;
     --ngx-datepicker-header-gap: 0.25rem;
     --ngx-datepicker-nav-btn-size: 2.25rem;
     --ngx-datepicker-popup-padding: 0.5rem;
-    --ngx-datepicker-popup-bg: #fff;
-    --ngx-datepicker-popup-border: 1px solid #E5E5EA;
+    --ngx-datepicker-popup-bg: var(--ngx-ios-glass-bg);
+    --ngx-datepicker-popup-border: var(--ngx-ios-glass-border);
     --ngx-datepicker-popup-border-radius: 12px;
-    --ngx-datepicker-popup-shadow: 0 8px 32px rgba(0, 0, 0, 0.14),
-        0 0 1px rgba(0, 0, 0, 0.1);
+    --ngx-datepicker-popup-shadow: var(--ngx-ios-glass-shadow);
     --ngx-datepicker-icon-size: 1.25rem;
 
     /* Date Range — iOS system blue at low opacity for the band */
-    --ngx-daterange-in-range-bg: rgba(0, 122, 255, 0.12);
-    --ngx-daterange-endpoint-bg: #007AFF;
-    --ngx-daterange-endpoint-color: #fff;
+    --ngx-daterange-in-range-bg: color-mix(in srgb, var(--ngx-ios-blue), transparent 88%);
+    --ngx-daterange-endpoint-bg: var(--ngx-ios-blue);
+    --ngx-daterange-endpoint-color: var(--ngx-ios-bg);
 
     /* Layout — compact */
     --ngx-renderer-gap: 0.25rem;
     --ngx-renderer-margin-bottom: 0.375rem;
 }
 
+/* ─── iOS Ambient Background — necessario per il Liquid Glass ─────────────── */
+/* Il backdrop-filter sfuma il contenuto *dietro* il pannello.                */
+/* Senza un background colorato, sfuma il bianco = bianco. Questo gradiente   */
+/* simula una wallpaper iOS e rende l'effetto vetro visibile.                 */
+
+body {
+    background:
+        radial-gradient(ellipse 80% 80% at 18% 12%, rgba(0, 122, 255, 0.20) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 60% at 82% 88%, rgba(52, 199, 89, 0.14) 0%, transparent 50%),
+        radial-gradient(ellipse 55% 55% at 68% 28%, rgba(255, 59, 48, 0.09) 0%, transparent 45%),
+        radial-gradient(ellipse 40% 40% at 40% 75%, rgba(175, 82, 222, 0.08) 0%, transparent 40%),
+        #f2f2f7;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background:
+            radial-gradient(ellipse 80% 80% at 18% 12%, rgba(10, 132, 255, 0.30) 0%, transparent 55%),
+            radial-gradient(ellipse 60% 60% at 82% 88%, rgba(48, 209, 88, 0.20) 0%, transparent 50%),
+            radial-gradient(ellipse 55% 55% at 68% 28%, rgba(255, 69, 58, 0.14) 0%, transparent 45%),
+            radial-gradient(ellipse 40% 40% at 40% 75%, rgba(191, 90, 242, 0.12) 0%, transparent 40%),
+            #000000;
+    }
+}
+
+/* ─── Dark Mode — iOS System Colors ──────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* iOS Dark System Colors */
+        --ngx-ios-blue:         #0A84FF;
+        --ngx-ios-red:          #FF453A;
+        --ngx-ios-green:        #30D158;
+        --ngx-ios-gray:         #8E8E93;
+        --ngx-ios-gray2:        #636366;
+        --ngx-ios-gray3:        #48484A;
+        --ngx-ios-gray4:        #3A3A3C;
+        --ngx-ios-gray5:        #2C2C2E;
+        --ngx-ios-gray6:        #1C1C1E;
+        --ngx-ios-label:        #FFFFFF;
+        --ngx-ios-secondary-label: rgba(235, 235, 245, 0.6);
+        --ngx-ios-placeholder:  rgba(235, 235, 245, 0.3);
+        --ngx-ios-bg:           #000000;
+        --ngx-ios-secondary-bg: #1C1C1E;
+
+        /* Liquid Glass dark tokens */
+        --ngx-ios-glass-bg:         rgba(20, 20, 25, 0.65);
+        --ngx-ios-glass-border:     0.5px solid rgba(255, 255, 255, 0.18);
+        --ngx-ios-glass-shadow:     0 20px 48px rgba(0, 0, 0, 0.50),
+                                     0 8px 16px rgba(0, 0, 0, 0.35),
+                                     0 2px 4px rgba(0, 0, 0, 0.20);
+        --ngx-ios-glass-inner-glow: inset 0 1.5px 0 rgba(255, 255, 255, 0.16),
+                                     inset 1px 0 0 rgba(255, 255, 255, 0.08),
+                                     inset -1px 0 0 rgba(0, 0, 0, 0.25),
+                                     inset 0 -1px 0 rgba(0, 0, 0, 0.30);
+
+        /* Disabled in dark */
+        --ngx-disabled-bg: rgba(120, 120, 128, 0.18);
+        --ngx-disabled-color: rgba(235, 235, 245, 0.3);
+    }
+}
+
 /* ─── Global font — SF Pro / System ───────────────────────────────────────── */
 
-.ngx-renderer {
+.ngx-renderer,
+.ngx-timepicker-container,
+.ngx-datepicker__popup,
+.ngx-datepicker__popup--modal,
+.ngx-multiselect-overlay__panel,
+.ngx-colors__dropdown,
+.ngx-select__dropdown {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
         'Helvetica Neue', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -202,7 +304,7 @@
 .ngx-renderer input[type="email"],
 .ngx-renderer textarea,
 .ngx-renderer select {
-    background-color: #fff;
+    background-color: var(--ngx-ios-bg);
     color: var(--ngx-input-color);
     border: var(--ngx-input-border);
     border-radius: var(--ngx-input-border-radius);
@@ -212,7 +314,7 @@
 .ngx-renderer input:hover:not(:disabled):not(:focus),
 .ngx-renderer textarea:hover:not(:disabled):not(:focus),
 .ngx-renderer select:hover:not(:disabled):not(:focus) {
-    border-color: #AEAEB2;
+    border-color: var(--ngx-ios-gray2);
 }
 
 .ngx-renderer input:focus,
@@ -263,7 +365,7 @@
 /* ─── Custom select trigger — iOS rounded style ───────────────────────────── */
 
 .ngx-select__trigger {
-    background: #fff;
+    background: var(--ngx-ios-bg);
     color: var(--ngx-input-color);
     border: var(--ngx-input-border);
     border-radius: var(--ngx-input-border-radius);
@@ -271,7 +373,7 @@
 }
 
 .ngx-select__trigger:hover:not(:disabled):not(:focus) {
-    border-color: #AEAEB2;
+    border-color: var(--ngx-ios-gray2);
 }
 
 .ngx-select__trigger:focus {
@@ -306,7 +408,7 @@
 
 .ngx-select__dropdown {
     margin-top: 0.375rem;
-    background: #fff;
+    background: var(--ngx-ios-glass-bg);
 }
 
 .ngx-select__search {
@@ -374,23 +476,23 @@
 }
 
 .ngx-multiselect__search-btn:hover:not(:disabled) {
-    background: rgba(0, 122, 255, 0.08);
-    color: #007AFF;
+    background: color-mix(in srgb, var(--ngx-ios-blue), transparent 92%);
+    color: var(--ngx-ios-blue);
 }
 
 .ngx-multiselect__options {
     scrollbar-width: thin;
-    scrollbar-color: #C7C7CC transparent;
+    scrollbar-color: var(--ngx-ios-gray3) transparent;
 }
 
 .ngx-select__list {
     scrollbar-width: thin;
-    scrollbar-color: #C7C7CC transparent;
+    scrollbar-color: var(--ngx-ios-gray3) transparent;
 }
 
 .ngx-multiselect-overlay__grid {
     scrollbar-width: thin;
-    scrollbar-color: #C7C7CC transparent;
+    scrollbar-color: var(--ngx-ios-gray3) transparent;
 }
 
 .ngx-chip:hover:not(:disabled):not(.ngx-chip--selected) {
@@ -410,7 +512,7 @@
 
 /* Overlay — iOS sheet-style popup */
 .ngx-multiselect-overlay__panel {
-    background: #fff;
+    background: var(--ngx-ios-glass-bg);
     border: 1px solid var(--ngx-outline-subtle);
     border-radius: 12px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12),
@@ -483,13 +585,13 @@
 /* ─── Date Picker — iOS calendar style ────────────────────────────────────── */
 
 .ngx-datepicker__input {
-    background: #fff;
+    background: var(--ngx-ios-bg);
     color: var(--ngx-input-color);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ngx-datepicker__input:hover:not(:disabled):not(:focus) {
-    border-color: #AEAEB2;
+    border-color: var(--ngx-ios-gray2);
 }
 
 .ngx-datepicker__input:focus {
@@ -514,13 +616,13 @@
 }
 
 .ngx-datepicker__toggle {
-    background: #fff;
+    background: var(--ngx-ios-bg);
     color: var(--ngx-input-focus-color);
     transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .ngx-datepicker__toggle:hover:not(:disabled) {
-    background: rgba(0, 122, 255, 0.06);
+    background: color-mix(in srgb, var(--ngx-ios-blue), transparent 94%);
 }
 
 .ngx-datepicker__nav-btn {
@@ -528,8 +630,8 @@
 }
 
 .ngx-datepicker__nav-btn:hover {
-    background: rgba(0, 122, 255, 0.08);
-    color: #007AFF;
+    background: color-mix(in srgb, var(--ngx-ios-blue), transparent 92%);
+    color: var(--ngx-ios-blue);
 }
 
 .ngx-datepicker__title {
@@ -557,7 +659,7 @@
 /* Container focus — iOS ring on the whole group */
 .ngx-daterange__group:focus-within {
     box-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.3);
-    border-color: #007AFF;
+    border-color: var(--ngx-ios-blue);
 }
 
 /* Kill per-input focus */
@@ -571,4 +673,184 @@
     color: var(--ngx-on-surface-variant);
     font-size: 0.75rem;
     font-weight: 600;
+}
+
+/* ─── Liquid Glass — Dropdown / Popup / Overlay ───────────────────────────── */
+/* Fallback: solid semi-opaque background for browsers without backdrop-filter */
+
+.ngx-select__dropdown,
+.ngx-multiselect-overlay__panel,
+.ngx-datepicker__popup,
+.ngx-colors__dropdown,
+.ngx-timepicker-container {
+    background: rgba(255, 255, 255, 0.95); /* solid fallback (light) */
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .ngx-select__dropdown,
+    .ngx-multiselect-overlay__panel,
+    .ngx-datepicker__popup,
+    .ngx-colors__dropdown,
+    .ngx-timepicker-container {
+        /* Gradiente di rifrazione speculare — questo è il cuore del Liquid Glass.
+           Top-left luminoso (riflesso luce), centro semitrasparente, bottom leggermente
+           caldo. Simula la curvatura e lo spessore di una lastra di vetro. */
+        background: linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.75) 0%,
+            rgba(248, 250, 255, 0.50) 45%,
+            rgba(255, 255, 255, 0.62) 100%
+        );
+        backdrop-filter: var(--ngx-ios-glass-blur);
+        -webkit-backdrop-filter: var(--ngx-ios-glass-blur);
+        /* Bordo: top/left bianco luminoso, bottom/right leggermente scuro */
+        border: var(--ngx-ios-glass-border);
+        border-bottom-color: rgba(0, 0, 0, 0.06);
+        border-right-color: rgba(0, 0, 0, 0.04);
+        box-shadow: var(--ngx-ios-glass-shadow),
+                    var(--ngx-ios-glass-inner-glow);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .ngx-select__dropdown,
+    .ngx-multiselect-overlay__panel,
+    .ngx-datepicker__popup,
+    .ngx-colors__dropdown,
+    .ngx-timepicker-container {
+        background: rgba(20, 20, 25, 0.92); /* solid fallback dark */
+    }
+
+    @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+        .ngx-select__dropdown,
+        .ngx-multiselect-overlay__panel,
+        .ngx-datepicker__popup,
+        .ngx-colors__dropdown,
+        .ngx-timepicker-container {
+            background: linear-gradient(
+                145deg,
+                rgba(65, 65, 80, 0.78) 0%,
+                rgba(20, 20, 30, 0.62) 45%,
+                rgba(58, 58, 72, 0.72) 100%
+            );
+            border-bottom-color: rgba(0, 0, 0, 0.35);
+            border-right-color: rgba(0, 0, 0, 0.25);
+        }
+    }
+}
+
+.ngx-timepicker-container {
+    border-radius: 14px;
+}
+
+/* ─── Focus Ring — iOS accessibility ring on all interactive controls ──────── */
+
+.ngx-select__trigger:focus-visible,
+.ngx-datepicker__toggle:focus-visible,
+.ngx-datepicker__nav-btn:focus-visible,
+.ngx-segmented__button:focus-visible,
+.ngx-file-button:focus-visible {
+    outline: 3.5px solid rgba(0, 122, 255, 0.4);
+    outline-offset: 2px;
+}
+
+/* ─── Radio Buttons — iOS circular dot style ──────────────────────────────── */
+
+.ngx-radio-circle {
+    border: 2px solid var(--ngx-ios-gray3);
+}
+
+.ngx-radio-item input[type="radio"]:checked + .ngx-radio-circle {
+    border-color: var(--ngx-ios-blue);
+    background: var(--ngx-ios-blue);
+}
+
+.ngx-radio-item input[type="radio"]:focus-visible + .ngx-radio-circle {
+    outline: 3.5px solid rgba(0, 122, 255, 0.4);
+    outline-offset: 2px;
+}
+
+/* ─── Segmented Buttons — iOS pill-shape ──────────────────────────────────── */
+
+.ngx-segmented {
+    background: rgba(118, 118, 128, 0.12);
+    border: none;
+    padding: 2px;
+    gap: 0;
+}
+
+.ngx-segmented__button {
+    border-radius: var(--ngx-corner-large);
+    border-right: none;
+    margin-right: 0;
+    color: var(--ngx-ios-label);
+}
+
+.ngx-segmented__button--selected {
+    background: var(--ngx-ios-bg);
+    color: var(--ngx-ios-label);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.06);
+    border-radius: var(--ngx-corner-large);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .ngx-segmented__button--selected {
+        background: var(--ngx-ios-glass-bg);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+    }
+}
+
+.ngx-segmented__button:hover:not(.ngx-segmented__button--selected):not(:disabled) {
+    background: rgba(118, 118, 128, 0.1);
+    color: var(--ngx-ios-label);
+}
+
+/* ─── Slider — iOS shadow thumb ───────────────────────────────────────────── */
+
+.ngx-slider::-webkit-slider-thumb {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.20), 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.ngx-slider::-moz-range-thumb {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.20), 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* ─── File Upload — iOS style ─────────────────────────────────────────────── */
+
+.ngx-file-container {
+    border: 1.5px dashed var(--ngx-ios-gray3);
+    border-radius: 10px;
+    background: var(--ngx-ios-gray6);
+}
+
+.ngx-button {
+    background: var(--ngx-ios-blue);
+    border-radius: var(--ngx-corner-full);
+}
+
+/* ─── Floating Label — iOS system blue on focus ────────────────────────────── */
+
+.ngx-renderer.ngx-floating-label:has(.ngx-input-wrapper:focus-within) .ngx-label {
+    color: var(--ngx-ios-blue);
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .ngx-renderer *,
+    .ngx-datepicker__popup--modal,
+    .ngx-timepicker-container {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .ngx-select__dropdown,
+    .ngx-multiselect-overlay__panel,
+    .ngx-datepicker__popup,
+    .ngx-colors__dropdown,
+    .ngx-timepicker-container {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
 }
