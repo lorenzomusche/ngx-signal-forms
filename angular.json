@@ -34,9 +34,15 @@
                         "index": "projects/demo/src/index.html",
                         "browser": "projects/demo/src/main.ts",
                         "tsConfig": "projects/demo/tsconfig.app.json",
+                        "assets": [
+                            {
+                                "glob": "**/*",
+                                "input": "projects/ngx-signal-forms/src/styles",
+                                "output": "styles"
+                            }
+                        ],
                         "styles": [
                             "@ngx-signals/forms/styles/ngx-signal-forms-base.css",
-                            "@ngx-signals/forms/styles/ngx-signal-forms-default.css",
                             "projects/demo/src/styles.scss"
                         ]
                     },

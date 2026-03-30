@@ -1,6 +1,6 @@
 {
   "name": "@ngx-signals/forms",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "The elite declarative form engine for Angular Signals. Typesafe, M3-optimized, and built for performance.",
   "funding": {
     "type": "github",
@@ -41,7 +41,7 @@
   },
   "exports": {
     ".": {
-      "import": "./fesm2022/ngx-signal-forms.mjs"
+      "import": "./fesm2022/ngx-signals-forms.mjs"
     },
     "./styles/ionic.css": {
       "default": "./styles/ngx-signal-forms-ionic.css"

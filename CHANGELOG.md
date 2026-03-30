@@ -2,6 +2,20 @@
 
 All notable changes to the `ngx-signal-forms` library will be documented in this file.
 
+## [2.0.3] - 2026-03-30
+
+### Fixed
+- **Build**: Fixed path normalization for build artifacts and standardized exports.
+
+## [2.0.2] - 2026-03-30
+
+### Added
+- **Styles**: Implemented high-fidelity iOS 26 Liquid Glass material system.
+- **Styles**: Safari-optimized density (140px blur, 450% saturation).
+- **Styles**: Chrome-brilliance fix with sRGB interpolation and brightness boost.
+- **Styles**: Standardized Apple system font stack (-apple-system / SF Pro).
+- **Styles**: Enhanced demo card with independent glass layer for overlay stability.
+
 ## [2.0.1] - 2026-03-27
 
 ### Fixed

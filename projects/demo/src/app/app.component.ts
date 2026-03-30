@@ -398,7 +398,7 @@ export class AppComponent {
         | "ionic",
       primaryColor: (form?.getField("primaryColor")?.()?.value() ??
         "#18181b") as string,
-      density: (form?.getField("density")?.()?.value() ?? -3) as number,
+      density: (form?.getField("density")?.()?.value() ?? 0) as number,
       floating: (form?.getField("floating")?.()?.value() ?? false) as boolean,
     };
   });
@@ -411,10 +411,11 @@ export class AppComponent {
         "ngx-theme-link",
       ) as HTMLLinkElement;
       if (link) {
+        const theme = config.theme || "default";
         const filename =
-          config.theme === "default"
+          theme === "default"
             ? "ngx-signal-forms.css"
-            : `ngx-signal-forms-${config.theme}.css`;
+            : `ngx-signal-forms-${theme}.css`;
         link.href = `styles/${filename}`;
       }
 
