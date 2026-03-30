@@ -2,10 +2,17 @@
 
 > **Declarative, signal-driven form library for Angular.** Built on the experimental **Signal Forms API**, it provides a type-safe, reactive, and highly accessible way to build modern forms with Material Design 3 (M3) aesthetics.
 
-[![Angular](https://img.shields.io/badge/Angular-18%2F19%2B-red)](https://angular.dev)
+[![Angular](https://img.shields.io/badge/Angular-21%2B-red)](https://angular.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)](https://www.typescriptlang.org)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=flat&logo=github-sponsors)](https://github.com/sponsors/lorenzomusche)
+
+---
+
+## ⚡ Live Demo
+
+Try the library immediately on **StackBlitz**:
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/stackblitz-starters-m5n2dffd)
 
 ---
 
