@@ -1,6 +1,6 @@
 {
   "name": "@ngx-signals/forms",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "The elite declarative form engine for Angular Signals. Typesafe, M3-optimized, and built for performance.",
   "funding": {
     "type": "github",
