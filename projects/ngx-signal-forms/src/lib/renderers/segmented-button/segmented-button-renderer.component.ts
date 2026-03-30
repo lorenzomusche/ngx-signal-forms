@@ -14,8 +14,8 @@ import { NgxSelectOption } from "../../core/types";
   standalone: true,
   imports: [NgTemplateOutlet, NgxControlLabelComponent, NgxErrorListComponent, NgxIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { 
-    class: "ngx-renderer ngx-renderer--segmented", 
+  host: {
+    class: "ngx-renderer ngx-renderer--segmented",
     "[class.ngx-renderer--touched]": "touched()",
     "[style.width]": "fullWidth() ? '100%' : 'fit-content'",
     "[style.--ngx-segments-count]": "segmentsCount()"
@@ -34,8 +34,9 @@ import { NgxSelectOption } from "../../core/types";
       class="ngx-segmented"
       role="radiogroup"
       [attr.aria-labelledby]="label() ? fieldId + '-label' : null"
+      
     >
-      @for (opt of options(); track opt.value; let first = $first; let last = $last) {
+      @for (opt of options(); track opt.value; let first = $first; let last = $last; let i = $index) {
         <button
           type="button"
           class="ngx-segmented__button"
@@ -43,6 +44,7 @@ import { NgxSelectOption } from "../../core/types";
           [class.ngx-segmented__button--last]="last"
           [class.ngx-segmented__button--selected]="value() === opt.value"
           [disabled]="isDisabled()"
+          [attr.data-seg-index]="i"
           (click)="onSelect(opt.value)"
           (blur)="markAsTouched()"
           role="radio"

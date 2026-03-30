@@ -10,7 +10,7 @@
 }
 
 body {
-    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--ngx-ios-font, -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif);
     line-height: 1.5;
     color: var(--ngx-on-surface);
     /* Do NOT set background here — let the iOS theme's Liquid Glass gradient show */

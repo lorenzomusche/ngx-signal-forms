@@ -89,11 +89,11 @@ import {
       <section style="margin-bottom: 2rem;">
           <details
             class="playground-accordion"
-            style="margin-bottom: 2rem; border-radius: 12px; border: 1px solid var(--ngx-outline-variant); background: var(--ngx-surface-container);"
+            style="margin-bottom: 2rem; border-radius: 12px; border: 1px solid var(--ngx-outline-variant);"
             [open]="false"
           >
 
-            <summary style="padding: 1rem 1.25rem; list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; background: var(--ngx-surface); font-size: 0.8125rem; font-weight: 700; color: var(--ngx-primary); transition: background 0.2s;">
+            <summary style="padding: 1rem 1.25rem; list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.8125rem; font-weight: 700; color: var(--ngx-primary); transition: background 0.2s;">
               <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <span style="font-size: 1rem;">🎨</span>
                 <span>Design System Inspector</span>
@@ -103,10 +103,10 @@ import {
 
             <div
               class="demo-config"
-              style="padding: 1.5rem; background: var(--ngx-surface); border-top: 1px solid var(--ngx-outline-variant); position: relative;"
+              style="padding: 1.5rem; border-top: 1px solid var(--ngx-outline-variant); position: relative;"
             >
               <!-- Decorative accent bar -->
-              <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--ngx-primary);"></div>
+              <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px;"></div>
 
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
                 <div style="padding-right: 1.5rem;">
