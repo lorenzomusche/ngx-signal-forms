@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!--
+      liquid-glass-lens
+      ─────────────────────────────────────────────────────────────────────────
+      Lens-distortion filter for Apple Liquid Glass effect in iOS 26.
+      Displaces the backdrop pixels to simulate a convex glass lens bending
+      light at the rim — creating the signature "looking through glass" effect.
+
+      Browser support: backdrop-filter: url() works in Chromium ≥ 76 / Edge ≥ 79.
+      Safari / Firefox fall back to the standard blur() defined in main CSS.
+
+      Parameters tuned for UI panels (dropdowns, popovers, date pickers):
+        • scale="12"  →  up to 12px rim displacement — clearly visible lens warp
+        • baseFrequency low  →  large, smooth deformation waves (not noisy)
+        • numOctaves="2"  →  smooth organic shape, less fractal noise
+    -->
+    <filter
+      id="liquid-glass-lens"
+      color-interpolation-filters="linearRGB"
+      x="-5%" y="-5%" width="110%" height="110%"
+    >
+      <!-- Step 1: Low-frequency fractal noise for organic displacement field -->
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.012 0.018"
+        numOctaves="2"
+        seed="7"
+        result="noise"
+      />
+
+      <!-- Step 2: Desaturate → single neutral displacement channel -->
+      <feColorMatrix
+        in="noise"
+        type="saturate"
+        values="0"
+        result="grey_noise"
+      />
+
+      <!-- Step 3: Displace the backdrop — scale=12 for clearly visible glass warp -->
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="grey_noise"
+        scale="12"
+        xChannelSelector="R"
+        yChannelSelector="G"
+        result="displaced"
+      />
+
+      <!-- Step 4: Slight blur to anti-alias the displacement stepping artefacts -->
+      <feGaussianBlur
+        in="displaced"
+        stdDeviation="0.3"
+      />
+    </filter>
+  </defs>
+</svg>

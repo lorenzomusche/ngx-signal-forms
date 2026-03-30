@@ -13,9 +13,10 @@ body {
     font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.5;
     color: var(--ngx-on-surface);
-    background: var(--ngx-base-bg);
+    /* Do NOT set background here — let the iOS theme's Liquid Glass gradient show */
     margin: 0;
     padding: 1.5rem;
+    min-height: 100vh;
     transition: background 0.3s, color 0.3s;
 }
 
@@ -24,12 +25,53 @@ body {
 .demo-card {
     max-width: 600px;
     margin: 0 auto;
-    background: var(--ngx-surface);
+    /* Liquid Glass card — background only, NO backdrop-filter on the element itself.
+       backdrop-filter directly on a container creates a new containing block for
+       position:fixed children (Angular overlays, dropdowns) — breaking their position.
+       We use ::after for the blur and ::before for the specular. */
+    background: rgba(255, 255, 255, 0.38);
     padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
-        0 8px 10px -6px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--ngx-outline-variant);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.60);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.85),
+        inset 1px 0 0 rgba(255, 255, 255, 0.40),
+        0 24px 64px rgba(0, 0, 0, 0.16),
+        0 8px 20px rgba(0, 0, 0, 0.08);
+    isolation: isolate;
+    position: relative;
+}
+
+/* Blur layer — position:absolute so it does NOT create a fixed-position containing block */
+.demo-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: -1;
+    backdrop-filter: blur(48px) saturate(280%) brightness(1.05);
+    -webkit-backdrop-filter: blur(48px) saturate(280%) brightness(1.05);
+}
+
+/* Specular rim on the card */
+.demo-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 100% 35% at 50% -3%,
+            rgba(255, 255, 255, 0.75) 0%,
+            rgba(255, 255, 255, 0.18) 42%,
+            transparent 68%);
+}
+
+.demo-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 .demo-card h1 {
@@ -48,7 +90,25 @@ body {
 
 @media (prefers-color-scheme: dark) {
     .demo-card {
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        background: rgba(10, 10, 20, 0.45);
+        border-color: rgba(255, 255, 255, 0.14);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.14),
+            0 24px 64px rgba(0, 0, 0, 0.60),
+            0 8px 20px rgba(0, 0, 0, 0.40);
+    }
+
+    .demo-card::after {
+        backdrop-filter: blur(48px) saturate(200%) brightness(0.95);
+        -webkit-backdrop-filter: blur(48px) saturate(200%) brightness(0.95);
+    }
+
+    .demo-card::before {
+        background:
+            radial-gradient(ellipse 100% 35% at 50% -3%,
+                rgba(255, 255, 255, 0.18) 0%,
+                rgba(255, 255, 255, 0.04) 42%,
+                transparent 68%);
     }
 }
 
@@ -81,7 +141,7 @@ button[type="submit"] {
     padding: 0.75rem 2rem;
     min-height: 2.75rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 9999px;
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;

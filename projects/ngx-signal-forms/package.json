@@ -50,7 +50,7 @@
       "default": "./styles/ngx-signal-forms-ios.css"
     },
     "./styles/base.css": {
-      "default": "./styles/ngx-signal-forms-m3-base.css"
+      "default": "./styles/ngx-signal-forms-base.css"
     },
     "./styles/material.css": {
       "default": "./styles/ngx-signal-forms-material.css"

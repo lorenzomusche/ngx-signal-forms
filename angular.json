@@ -35,8 +35,8 @@
                         "browser": "projects/demo/src/main.ts",
                         "tsConfig": "projects/demo/tsconfig.app.json",
                         "styles": [
-                            "@ngx-signals/forms-compiled/styles/base.css",
-                            "@ngx-signals/forms-compiled/styles/default.css",
+                            "@ngx-signals/forms/styles/ngx-signal-forms-base.css",
+                            "@ngx-signals/forms/styles/ngx-signal-forms-ios.css",
                             "projects/demo/src/styles.scss"
                         ]
                     },
