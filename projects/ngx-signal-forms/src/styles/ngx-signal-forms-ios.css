@@ -1413,6 +1413,7 @@ body,
 
 .ngx-segmented__button--selected {
     font-weight: 600;
+    --ngx-tick-w: 1rem;
     color: var(--ngx-ios-label);
 }
 

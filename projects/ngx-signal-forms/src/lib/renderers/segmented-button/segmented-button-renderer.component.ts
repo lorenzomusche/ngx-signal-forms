@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, InputSignalWithTransform } from "@angular/core";
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, input, InputSignalWithTransform, viewChild } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
@@ -31,10 +31,14 @@ import { NgxSelectOption } from "../../core/types";
     />
 
     <div
+      #track
       class="ngx-segmented"
       role="radiogroup"
       [attr.aria-labelledby]="label() ? fieldId + '-label' : null"
-      
+      (pointerdown)="onTrackPointerDown($event)"
+      (pointermove)="onTrackPointerMove($event)"
+      (pointerup)="onTrackPointerUp()"
+      (pointercancel)="onTrackPointerUp()"
     >
       @for (opt of options(); track opt.value; let first = $first; let last = $last; let i = $index) {
         <button
@@ -80,6 +84,47 @@ export class NgxSegmentedButtonComponent<TValue = any> extends NgxBaseControl<TV
   protected readonly fieldId = `ngx-control-segmented-${NgxBaseControl.nextId()}`;
 
   protected readonly segmentsCount = computed(() => this.options().length);
+
+  private readonly track = viewChild<ElementRef<HTMLElement>>("track");
+  private isDragging = false;
+
+  protected onTrackPointerDown(event: PointerEvent): void {
+    if (this.isDisabled() || event.button !== 0) return;
+    this.isDragging = true;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    this.updateSelectionFromPointer(event);
+  }
+
+  protected onTrackPointerMove(event: PointerEvent): void {
+    if (!this.isDragging || this.isDisabled()) return;
+    this.updateSelectionFromPointer(event);
+  }
+
+  protected onTrackPointerUp(): void {
+    this.isDragging = false;
+    this.markAsTouched();
+  }
+
+  private updateSelectionFromPointer(event: PointerEvent): void {
+    const trackEl = this.track()?.nativeElement;
+    if (!trackEl) return;
+
+    const rect = trackEl.getBoundingClientRect();
+    const count = this.segmentsCount();
+    if (count === 0) return;
+
+    const relativeX = event.clientX - rect.left;
+    const segmentWidth = rect.width / count;
+    let index = Math.floor(relativeX / segmentWidth);
+
+    // Clamp index
+    index = Math.max(0, Math.min(index, count - 1));
+
+    const option = this.options()[index];
+    if (option && this.value() !== option.value) {
+      this.onSelect(option.value);
+    }
+  }
 
   protected onSelect(value: TValue): void {
     if (this.isDisabled()) return;
