@@ -1,1 +1,17 @@
-PLACEHOLDER_MAIN
+/*
+ * ngx-signal-forms.css — Default Theme
+ *
+ * Import this file in your application's global styles:
+ *   @import 'ngx-signal-forms/styles/ngx-signal-forms.css';
+ *
+ * Override any CSS custom property on :root or a scoped selector
+ * to create a custom theme.
+ *
+ * CSS @layer order:
+ *   ngx.tokens     — all CSS custom properties (:root bridge + dark-mode overrides)
+ *   ngx.base       — renderer layout, generic wrappers
+ *   ngx.components — every component (input, select, checkbox, toggle, datepicker…)
+ *   ngx.themes     — reserved for theme overrides (material, ionic, ios)
+ */
+
+@layer ngx.tokens, ngx.base, ngx.components, ngx.themes;
