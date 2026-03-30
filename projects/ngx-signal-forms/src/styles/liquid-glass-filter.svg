@@ -17,8 +17,8 @@
     -->
     <filter
       id="liquid-glass-lens"
-      color-interpolation-filters="linearRGB"
-      x="-5%" y="-5%" width="110%" height="110%"
+      color-interpolation-filters="sRGB"
+      x="-10%" y="-10%" width="120%" height="120%"
     >
       <!-- Step 1: Low-frequency fractal noise for organic displacement field -->
       <feTurbulence
@@ -37,11 +37,11 @@
         result="grey_noise"
       />
 
-      <!-- Step 3: Displace the backdrop — scale=12 for clearly visible glass warp -->
+      <!-- Step 3: Displace the backdrop — scale 96 for extreme-refraction glass warp -->
       <feDisplacementMap
         in="SourceGraphic"
         in2="grey_noise"
-        scale="12"
+        scale="96"
         xChannelSelector="R"
         yChannelSelector="G"
         result="displaced"

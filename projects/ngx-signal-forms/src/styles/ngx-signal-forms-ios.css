@@ -72,9 +72,10 @@
 
     /* ─── Liquid Glass Tokens ───────────────────────────────────────────────── */
     /* bg = solid fallback for browsers without backdrop-filter support         */
-    --ngx-ios-glass-bg:         rgba(255, 255, 255, 0.55);
-    /* blur: 40px deep frosted blur; saturate 320% = vivid refracted colors    */
-    --ngx-ios-glass-blur:       blur(40px) saturate(320%) brightness(1.06);
+    --ngx-ios-glass-bg:         rgba(255, 255, 255, 0.15);
+    /* blur: 54px deep liquid blur; saturate 220% = natural refraction; brightness 1.0 (no milk) */
+    /* Brilliance Boost: brightness 1.04 to amplify light, saturate 450% for crystalline pop */
+    --ngx-ios-glass-blur:       blur(80px) saturate(450%) brightness(1.04) contrast(1.05) url('./liquid-glass-filter.svg#liquid-glass-lens');
     /* Directional borders: top/left bright (light-facing), bottom/right dark  */
     /* Applied as inset box-shadows directly on elements (not a single border) */
     --ngx-ios-glass-border-top:    rgba(255, 255, 255, 0.90);
@@ -86,8 +87,8 @@
                                  0 8px 16px rgba(0, 0, 0, 0.10),
                                  0 2px 4px rgba(0, 0, 0, 0.07);
     /* tinting: override --ngx-ios-glass-tint with an env color for color spill */
-    --ngx-ios-glass-tint:         transparent;
-    --ngx-ios-glass-tint-opacity: 0.10;
+    --ngx-ios-glass-tint:         rgba(255, 255, 255, 0.08); /* slightly more visible scatter */
+    --ngx-ios-glass-tint-opacity: 0.35;        /* double density Light */
 
     /* Typography — SF Pro, iOS body style (17pt), labels (15pt) */
     --ngx-label-font-weight: 400;
@@ -123,11 +124,11 @@
 
     /* Toggle (Switch) — iOS UISwitch dimensions: 51×31pt
        Thumb: 27pt unchecked, 27pt checked. Green track when on. */
-    --ngx-toggle-width: 3.1875rem;
-    --ngx-toggle-height: 1.9375rem;
-    --ngx-toggle-thumb-size: 1.6875rem;
-    --ngx-toggle-thumb-size-checked: 1.6875rem;
-    --ngx-toggle-thumb-offset: 0.125rem;
+    --ngx-toggle-width:          3.5rem;    /* 56px */
+    --ngx-toggle-height:         1.5rem;    /* 24px */
+    --ngx-toggle-thumb-width:    1.875rem;  /* 30px pill width */
+    --ngx-toggle-thumb-height:   1.25rem;   /* 20px pill height */
+    --ngx-toggle-thumb-offset:   0.0625rem; /* 1px: precision alignment */
     --ngx-toggle-thumb-color: var(--ngx-ios-bg);
     --ngx-toggle-thumb-color-checked: var(--ngx-ios-bg);
     --ngx-toggle-bg: var(--ngx-ios-gray5);
@@ -203,9 +204,10 @@
     --ngx-datepicker-cell-border-radius: 50%;
     --ngx-datepicker-cell-font-size: 1rem;
     --ngx-datepicker-today-ring: 2px solid var(--ngx-ios-blue);
-    --ngx-datepicker-selected-bg: var(--ngx-ios-blue);
-    --ngx-datepicker-selected-color: var(--ngx-ios-bg);
-    --ngx-datepicker-hover-bg: color-mix(in srgb, var(--ngx-ios-blue), transparent 92%);
+    --ngx-datepicker-selected-bg: rgba(0, 122, 255, 0.45);
+    --ngx-datepicker-selected-border: 1px solid rgba(255, 255, 255, 0.40);
+    --ngx-datepicker-selected-color: var(--ngx-ios-label);
+    --ngx-datepicker-hover-bg: rgba(0, 122, 255, 0.15);
     --ngx-datepicker-outside-opacity: 0.3;
     --ngx-datepicker-disabled-opacity: 0.2;
     --ngx-datepicker-header-gap: 0.25rem;
@@ -278,15 +280,17 @@ body {
         --ngx-ios-bg:           #000000;
         --ngx-ios-secondary-bg: #1C1C1E;
 
-        /* Liquid Glass dark tokens */
-        --ngx-ios-glass-bg:            rgba(20, 20, 25, 0.65);
-        --ngx-ios-glass-border-top:    rgba(255, 255, 255, 0.18);
+        /* Liquid Glass dark tokens — deep thickness, zero milkiness */
+        --ngx-ios-glass-bg:            rgba(5, 5, 10, 0.85);
+        --ngx-ios-glass-border-top:    rgba(255, 255, 255, 0.15);
         --ngx-ios-glass-border-left:   rgba(255, 255, 255, 0.10);
-        --ngx-ios-glass-border-bottom: rgba(0, 0, 0, 0.35);
-        --ngx-ios-glass-border-right:  rgba(0, 0, 0, 0.25);
-        --ngx-ios-glass-shadow:        0 20px 48px rgba(0, 0, 0, 0.50),
-                                        0 8px 16px rgba(0, 0, 0, 0.35),
-                                        0 2px 4px rgba(0, 0, 0, 0.20);
+        --ngx-ios-glass-border-bottom: rgba(0, 0, 0, 0.50);
+        --ngx-ios-glass-border-right:  rgba(0, 0, 0, 0.40);
+        --ngx-ios-glass-shadow:        0 32px 80px rgba(0, 0, 0, 0.70),
+                                        0 16px 32px rgba(0, 0, 0, 0.50),
+                                        0 4px 10px rgba(0, 0, 0, 0.35);
+        --ngx-ios-glass-tint:          rgba(0, 0, 0, 0.30);
+        --ngx-ios-glass-tint-opacity:  0.55;         /* extreme density Dark */
 
         /* Disabled in dark */
         --ngx-disabled-bg: rgba(120, 120, 128, 0.18);
@@ -298,14 +302,9 @@ body {
 
 @media (prefers-color-scheme: dark) {
     .ngx-renderer .ngx-input-wrapper {
-        background-color: rgba(0, 0, 0, 0.22) !important;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        border-color: rgba(255, 255, 255, 0.14) !important;
-        box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.14),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.30),
-            0 1px 3px rgba(0, 0, 0, 0.20) !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important; /* Managed by glass material layer below */
     }
 
     .ngx-renderer .ngx-input-wrapper::before {
@@ -535,18 +534,22 @@ body {
 
 .ngx-select__search {
     /* iOS 26: pill-shaped search bar inside the dropdown (like UISearchBar in a sheet) */
-    background: rgba(118, 118, 128, 0.12) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px) saturate(150%) brightness(1.05) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(150%) brightness(1.05) !important;
     border: none !important;
-    border-bottom: none !important;
     border-radius: 10px !important;
     margin: 0.5rem 0.75rem 0.25rem !important;
     padding: 0.5rem 0.75rem !important;
     width: calc(100% - 1.5rem) !important;
     box-sizing: border-box;
     font-size: var(--ngx-input-font-size);
-    box-shadow: none !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+        0 4px 12px rgba(0, 0, 0, 0.08) !important;
     outline: none !important;
-    transition: background 0.15s ease;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ngx-select__search:focus {
@@ -601,23 +604,18 @@ body {
 .ngx-toggle__track {
     box-sizing: border-box;
     position: relative;
-    border-radius: 9999px !important;      /* iOS 26: fully capsule-shaped track */
-    /* Very faint fill — shows card gradient through it */
-    background: rgba(120, 120, 128, 0.10) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    /* Glass edges: bright top/left catch light, subtle dark bottom/right */
+    border-radius: 9999px !important;
+    background: rgba(120, 120, 128, 0.06) !important;
+    backdrop-filter: blur(12px) saturate(180%) brightness(1.1) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(180%) brightness(1.1) !important;
     border: none !important;
     box-shadow:
-        inset 0    1px 0   rgba(255, 255, 255, 0.85),   /* bright top specular */
-        inset 0   -1px 0   rgba(0, 0, 0, 0.10),         /* dark bottom edge */
-        inset  1px 0   0   rgba(255, 255, 255, 0.40),   /* left side light */
-        inset -1px 0   0   rgba(0, 0, 0, 0.04),         /* right side shadow */
-        0 0 0 0.5px rgba(0, 0, 0, 0.10) !important;     /* outer capsule outline */
-    transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    isolation: isolate;
+        inset 0    0.5px 0  rgba(255, 255, 255, 0.90),
+        inset 0   -0.5px 0  rgba(0, 0, 0, 0.15),
+        0 0 0 0.5px rgba(0, 0, 0, 0.08) !important;
+    transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: visible !important; /* Critical for iOS 26 perimeter breach */
 }
 
 /* Glass dome highlight — top half bright, bottom half shadowed = 3D curved surface */
@@ -639,11 +637,13 @@ body {
 
 /* ON state: vivid green, no glass */
 .ngx-toggle input:checked + .ngx-toggle__track {
-    background: var(--ngx-ios-green) !important;
+    background: color-mix(in srgb, var(--ngx-ios-green), transparent 25%) !important;
+    backdrop-filter: blur(8px) saturate(220%) brightness(1.1) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(220%) brightness(1.1) !important;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
         0 0 0 0.5px rgba(52, 199, 89, 0.60),
-        0 2px 8px rgba(52, 199, 89, 0.40) !important;
+        0 4px 12px rgba(52, 199, 89, 0.35) !important;
 }
 
 .ngx-toggle input:checked + .ngx-toggle__track::before {
@@ -651,13 +651,52 @@ body {
 }
 
 .ngx-toggle__thumb {
-    /* Large shadow = thumb floats visibly above the near-invisible track */
+    background: #ffffff !important;
+    width: var(--ngx-toggle-thumb-width) !important;
+    height: var(--ngx-toggle-thumb-height) !important;
+    border-radius: 9999px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     box-shadow:
-        0 3px 10px rgba(0, 0, 0, 0.28),
-        0 1px 3px rgba(0, 0, 0, 0.20),
-        0 0 0 0.5px rgba(0, 0, 0, 0.08) !important;
+        0 2px 8px rgba(0, 0, 0, 0.20),
+        0 0 0 0.5px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 1.0) !important;
     z-index: 2;
-    position: relative;
+    position: absolute;
+    /* Elastic drop transition — strictly horizontal expansion */
+    transition: left 0.36s cubic-bezier(0.4, 0, 0.2, 1.2),
+                width 0.28s cubic-bezier(0.4, 0, 0.2, 1.2),
+                transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28),
+                box-shadow 0.2s ease !important;
+    will-change: left, width, transform;
+}
+
+/* iOS 26 Perimeter Breach: expansion from center */
+.ngx-toggle:active .ngx-toggle__thumb {
+    transform: translateY(-50%) scale(1.2) !important;
+    width: calc(var(--ngx-toggle-thumb-width) + 6px) !important;
+}
+
+.ngx-toggle input:checked + .ngx-toggle__track .ngx-toggle__thumb {
+    left: calc(var(--ngx-toggle-width) - var(--ngx-toggle-thumb-width) - var(--ngx-toggle-thumb-offset)) !important;
+    /* Green Chromatic Leakage (inner glow from the glass track) */
+    box-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.25),
+        0 0 0 0.5px rgba(0, 0, 0, 0.10),
+        inset 0 0 5px color-mix(in srgb, var(--ngx-ios-green), transparent 45%),
+        inset 0 1px 0 rgba(255, 255, 255, 1.0) !important;
+}
+
+/* Liquid 'Goccia' Stretching during transition */
+/* When moving to ON: stretch towards right */
+.ngx-toggle:active input:not(:checked) + .ngx-toggle__track .ngx-toggle__thumb {
+    width: calc(var(--ngx-toggle-thumb-size) + 14px) !important;
+}
+
+/* When moving to OFF: stretch towards left and compensate position */
+.ngx-toggle:active input:checked + .ngx-toggle__track .ngx-toggle__thumb {
+    width: calc(var(--ngx-toggle-thumb-size) + 14px) !important;
+    left: calc(var(--ngx-toggle-width) - var(--ngx-toggle-thumb-size) - var(--ngx-toggle-thumb-offset) - 14px) !important;
 }
 
 .ngx-toggle input:focus-visible + .ngx-toggle__track {
@@ -783,15 +822,20 @@ body {
 
 .ngx-multiselect-overlay__input {
     /* iOS 26: pill search inside the overlay panel */
-    background: rgba(118, 118, 128, 0.12) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px) saturate(150%) brightness(1.05) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(150%) brightness(1.05) !important;
     border: none !important;
     border-radius: 10px !important;
     margin: 0.5rem 0.75rem 0.25rem !important;
     padding: 0.5rem 0.75rem !important;
     width: calc(100% - 1.5rem) !important;
     box-sizing: border-box;
-    box-shadow: none !important;
-    transition: background 0.15s ease;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+        0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ngx-multiselect-overlay__panel--above .ngx-multiselect-overlay__input {
@@ -944,6 +988,24 @@ body {
     color: var(--ngx-ios-blue);
 }
 
+.ngx-datepicker__cell--selected {
+    font-weight: var(--ngx-font-weight-medium);
+    background: var(--ngx-datepicker-selected-bg) !important;
+    color: var(--ngx-datepicker-selected-color) !important;
+    backdrop-filter: blur(4px) saturate(180%) brightness(1.1) !important;
+    -webkit-backdrop-filter: blur(4px) saturate(180%) brightness(1.1) !important;
+    box-shadow:
+        inset 0 0.5px 0 rgba(255, 255, 255, 0.40),
+        0 2px 6px rgba(0, 122, 255, 0.25) !important;
+}
+
+.ngx-datepicker__cell--today:not(.ngx-datepicker__cell--selected) {
+    box-shadow: inset 0 0 0 1px var(--ngx-ios-blue) !important;
+    color: var(--ngx-ios-blue) !important;
+    font-weight: var(--ngx-font-weight-medium);
+    background: rgba(0, 122, 255, 0.08) !important;
+}
+
 .ngx-datepicker__title {
     color: var(--ngx-on-surface);
     letter-spacing: -0.01em;
@@ -1007,43 +1069,38 @@ body {
 }
 
 /* ── Layer 3: Specular Highlight (::before) ────────────────────────────────── */
-/* Mimics the prism rim light Apple describes: bright arch at the top edge     */
-/* (where the "glass lens" catches the light source) + a secondary catch spot. */
+/* Mimics the prism rim light Apple describes: razor-thin top edge highlight   */
+/* (where the "glass lens" catches the light source). Zero center bleed.       */
 
 .ngx-select__dropdown::before,
 .ngx-multiselect-overlay__panel::before,
 .ngx-datepicker__popup::before,
 .ngx-colors__dropdown::before,
-.ngx-timepicker-container::before {
+.ngx-timepicker-container::before,
+.ngx-input-wrapper::before,
+.ngx-select__search::before {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
     z-index: 1;
-    /* Top-arc rim: bright ellipse grazing the top edge — the prism highlight */
+    /* Razor-thin prismatic top rim */
     background:
-        radial-gradient(ellipse 90% 45% at 50% -5%,
+        linear-gradient(to bottom,
             rgba(255, 255, 255, 0.90) 0%,
-            rgba(255, 255, 255, 0.30) 38%,
-            transparent 68%),
-        /* Top-left catch: secondary specular spot (off-axis light catch) */
-        radial-gradient(ellipse 50% 28% at 10% 6%,
-            rgba(255, 255, 255, 0.68) 0%,
-            transparent 58%);
-    /* Subtle shimmer: simulates highlight shift from device orientation changes */
+            rgba(255, 255, 255, 0.05) 0.5px,
+            transparent 1px),
+        radial-gradient(ellipse 100% 2% at 50% 0%,
+            rgba(255, 255, 255, 0.85) 0%,
+            transparent 100%);
+    /* Subtle shimmer to simulate light shift */
     animation: ngx-glass-shimmer 8s ease-in-out infinite alternate;
 }
 
 @keyframes ngx-glass-shimmer {
-    from {
-        opacity: 1;
-        background-position: 50% -5%, 12% 8%;
-    }
-    to {
-        opacity: 0.78;
-        background-position: 48% -4%, 14% 9%;
-    }
+    from { opacity: 1; filter: brightness(1); }
+    to { opacity: 0.82; filter: brightness(1.08); }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1051,79 +1108,84 @@ body {
     .ngx-multiselect-overlay__panel::before,
     .ngx-datepicker__popup::before,
     .ngx-colors__dropdown::before,
-    .ngx-timepicker-container::before {
-        /* Dark mode: dimmer specular (glass reflects less light on dark bg) */
+    .ngx-timepicker-container::before,
+    .ngx-input-wrapper::before,
+    .ngx-select__search::before {
+        /* Dark mode: minimal specular catch */
         background:
-            radial-gradient(ellipse 90% 40% at 50% -5%,
-                rgba(255, 255, 255, 0.30) 0%,
-                rgba(255, 255, 255, 0.08) 40%,
-                transparent 70%),
-            radial-gradient(ellipse 45% 25% at 12% 8%,
-                rgba(255, 255, 255, 0.20) 0%,
-                transparent 60%);
+            linear-gradient(to bottom,
+                rgba(255, 255, 255, 0.40) 0%,
+                rgba(255, 255, 255, 0.02) 0.5px,
+                transparent 1px);
     }
 }
 
 /* ── Layer 2: Material (backdrop-filter + gradient) ───────────────────────── */
+/* The "Spirit" of Liquid Glass: Refraction, Saturation, and Zero White Fog.   */
 
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     .ngx-select__dropdown,
     .ngx-multiselect-overlay__panel,
     .ngx-datepicker__popup,
     .ngx-colors__dropdown,
-    .ngx-timepicker-container {
-        /* Lens-thickness gradient: Apple Liquid Glass is very transparent.
-           Top edge bright (thin glass rim), center deeply see-through,
-           bottom with slight warm tint — reveals the blurred bg clearly.    */
+    .ngx-timepicker-container,
+    .ngx-input-wrapper,
+    .ngx-select__search {
+        /* Super-Extreme Safari Density: Total crystal clarity with massive absorption */
+        -webkit-backdrop-filter: blur(140px) saturate(450%) brightness(0.92) contrast(1.1);
+        backdrop-filter: var(--ngx-ios-glass-blur);
+        
+        max-width: calc(100vw - 32px); /* ZERO-SCROLL GUARANTEE */
+        box-sizing: border-box;
+        overflow: hidden;              /* clip any filter-induced bleed */
+        
         background:
             linear-gradient(
                 160deg,
-                rgba(255, 255, 255, 0.62) 0%,   /* bright top rim */
-                rgba(240, 245, 255, 0.16) 35%,  /* near-transparent center */
-                rgba(248, 244, 255, 0.22) 70%,  /* slight warm scatter */
-                rgba(255, 255, 255, 0.32) 100%  /* bottom edge */
+                rgba(255, 255, 255, 0.45) 0%,   /* razor-thin top prism */
+                rgba(255, 255, 255, 0) 10%,     /* transition to crystal field */
+                rgba(255, 255, 255, 0) 90%,     /* ZERO WHITE TINT CENTER */
+                rgba(255, 255, 255, 0.05) 100%  /* faint base rim */
             ),
-            /* Tinting layer: pick up subtle env color when --ngx-ios-glass-tint set */
             color-mix(in srgb, var(--ngx-ios-glass-tint),
                 transparent calc(100% - var(--ngx-ios-glass-tint-opacity) * 100%));
-        backdrop-filter: var(--ngx-ios-glass-blur);
-        -webkit-backdrop-filter: var(--ngx-ios-glass-blur);
-        /* Directional borders: top/left bright, bottom/right dark (real glass optics) */
+        
         border: none;
         box-shadow:
             inset 0     0.5px 0 var(--ngx-ios-glass-border-top),
             inset 0.5px 0     0 var(--ngx-ios-glass-border-left),
             inset 0    -0.5px 0 var(--ngx-ios-glass-border-bottom),
             inset -0.5px 0    0 var(--ngx-ios-glass-border-right),
-            var(--ngx-ios-glass-shadow);
+            var(--ngx-ios-glass-shadow) !important;
     }
 }
 
 @media (prefers-color-scheme: dark) {
-    .ngx-select__dropdown,
-    .ngx-multiselect-overlay__panel,
-    .ngx-datepicker__popup,
-    .ngx-colors__dropdown,
-    .ngx-timepicker-container {
-        background: rgba(20, 20, 28, 0.82); /* solid fallback dark */
-    }
-
     @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
         .ngx-select__dropdown,
         .ngx-multiselect-overlay__panel,
         .ngx-datepicker__popup,
         .ngx-colors__dropdown,
-        .ngx-timepicker-container {
+        .ngx-timepicker-container,
+        .ngx-input-wrapper,
+        .ngx-select__search {
+            /* ZERO-MILK DARK (Super-Extreme Safari Optimized) */
+            -webkit-backdrop-filter: blur(140px) saturate(350%) brightness(0.85) contrast(1.1);
+            backdrop-filter: var(--ngx-ios-glass-blur);
+            
+            max-width: calc(100vw - 32px); /* ZERO-SCROLL GUARANTEE */
+            box-sizing: border-box;
+            overflow: hidden;
+            
             background:
                 linear-gradient(
                     160deg,
-                    rgba(80, 80, 100, 0.45) 0%,  /* top: semi-transparent */
-                    rgba(18, 18, 28, 0.28) 35%,   /* center: near see-through */
-                    rgba(52, 48, 68, 0.36) 70%,   /* slight purple scatter */
-                    rgba(70, 68, 88, 0.42) 100%
+                    rgba(255, 255, 255, 0.12) 0%,   /* razor-thin dark rim highlight */
+                    rgba(255, 255, 255, 0) 10%,     /* transition to smoky field */
+                    rgba(0, 0, 0, 0) 90%,           /* ZERO COLOR TINT CENTER */
+                    rgba(255, 255, 255, 0.04) 100%
                 ),
-                color-mix(in srgb, var(--ngx-ios-glass-tint),
-                    transparent calc(100% - var(--ngx-ios-glass-tint-opacity) * 100%));
+                rgba(0, 0, 0, 0.45) !important;
         }
     }
 }
