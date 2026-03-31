@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -32,7 +32,7 @@ import { CalendarDate } from "../../core/date-utils";
     </div>
   `,
 })
-export class NgxYearPickerComponent implements AfterViewInit {
+export class NgxYearPickerComponent {
   readonly currentYear = input.required<number>();
   readonly minDate = input<CalendarDate | null>(null);
   readonly maxDate = input<CalendarDate | null>(null);
@@ -40,16 +40,16 @@ export class NgxYearPickerComponent implements AfterViewInit {
 
   private readonly yearButtons = viewChildren<ElementRef<HTMLButtonElement>>("yearBtn");
 
-  ngAfterViewInit(): void {
-    // Scroll to the current year on init
-    setTimeout(() => {
+  constructor() {
+    // Scroll to the current year after the view renders
+    afterNextRender(() => {
         const btns = this.yearButtons();
         const years = this.years();
         const selectedIndex = years.findIndex(y => y === this.currentYear());
         if (selectedIndex !== -1 && btns[selectedIndex]) {
             btns[selectedIndex].nativeElement.scrollIntoView({ block: 'center', behavior: 'instant' });
         }
-    }, 0);
+    });
   }
 
 

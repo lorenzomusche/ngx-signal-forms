@@ -31,1083 +31,1097 @@
 
 /* ─── Custom property overrides ───────────────────────────────────────────── */
 
-:root {
-    /* ─── Typography ───────────────────────────────────────────────────────── */
-    --ngx-font-family: "Outfit", "Inter", "Roboto", system-ui, -apple-system, sans-serif;
-    --ngx-font-weight-regular: 400;
-    --ngx-font-weight-medium: 500;
-    --ngx-font-weight-semibold: 600;
-    --ngx-label-font-weight: var(--ngx-font-weight-medium);
-    --ngx-input-placeholder-color: var(--ngx-outline);
+/* ═══════════════════════════════════════════════════════════════════════════
+ * LAYER: ngx.themes
+ * Theme overrides for the Modern Neutral (Zinc) theme.
+ * Provides a clean, professional high-contrast neutral palette over M3 defaults.
+ * All token overrides here are scoped to ngx.themes so they cascade AFTER
+ * ngx.tokens without relying on specificity hacks.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+@layer ngx.themes {
 
-    /* ─── Key Palette (Zinc Neutral) ───────────────────────────────────────── */
-    --ngx-primary: #18181b;
-    --ngx-on-primary: #ffffff;
-    --ngx-error: #dc2626;
-    --ngx-on-error: #ffffff;
-
-    /* ─── Dynamic Tints (Mathematical derivation from Key Palette) ────────── */
-    /* Uses explicit 'white' base for precise zinc derivation (vs base's var(--ngx-base-bg)) */
-    --ngx-surface: color-mix(in srgb, var(--ngx-primary), white 96%);
-    --ngx-surface-container-lowest: #ffffff;
-    --ngx-surface-container-low: color-mix(in srgb, var(--ngx-primary), white 95%);
-    --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), white 93%);
-    --ngx-surface-container-high: color-mix(in srgb, var(--ngx-primary), white 90%);
-    --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), white 88%);
-    --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), white 82%);
-
-    --ngx-primary-container: var(--ngx-surface-container-highest);
-    --ngx-on-primary-container: color-mix(in srgb, var(--ngx-primary), black 80%);
-    --ngx-error-container: color-mix(in srgb, var(--ngx-error), white 94%);
-    --ngx-on-error-container: var(--ngx-error);
-
-    --ngx-on-surface: color-mix(in srgb, var(--ngx-primary), black 80%);
-    --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-primary), black 40%);
-    --ngx-outline: color-mix(in srgb, var(--ngx-primary), black 20%);
-    --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 40%);
-    --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 60%);
-
-    --ngx-disabled-bg: rgba(15, 23, 42, 0.04);
-    --ngx-disabled-color: rgba(15, 23, 42, 0.38);
-
-    /* ─── Select / Multiselect ─────────────────────────────────────────────── */
-    --ngx-select-dropdown-bg: var(--ngx-surface-container);
-    --ngx-select-option-hover-bg: rgba(24, 24, 27, 0.08);
-    --ngx-select-option-selected-bg: rgba(24, 24, 27, 0.12);
-    --ngx-multiselect-padding: 0.25rem 1rem;
-    --ngx-multiselect-max-height: 5.5rem;
-    --ngx-chip-color: var(--ngx-on-surface-variant);
-    --ngx-chip-max-width: 11rem;
-
-    /* ─── DatePicker M3 overrides (differ from base defaults) ─────────────── */
-    --ngx-datepicker-popup-border: 1px solid var(--ngx-outline-subtle);
-    /* base: none */
-    --ngx-datepicker-popup-border-radius: 20px;
-    /* base: var(--ngx-corner-medium) = 12px */
-    --ngx-datepicker-cell-size: 40px;
-    /* base: 2.25rem ≈ 36px, M3 spec: 40dp */
-    --ngx-datepicker-today-color: var(--ngx-primary);
-
-    /* ─── Date Range M3 overrides ──────────────────────────────────────────── */
-    --ngx-daterange-in-range-bg: var(--ngx-surface-container-highest);
-    --ngx-daterange-endpoint-bg: var(--ngx-primary);
-    --ngx-daterange-endpoint-color: var(--ngx-on-primary);
-
-    /* ─── Segmented Button ─────────────────────────────────────────────────── */
-    --ngx-segmented-btn-bg-selected-hover: color-mix(in srgb, var(--ngx-primary), white 8%);
-
-    /* ─── Error color bridge ────────────────────────────────────────────────── */
-    --ngx-error-color: var(--ngx-error);
-
-    /* ─── Select / Dropdown improvements ───────────────────────────────────── */
-    --ngx-select-option-hover-bg: color-mix(in srgb, var(--ngx-on-surface), transparent 92%);
-    --ngx-select-option-selected-bg: color-mix(in srgb, var(--ngx-on-surface), transparent 88%);
-    --ngx-select-dropdown-border-radius: var(--ngx-corner-small);
-
-    /* ─── Multiselect overlay ───────────────────────────────────────────────── */
-    --ngx-multiselect-overlay-bg: var(--ngx-surface-container);
-}
-
-/* ─── Global Font ─────────────────────────────────────────────────────────── */
-
-.ngx-renderer,
-.ngx-timepicker-container,
-.ngx-datepicker__popup,
-.ngx-datepicker__popup--modal,
-.ngx-multiselect-overlay__panel,
-.ngx-colors__dropdown,
-.ngx-select__dropdown {
-    font-family: var(--ngx-font-family);
-    box-sizing: border-box;
-}
-
-/* ─── DatePicker popup — M3 Docked spec (360dp) ──────────────────────────── */
-
-.ngx-datepicker__popup {
-    width: 360px;
-    max-width: calc(100vw - 32px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 0;
-    background: var(--ngx-datepicker-popup-bg);
-    border-radius: var(--ngx-datepicker-popup-border-radius);
-    box-shadow: var(--ngx-datepicker-popup-shadow);
-    z-index: 1000;
-}
-
-.ngx-renderer--open .ngx-datepicker__popup:not(.ngx-datepicker__popup--modal):not(.ngx-datepicker__popup--overlay),
-.ngx-renderer--open .ngx-timepicker__popup:not(.ngx-timepicker__popup--overlay) {
-    position: fixed !important;
-    top: var(--ngx-overlay-top, auto);
-    bottom: var(--ngx-overlay-bottom, auto);
-    left: var(--ngx-overlay-left, auto);
-    right: var(--ngx-overlay-right, auto);
-    width: var(--ngx-overlay-width, 360px);
-    margin: 0;
-    margin-top: 4px;
-}
-
-/* ─── Filled text field surface ───────────────────────────────────────────── */
-/* Active indicator is always 3px but visually 1px via a pseudo-element, so
-   the actual border-bottom never changes width → zero layout shift.          */
-
-.ngx-renderer input[type="text"],
-.ngx-renderer input[type="number"],
-.ngx-renderer input[type="date"],
-.ngx-renderer input[type="email"],
-.ngx-renderer textarea,
-.ngx-renderer select {
-    background-color: var(--ngx-surface-container-highest);
-    color: var(--ngx-input-color);
-    border: none;
-    border-bottom: 1px solid var(--ngx-on-surface-variant);
-    border-radius: var(--ngx-input-border-radius);
-    padding-bottom: calc(0.625rem + 2px);
-    transition: border-color 0.2s cubic-bezier(0.2, 0, 0, 1),
-        background 0.2s, color 0.2s;
-}
-
-/* Ensure inputs inside wrappers are transparent to show the wrapper's background */
-.ngx-input-wrapper input,
-.ngx-input-wrapper textarea,
-.ngx-input-wrapper select {
-    background-color: transparent !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
-}
-
-.ngx-renderer input:hover,
-.ngx-renderer textarea:hover,
-.ngx-renderer select:hover {
-    background-color: var(--ngx-surface-container-highest-hover);
-    border-bottom-color: var(--ngx-on-surface);
-}
-
-/* On focus: keep 1px border but add a 3px box-shadow to simulate the thick
-   indicator — this avoids the 2px height jump entirely. */
-.ngx-renderer input:focus,
-.ngx-renderer textarea:focus,
-.ngx-renderer select:focus {
-    background-color: var(--ngx-surface-container-highest);
-    border-bottom-color: var(--ngx-input-focus-color);
-    box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
-    outline: none;
-}
-
-.ngx-renderer input[aria-invalid="true"],
-.ngx-renderer textarea[aria-invalid="true"],
-.ngx-renderer select[aria-invalid="true"] {
-    border-bottom-color: var(--ngx-error-color);
-}
-
-.ngx-renderer input[aria-invalid="true"]:focus,
-.ngx-renderer textarea[aria-invalid="true"]:focus {
-    border-bottom-color: var(--ngx-error-color);
-    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
-}
-
-.ngx-renderer input:disabled,
-.ngx-renderer textarea:disabled,
-.ngx-renderer select:disabled {
-    background-color: var(--ngx-disabled-bg);
-    border-bottom-color: var(--ngx-disabled-color);
-    color: var(--ngx-disabled-color);
-}
-
-.ngx-renderer input::placeholder,
-.ngx-renderer textarea::placeholder {
-    color: var(--ngx-input-placeholder-color);
-}
-
-.ngx-renderer input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: var(--ngx-calendar-icon-filter, none);
-}
-
-/* ─── Labels — on-surface-variant ─────────────────────────────────────────── */
-
-.ngx-renderer .ngx-label {
-    color: var(--ngx-on-surface-variant);
-    letter-spacing: 0.006em;
-}
-
-/* ─── Custom select trigger (filled style) ────────────────────────────────── */
-
-.ngx-select__trigger {
-    background: var(--ngx-surface-container-highest);
-    color: var(--ngx-input-color);
-    border: none;
-    border-bottom: 1px solid var(--ngx-on-surface-variant);
-    border-radius: var(--ngx-input-border-radius);
-    padding-bottom: calc(0.625rem + 2px);
-}
-
-.ngx-select__trigger:hover {
-    background: var(--ngx-surface-container-highest-hover);
-    border-bottom-color: var(--ngx-on-surface);
-}
-
-.ngx-select__trigger:focus {
-    background: var(--ngx-surface-container-highest);
-    border-bottom-color: var(--ngx-input-focus-color);
-    box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
-    outline: none;
-}
-
-.ngx-select__trigger[aria-invalid="true"] {
-    border-bottom-color: var(--ngx-error-color);
-}
-
-.ngx-select__trigger[aria-invalid="true"]:focus {
-    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
-}
-
-.ngx-select__trigger:disabled {
-    background: var(--ngx-disabled-bg);
-    border-bottom-color: var(--ngx-disabled-color);
-    color: var(--ngx-disabled-color);
-}
-
-.ngx-select__placeholder {
-    color: var(--ngx-outline);
-}
-
-.ngx-select__arrow {
-    color: var(--ngx-on-surface-variant);
-}
-
-/* ─── Dropdown surface — M3 menu specs ────────────────────────────────────── */
-
-.ngx-select__dropdown {
-    margin-top: 0.25rem;
-    background: var(--ngx-surface-container);
-}
-
-.ngx-select__search {
-    border-bottom-color: var(--ngx-outline-subtle);
-    font-size: 0.875rem;
-}
-
-.ngx-select__search:focus {
-    border-bottom-color: var(--ngx-input-focus-color);
-}
-
-.ngx-select__list {
-    padding: 0.5rem 0;
-}
-
-.ngx-select__no-results {
-    color: var(--ngx-outline);
-}
-
-.ngx-select__option {
-    border-radius: 0;
-    transition: background 0.15s cubic-bezier(0.2, 0, 0, 1);
-}
-
-/* ─── Toggle / Switch ─────────────────────────────────────────────────────── */
-
-.ngx-toggle__track {
-    box-sizing: border-box;
-}
-
-.ngx-toggle__thumb {
-    box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15),
-        0 1px 2px 0 rgba(0, 0, 0, 0.3);
-}
-
-/* M3 checkmark icon in thumb when active */
-.ngx-toggle input:checked+.ngx-toggle__track .ngx-toggle__thumb::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 10px;
-    height: 6px;
-    border: solid var(--ngx-toggle-bg-checked);
-    border-width: 0 0 2px 2px;
-    transform: translate(-50%, -75%) rotate(-45deg);
-}
-
-/* M3 focus: state layer around thumb */
-.ngx-toggle input:focus-visible+.ngx-toggle__track {
-    outline: 2px solid var(--ngx-input-focus-color);
-    outline-offset: 2px;
-}
-
-/* ─── Radio Group — M3 spec (20dp outer, 10dp inner) ──────────────────────── */
-
-.ngx-radio-group-label {
-    display: none;
-}
-
-.ngx-radio-item {
-    gap: 0.75rem;
-}
-
-.ngx-radio-circle {
-    width: 1.25rem;
-    height: 1.25rem;
-    border: 2px solid var(--ngx-outline);
-    background: transparent;
-    transition: border-color 0.2s cubic-bezier(0.2, 0, 0, 1);
-}
-
-.ngx-radio-circle::after {
-    width: 0.625rem;
-    height: 0.625rem;
-    background: var(--ngx-on-primary, #fff);
-    transform: translate(-50%, -50%) scale(0);
-}
-
-.ngx-radio-item input[type="radio"]:checked+.ngx-radio-circle {
-    border-color: var(--ngx-input-focus-color);
-    background: var(--ngx-input-focus-color);
-}
-
-/* State layer (hover/focus ring) */
-.ngx-radio-item::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0.625rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    background: var(--ngx-input-focus-color);
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-    transition: transform 0.2s, opacity 0.2s;
-    pointer-events: none;
-}
-
-.ngx-radio-item:hover::before {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.08;
-}
-
-.ngx-radio-item input[type="radio"]:focus-visible+.ngx-radio-circle {
-    outline: none;
-}
-
-.ngx-radio-item input[type="radio"]:focus-visible~.ngx-radio-label {
-    text-decoration: underline;
-}
-
-.ngx-radio-item input[type="radio"]:focus-visible::before {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.12;
-}
-
-.ngx-radio-item--disabled {
-    opacity: 0.38;
-    cursor: not-allowed;
-}
-
-/* ─── Slider — M3 spec (4dp track, 20dp thumb) ───────────────────────────── */
-
-.ngx-slider {
-    background: var(--ngx-surface-container-highest);
-}
-
-.ngx-slider::-webkit-slider-thumb {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-    border: none;
-}
-
-.ngx-slider::-moz-range-thumb {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-    border: none;
-}
-
-.ngx-slider:focus-visible {
-    outline: none;
-}
-
-.ngx-slider-value {
-    color: var(--ngx-on-surface);
-    font-weight: var(--ngx-font-weight-medium);
-}
-
-.ngx-slider-container {
-    position: relative;
-    padding: 0.5rem 0;
-}
-
-/* ─── File Upload ────────────────────────────────────────────────────────── */
-
-.ngx-file-container {
-    border-color: var(--ngx-outline-variant);
-    background: var(--ngx-surface-container-low);
-}
-
-.ngx-file-container--dragover {
-    border-color: var(--ngx-input-focus-color);
-    background: var(--ngx-surface-container-high);
-}
-
-.ngx-button {
-    background: var(--ngx-input-focus-color);
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-}
-
-.ngx-file-placeholder {
-    color: var(--ngx-on-surface-variant);
-}
-
-.ngx-file-name {
-    color: var(--ngx-on-surface);
-    font-weight: var(--ngx-font-weight-medium);
-}
-
-.ngx-file-clear {
-    color: var(--ngx-error);
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-
-.ngx-file-clear:hover {
-    opacity: 1;
-}
-
-/* ─── Chips ───────────────────────────────────────────────────────────────── */
-
-.ngx-chip--removable {
-    padding-right: 0.5rem;
-    gap: 0.5rem;
-}
-
-.ngx-chip {
-    border-color: var(--ngx-outline-variant);
-}
-
-.ngx-chip:hover:not(.ngx-chip--selected):not(:disabled) {
-    background-color: var(--ngx-surface-container-highest-hover);
-    border-color: var(--ngx-outline);
-}
-
-/* ─── Segmented Button — M3 Outlined Specification ───────────────────────── */
-
-.ngx-segmented {
-    display: inline-flex;
-    background: transparent;
-    padding: 0;
-    border-radius: var(--ngx-segmented-border-radius);
-    border: 1px solid var(--ngx-outline-variant);
-    overflow: hidden;
-    gap: 1px;
-    width: fit-content;
-
-    /* Global Redistribution Variables */
-    --ngx-tick-w: 1.5rem;
-    /* 1rem icon + 0.5rem gap */
-    --ngx-tick-share: calc(var(--ngx-tick-w) / (2 * var(--ngx-segments-count, 1)));
-}
-
-.ngx-segmented__button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding-left: calc(1.125rem + var(--ngx-tick-share));
-    padding-right: calc(1.125rem + var(--ngx-tick-share));
-    min-height: var(--ngx-segmented-height);
-    background: transparent;
-    border: none;
-    border-right: 1px solid var(--ngx-outline-variant);
-    margin-right: -1px;
-    color: var(--ngx-on-surface-variant);
-    font-size: 0.875rem;
-    font-weight: var(--ngx-font-weight-medium);
-    border-radius: 0;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s, padding 0.2s;
-    white-space: nowrap;
-}
-
-.ngx-segmented:has(.ngx-segmented__button--selected) .ngx-segmented__button {
-    padding-left: 1.125rem;
-    padding-right: 1.125rem;
-}
-
-.ngx-segmented__button:last-of-type {
-    border-right: none;
-    margin-right: 0;
-}
-
-.ngx-segmented__button--selected {
-    background: var(--ngx-surface-container-highest);
-    color: var(--ngx-on-surface);
-    font-weight: var(--ngx-font-weight-medium);
-    box-shadow: none;
-    padding-left: 1.125rem !important;
-    padding-right: 1.125rem !important;
-}
-
-.ngx-segmented__button:hover:not(.ngx-segmented__button--selected):not(:disabled) {
-    background: var(--ngx-surface-container-highest-hover);
-    color: var(--ngx-on-surface);
-}
-
-.ngx-segmented__check {
-    position: absolute;
-    left: 1rem;
-    width: 1rem;
-    height: 1rem;
-    animation: ngx-segmented-check-pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* ─── Multiselect ─────────────────────────────────────────────────────────── */
-
-.ngx-multiselect__label {
-    color: var(--ngx-on-surface-variant);
-    letter-spacing: 0.006em;
-}
-
-.ngx-multiselect__search-btn {
-    color: var(--ngx-on-surface-variant);
-}
-
-.ngx-multiselect__search-btn:hover:not(:disabled) {
-    background: var(--ngx-select-option-hover-bg);
-    color: var(--ngx-select-option-hover-color);
-}
-
-.ngx-multiselect__options,
-.ngx-select__list,
-.ngx-multiselect-overlay__grid {
-    scrollbar-width: thin;
-    scrollbar-color: var(--ngx-outline-variant) transparent;
-}
-
-.ngx-multiselect-overlay__panel {
-    background: var(--ngx-surface);
-    border: 1px solid var(--ngx-outline-subtle);
-    border-radius: var(--ngx-select-dropdown-border-radius);
-    box-shadow: var(--ngx-select-dropdown-shadow);
-}
-
-.ngx-multiselect-overlay__input {
-    border-bottom-color: var(--ngx-surface-container-highest);
-}
-
-.ngx-multiselect-overlay__panel--above .ngx-multiselect-overlay__input {
-    border-top-color: var(--ngx-surface-container-highest);
-}
-
-.ngx-multiselect-overlay__input:focus {
-    border-color: var(--ngx-input-focus-color);
-}
-
-.ngx-multiselect-overlay__empty {
-    color: var(--ngx-outline);
-}
-
-/* ─── Inline errors — M3 supporting text ─────────────────────────────────── */
-
-.ngx-control__inline-errors-tooltip {
-    letter-spacing: 0.025em;
-}
-
-.ngx-control__error {
-    letter-spacing: 0.025em;
-    line-height: var(--ngx-error-line-height);
-}
-
-/* ─── DatePicker — M3 visual overrides ───────────────────────────────────── */
-/* Only rules that differ from base defaults are listed here.
-   Layout (grid/row/weekday structure) is handled by base using token values. */
-
-.ngx-datepicker__grid {
-    padding: 0 12px 16px;
-    align-items: center;
-}
-
-.ngx-datepicker__weekdays {
-    margin-bottom: 8px;
-}
-
-.ngx-datepicker__weekday {
-    width: var(--ngx-datepicker-cell-size);
-    height: 32px;
-    /* Weekday labels are shorter than cells in M3 */
-    font-weight: var(--ngx-font-weight-medium);
-    color: var(--ngx-on-surface-variant);
-}
-
-.ngx-datepicker__row {
-    margin: 1px 0;
-}
-
-.ngx-datepicker__cell {
-    aspect-ratio: 1 / 1;
-    place-self: center;
-    z-index: 1;
-    font-size: 0.8125rem;
-    color: var(--ngx-on-surface);
-}
-
-.ngx-datepicker__cell:hover:not(.ngx-datepicker__cell--disabled):not(.ngx-datepicker__cell--selected) {
-    background: var(--ngx-surface-container-highest-hover);
-}
-
-.ngx-datepicker__cell--today:not(.ngx-datepicker__cell--selected) {
-    box-shadow: inset 0 0 0 1px var(--ngx-datepicker-today-color);
-    color: var(--ngx-datepicker-today-color);
-    font-weight: var(--ngx-font-weight-medium);
-}
-
-.ngx-datepicker__cell--outside {
-    visibility: hidden;
-    /* M3 hides outside-month cells completely (vs base opacity) */
-}
-
-.ngx-datepicker__cell--disabled {
-    opacity: 0.38;
-    /* M3 spec (vs base 0.25) */
-}
-
-.ngx-datepicker__cell--selected {
-    font-weight: var(--ngx-font-weight-medium);
-}
-
-/* ─── DatePicker header — M3 sizing ──────────────────────────────────────── */
-
-.ngx-datepicker__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 12px 12px 24px;
-    background: transparent;
-    height: 48px;
-}
-
-.ngx-datepicker__nav-btn {
-    width: 48px;
-    height: 48px;
-}
-
-.ngx-datepicker__nav-btn ngx-icon {
-    display: block;
-    width: 24px;
-    height: 24px;
-    font-size: 24px;
-}
-
-.ngx-datepicker__title {
-    min-width: 140px;
-    text-align: center;
-}
-
-.ngx-datepicker__view-toggle {
-    padding: 8px 12px;
-}
-
-.ngx-datepicker__month-cell,
-.ngx-datepicker__year-cell {
-    min-height: 48px;
-    padding: 0 12px;
-}
-
-.ngx-datepicker__toggle {
-    background: var(--ngx-surface-container-highest);
-    border: none;
-    border-radius: 50%;
-    color: var(--ngx-on-surface-variant);
-}
-
-.ngx-datepicker__toggle:hover:not(:disabled) {
-    background: var(--ngx-surface-container-highest-hover);
-}
-
-/* ─── Host display helpers ────────────────────────────────────────────────── */
-
-.ngx-datepicker,
-.ngx-datepicker__calendar,
-.ngx-range-calendar {
-    display: block;
-    width: 100%;
-}
-
-/* ─── Backdrop (M3 Scrim) ─────────────────────────────────────────────────── */
-
-.ngx-datepicker__backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.32);
-    z-index: 999;
-}
-
-/* ─── DatePicker Modal — M3 Dialog spec ──────────────────────────────────── */
-
-.ngx-datepicker__popup--modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 328px;
-    max-width: calc(100vw - 32px);
-    background: var(--ngx-datepicker-modal-bg);
-    border-radius: var(--ngx-datepicker-modal-radius);
-    box-shadow: var(--ngx-shadow-depth-3);
-    z-index: 1000;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    margin-top: 0 !important;
-    animation: ngx-modal-in 0.3s cubic-bezier(0.05, 0.7, 0.1, 1);
-}
-
-@keyframes ngx-modal-in {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -45%) scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-
-.ngx-datepicker__modal-header {
-    background: var(--ngx-surface-container-low);
-    padding: 24px 24px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    border-bottom: 1px solid var(--ngx-outline-subtle);
-}
-
-.ngx-datepicker__modal-label {
-    font-size: 0.75rem;
-    font-weight: var(--ngx-font-weight-medium);
-    text-transform: none;
-    letter-spacing: 0.1px;
-    color: var(--ngx-on-surface-variant);
-}
-
-.ngx-datepicker__modal-value {
-    display: block;
-    font-size: 2.125rem;
-    line-height: 2.75rem;
-    font-weight: var(--ngx-font-weight-regular);
-    letter-spacing: 0;
-    color: var(--ngx-on-surface);
-}
-
-.ngx-datepicker__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 1rem 1.5rem 1.5rem;
-}
-
-.ngx-datepicker__action-btn {
-    padding: 0.625rem 1rem;
-    background: transparent;
-    border: none;
-    border-radius: var(--ngx-corner-full);
-    color: var(--ngx-primary);
-    font-size: 0.875rem;
-    font-weight: var(--ngx-font-weight-medium);
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.ngx-datepicker__action-btn:hover {
-    background: var(--ngx-surface-container-highest-hover);
-}
-
-.ngx-datepicker__action-btn--primary {
-    color: var(--ngx-primary);
-    font-weight: var(--ngx-font-weight-semibold);
-}
-
-/* ─── DatePicker input (filled style) ────────────────────────────────────── */
-
-.ngx-datepicker__input {
-    background: var(--ngx-surface-container-highest);
-    color: var(--ngx-input-color);
-    border: none;
-    border-bottom: 1px solid var(--ngx-on-surface-variant);
-    border-radius: var(--ngx-input-border-radius);
-    padding-bottom: calc(0.625rem + 2px);
-}
-
-.ngx-datepicker__input:hover {
-    background: var(--ngx-surface-container-highest-hover);
-    border-bottom-color: var(--ngx-on-surface);
-}
-
-.ngx-datepicker__input:focus {
-    background: var(--ngx-surface-container-highest);
-    border-bottom-color: var(--ngx-input-focus-color);
-    box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
-    outline: none;
-}
-
-.ngx-datepicker__input[aria-invalid="true"] {
-    border-bottom-color: var(--ngx-error-color);
-}
-
-.ngx-datepicker__input[aria-invalid="true"]:focus {
-    box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
-}
-
-.ngx-datepicker__input:disabled {
-    background: var(--ngx-disabled-bg);
-    border-bottom-color: var(--ngx-disabled-color);
-    color: var(--ngx-disabled-color);
-}
-
-/* ─── Date Range ──────────────────────────────────────────────────────────── */
-
-.ngx-daterange__sep {
-    border: none;
-}
-
-.ngx-daterange__group .ngx-daterange__input {
-    background: var(--ngx-surface-container-highest);
-    border: none;
-    border-bottom: 1px solid var(--ngx-on-surface-variant);
-    border-radius: var(--ngx-input-border-radius);
-}
-
-.ngx-daterange__group:focus-within {
-    box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
-    border-color: transparent;
-}
-
-.ngx-daterange__group .ngx-daterange__input:focus {
-    background: var(--ngx-surface-container-highest);
-    border-bottom-color: var(--ngx-input-focus-color);
-    box-shadow: none;
-    outline: none;
-}
-
-/* ─── Color Picker — M3 Filled Style ─────────────────────────────────────── */
-
-.ngx-renderer--colors .ngx-input-wrapper {
-    height: 2.75rem !important;
-    background-color: var(--ngx-surface-container-highest);
-    border-radius: var(--ngx-input-border-radius);
-    border-bottom: 1px solid var(--ngx-on-surface-variant);
-    transition: background 0.2s, border-color 0.2s;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    box-sizing: border-box;
-}
-
-.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-input-wrapper {
-    height: var(--ngx-floating-input-height, var(--ngx-input-height)) !important;
-}
-
-.ngx-renderer--colors:hover .ngx-input-wrapper {
-    background-color: var(--ngx-surface-container-highest-hover);
-    border-bottom-color: var(--ngx-on-surface);
-}
-
-.ngx-renderer--colors.ngx-renderer--open .ngx-input-wrapper,
-.ngx-renderer--colors:focus-within .ngx-input-wrapper {
-    border-bottom-color: var(--ngx-primary);
-    box-shadow: inset 0 -2px 0 0 var(--ngx-primary);
-}
-
-.ngx-input-wrapper__inliner {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    padding: 0 1rem;
-    box-sizing: border-box;
-    transition: padding-top 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-input-wrapper__inliner {
-    padding-top: var(--ngx-fl-pad-top);
-}
-
-.ngx-colors__primary-picker {
-    position: relative;
-    width: 2.25rem;
-    height: 1.125rem;
-    margin-right: 0.75rem !important;
-    flex-shrink: 0;
-}
-
-.ngx-colors__preview-swatch {
-    width: 100%;
-    height: 100%;
-    border-radius: var(--ngx-color-swatch-radius);
-    border: none !important;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.ngx-colors__native-hidden {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0 !important;
-    cursor: pointer;
-    border: none;
-    margin: 0;
-    padding: 0;
-    z-index: 2;
-}
-
-.ngx-colors__hex-input {
-    flex: 1;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    font-size: var(--ngx-input-font-size) !important;
-    color: var(--ngx-input-color) !important;
-    height: auto !important;
-    font-family: inherit !important;
-}
-
-.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-colors__hex-input {
-    padding: 0 !important;
-    height: 100% !important;
-}
-
-.ngx-colors__toggle-area {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 2.5rem;
-    margin-right: -0.75rem;
-}
-
-.ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-colors__toggle-area {
-    padding-bottom: 0.625rem !important;
-    align-items: flex-end !important;
-    box-sizing: border-box;
-}
-
-.ngx-colors__arrow--open {
-    transform: rotate(180deg);
-}
-
-.ngx-colors__dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background: var(--ngx-surface-container-high);
-    border: none;
-    box-shadow: var(--ngx-color-dropdown-shadow);
-    border-radius: var(--ngx-color-dropdown-radius);
-    padding: 1.5rem;
-    margin-top: 8px;
-    display: none;
-}
-
-.ngx-colors--open .ngx-colors__dropdown {
-    display: block;
-    position: fixed;
-    top: var(--ngx-overlay-top, auto);
-    bottom: var(--ngx-overlay-bottom, auto);
-    left: var(--ngx-overlay-left, auto);
-    right: var(--ngx-overlay-right, auto);
-    width: var(--ngx-overlay-width, 300px);
-    margin: 0;
-    margin-top: 4px;
-}
-
-.ngx-colors__dropdown--above {
-    bottom: 100%;
-    top: auto;
-    margin-top: 0;
-    margin-bottom: 8px;
-}
-
-.ngx-colors__dropdown--overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% - 3rem);
-    max-width: 340px;
-    margin: 0;
-    z-index: 9999;
-}
-
-.ngx-colors__dropdown-header {
-    color: var(--ngx-primary);
-    font-weight: var(--ngx-font-weight-semibold);
-}
-
-.ngx-color-swatch {
-    width: var(--ngx-color-swatch-size);
-    height: var(--ngx-color-swatch-size);
-    border-radius: var(--ngx-color-swatch-radius);
-}
-
-/* ─── Animations ──────────────────────────────────────────────────────────── */
-
-@keyframes ngx-fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ─── Dark Mode — Zinc palette inversion ─────────────────────────────────── */
-
-@media (prefers-color-scheme: dark) {
     :root {
-        /* In dark mode, surface/container roles invert: dark bg, light text */
-        --ngx-surface: color-mix(in srgb, var(--ngx-primary), black 40%);
-        --ngx-surface-container-lowest: color-mix(in srgb, var(--ngx-primary), black 55%);
-        --ngx-surface-container-low: color-mix(in srgb, var(--ngx-primary), black 50%);
-        --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), black 45%);
-        --ngx-surface-container-high: color-mix(in srgb, var(--ngx-primary), black 36%);
-        --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), black 28%);
-        --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), black 18%);
+        /* ─── Typography ───────────────────────────────────────────────────────── */
+        --ngx-font-family: "Outfit", "Inter", "Roboto", system-ui, -apple-system, sans-serif;
+        --ngx-font-weight-regular: 400;
+        --ngx-font-weight-medium: 500;
+        --ngx-font-weight-semibold: 600;
+        --ngx-label-font-weight: var(--ngx-font-weight-medium);
+        --ngx-input-placeholder-color: var(--ngx-outline);
 
-        --ngx-on-surface: color-mix(in srgb, var(--ngx-primary), white 90%);
-        --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-primary), white 68%);
-        --ngx-outline: color-mix(in srgb, var(--ngx-primary), white 55%);
-        --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 28%);
-        --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 14%);
+        /* ─── Key Palette (Zinc Neutral) ───────────────────────────────────────── */
+        --ngx-primary: #18181b;
+        --ngx-on-primary: #ffffff;
+        --ngx-error: #dc2626;
+        --ngx-on-error: #ffffff;
 
-        --ngx-disabled-bg: rgba(255, 255, 255, 0.06);
-        --ngx-disabled-color: rgba(255, 255, 255, 0.38);
+        /* ─── Dynamic Tints (Mathematical derivation from Key Palette) ────────── */
+        /* Uses explicit 'white' base for precise zinc derivation (vs base's var(--ngx-base-bg)) */
+        --ngx-surface: color-mix(in srgb, var(--ngx-primary), white 96%);
+        --ngx-surface-container-lowest: #ffffff;
+        --ngx-surface-container-low: color-mix(in srgb, var(--ngx-primary), white 95%);
+        --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), white 93%);
+        --ngx-surface-container-high: color-mix(in srgb, var(--ngx-primary), white 90%);
+        --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), white 88%);
+        --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), white 82%);
 
-        /* Error container in dark */
-        --ngx-error-container: color-mix(in srgb, var(--ngx-error), black 65%);
-        --ngx-on-error-container: color-mix(in srgb, var(--ngx-error), white 80%);
+        --ngx-primary-container: var(--ngx-surface-container-highest);
+        --ngx-on-primary-container: color-mix(in srgb, var(--ngx-primary), black 80%);
+        --ngx-error-container: color-mix(in srgb, var(--ngx-error), white 94%);
+        --ngx-on-error-container: var(--ngx-error);
 
-        /* Select dropdown must be darker than surface */
+        --ngx-on-surface: color-mix(in srgb, var(--ngx-primary), black 80%);
+        --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-primary), black 40%);
+        --ngx-outline: color-mix(in srgb, var(--ngx-primary), black 20%);
+        --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 40%);
+        --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 60%);
+
+        --ngx-disabled-bg: rgba(15, 23, 42, 0.04);
+        --ngx-disabled-color: rgba(15, 23, 42, 0.38);
+
+        /* ─── Select / Multiselect ─────────────────────────────────────────────── */
         --ngx-select-dropdown-bg: var(--ngx-surface-container);
+        --ngx-select-option-hover-bg: rgba(24, 24, 27, 0.08);
+        --ngx-select-option-selected-bg: rgba(24, 24, 27, 0.12);
+        --ngx-multiselect-padding: 0.25rem 1rem;
+        --ngx-multiselect-max-height: 5.5rem;
+        --ngx-chip-color: var(--ngx-on-surface-variant);
+        --ngx-chip-max-width: 11rem;
+
+        /* ─── DatePicker M3 overrides (differ from base defaults) ─────────────── */
+        --ngx-datepicker-popup-border: 1px solid var(--ngx-outline-subtle);
+        /* base: none */
+        --ngx-datepicker-popup-border-radius: 20px;
+        /* base: var(--ngx-corner-medium) = 12px */
+        --ngx-datepicker-cell-size: 40px;
+        /* base: 2.25rem ≈ 36px, M3 spec: 40dp */
+        --ngx-datepicker-today-color: var(--ngx-primary);
+
+        /* ─── Date Range M3 overrides ──────────────────────────────────────────── */
+        --ngx-daterange-in-range-bg: var(--ngx-surface-container-highest);
+        --ngx-daterange-endpoint-bg: var(--ngx-primary);
+        --ngx-daterange-endpoint-color: var(--ngx-on-primary);
+
+        /* ─── Segmented Button ─────────────────────────────────────────────────── */
+        --ngx-segmented-btn-bg-selected-hover: color-mix(in srgb, var(--ngx-primary), white 8%);
+
+        /* ─── Error color bridge ────────────────────────────────────────────────── */
+        --ngx-error-color: var(--ngx-error);
+
+        /* ─── Select / Dropdown improvements ───────────────────────────────────── */
+        --ngx-select-option-hover-bg: color-mix(in srgb, var(--ngx-on-surface), transparent 92%);
+        --ngx-select-option-selected-bg: color-mix(in srgb, var(--ngx-on-surface), transparent 88%);
+        --ngx-select-dropdown-border-radius: var(--ngx-corner-small);
+
+        /* ─── Multiselect overlay ───────────────────────────────────────────────── */
         --ngx-multiselect-overlay-bg: var(--ngx-surface-container);
     }
-}
 
-/* ─── Reduced Motion ──────────────────────────────────────────────────────── */
+    /* ─── Global Font ─────────────────────────────────────────────────────────── */
 
-@media (prefers-reduced-motion: reduce) {
-    .ngx-renderer *,
+    .ngx-renderer,
+    .ngx-timepicker-container,
+    .ngx-datepicker__popup,
     .ngx-datepicker__popup--modal,
-    .ngx-timepicker-container {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
+    .ngx-multiselect-overlay__panel,
+    .ngx-colors__dropdown,
+    .ngx-select__dropdown {
+        font-family: var(--ngx-font-family);
+        box-sizing: border-box;
     }
+
+    /* ─── DatePicker popup — M3 Docked spec (360dp) ──────────────────────────── */
+
+    .ngx-datepicker__popup {
+        width: 360px;
+        max-width: calc(100vw - 32px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 0;
+        background: var(--ngx-datepicker-popup-bg);
+        border-radius: var(--ngx-datepicker-popup-border-radius);
+        box-shadow: var(--ngx-datepicker-popup-shadow);
+        z-index: 1000;
+    }
+
+    .ngx-renderer--open .ngx-datepicker__popup:not(.ngx-datepicker__popup--modal):not(.ngx-datepicker__popup--overlay),
+    .ngx-renderer--open .ngx-timepicker__popup:not(.ngx-timepicker__popup--overlay) {
+        position: fixed !important;
+        top: var(--ngx-overlay-top, auto);
+        bottom: var(--ngx-overlay-bottom, auto);
+        left: var(--ngx-overlay-left, auto);
+        right: var(--ngx-overlay-right, auto);
+        width: var(--ngx-overlay-width, 360px);
+        margin: 0;
+        margin-top: 4px;
+    }
+
+    /* ─── Filled text field surface ───────────────────────────────────────────── */
+    /* Active indicator is always 3px but visually 1px via a pseudo-element, so
+   the actual border-bottom never changes width → zero layout shift.          */
+
+    .ngx-renderer input[type="text"],
+    .ngx-renderer input[type="number"],
+    .ngx-renderer input[type="date"],
+    .ngx-renderer input[type="email"],
+    .ngx-renderer textarea,
+    .ngx-renderer select {
+        background-color: var(--ngx-surface-container-highest);
+        color: var(--ngx-input-color);
+        border: none;
+        border-bottom: 1px solid var(--ngx-on-surface-variant);
+        border-radius: var(--ngx-input-border-radius);
+        padding-bottom: calc(0.625rem + 2px);
+        transition: border-color 0.2s cubic-bezier(0.2, 0, 0, 1),
+            background 0.2s, color 0.2s;
+    }
+
+    /* Ensure inputs inside wrappers are transparent to show the wrapper's background */
+    .ngx-input-wrapper input,
+    .ngx-input-wrapper textarea,
+    .ngx-input-wrapper select {
+        background-color: transparent !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+
+    .ngx-renderer input:hover,
+    .ngx-renderer textarea:hover,
+    .ngx-renderer select:hover {
+        background-color: var(--ngx-surface-container-highest-hover);
+        border-bottom-color: var(--ngx-on-surface);
+    }
+
+    /* On focus: keep 1px border but add a 3px box-shadow to simulate the thick
+   indicator — this avoids the 2px height jump entirely. */
+    .ngx-renderer input:focus,
+    .ngx-renderer textarea:focus,
+    .ngx-renderer select:focus {
+        background-color: var(--ngx-surface-container-highest);
+        border-bottom-color: var(--ngx-input-focus-color);
+        box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
+        outline: none;
+    }
+
+    .ngx-renderer input[aria-invalid="true"],
+    .ngx-renderer textarea[aria-invalid="true"],
+    .ngx-renderer select[aria-invalid="true"] {
+        border-bottom-color: var(--ngx-error-color);
+    }
+
+    .ngx-renderer input[aria-invalid="true"]:focus,
+    .ngx-renderer textarea[aria-invalid="true"]:focus {
+        border-bottom-color: var(--ngx-error-color);
+        box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
+    }
+
+    .ngx-renderer input:disabled,
+    .ngx-renderer textarea:disabled,
+    .ngx-renderer select:disabled {
+        background-color: var(--ngx-disabled-bg);
+        border-bottom-color: var(--ngx-disabled-color);
+        color: var(--ngx-disabled-color);
+    }
+
+    .ngx-renderer input::placeholder,
+    .ngx-renderer textarea::placeholder {
+        color: var(--ngx-input-placeholder-color);
+    }
+
+    .ngx-renderer input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: var(--ngx-calendar-icon-filter, none);
+    }
+
+    /* ─── Labels — on-surface-variant ─────────────────────────────────────────── */
+
+    .ngx-renderer .ngx-label {
+        color: var(--ngx-on-surface-variant);
+        letter-spacing: 0.006em;
+    }
+
+    /* ─── Custom select trigger (filled style) ────────────────────────────────── */
+
+    .ngx-select__trigger {
+        background: var(--ngx-surface-container-highest);
+        color: var(--ngx-input-color);
+        border: none;
+        border-bottom: 1px solid var(--ngx-on-surface-variant);
+        border-radius: var(--ngx-input-border-radius);
+        padding-bottom: calc(0.625rem + 2px);
+    }
+
+    .ngx-select__trigger:hover {
+        background: var(--ngx-surface-container-highest-hover);
+        border-bottom-color: var(--ngx-on-surface);
+    }
+
+    .ngx-select__trigger:focus {
+        background: var(--ngx-surface-container-highest);
+        border-bottom-color: var(--ngx-input-focus-color);
+        box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
+        outline: none;
+    }
+
+    .ngx-select__trigger[aria-invalid="true"] {
+        border-bottom-color: var(--ngx-error-color);
+    }
+
+    .ngx-select__trigger[aria-invalid="true"]:focus {
+        box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
+    }
+
+    .ngx-select__trigger:disabled {
+        background: var(--ngx-disabled-bg);
+        border-bottom-color: var(--ngx-disabled-color);
+        color: var(--ngx-disabled-color);
+    }
+
+    .ngx-select__placeholder {
+        color: var(--ngx-outline);
+    }
+
+    .ngx-select__arrow {
+        color: var(--ngx-on-surface-variant);
+    }
+
+    /* ─── Dropdown surface — M3 menu specs ────────────────────────────────────── */
+
+    .ngx-select__dropdown {
+        margin-top: 0.25rem;
+        background: var(--ngx-surface-container);
+    }
+
+    .ngx-select__search {
+        border-bottom-color: var(--ngx-outline-subtle);
+        font-size: 0.875rem;
+    }
+
+    .ngx-select__search:focus {
+        border-bottom-color: var(--ngx-input-focus-color);
+    }
+
+    .ngx-select__list {
+        padding: 0.5rem 0;
+    }
+
+    .ngx-select__no-results {
+        color: var(--ngx-outline);
+    }
+
+    .ngx-select__option {
+        border-radius: 0;
+        transition: background 0.15s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    /* ─── Toggle / Switch ─────────────────────────────────────────────────────── */
+
+    .ngx-toggle__track {
+        box-sizing: border-box;
+    }
+
+    .ngx-toggle__thumb {
+        box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15),
+            0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    /* M3 checkmark icon in thumb when active */
+    .ngx-toggle input:checked+.ngx-toggle__track .ngx-toggle__thumb::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 10px;
+        height: 6px;
+        border: solid var(--ngx-toggle-bg-checked);
+        border-width: 0 0 2px 2px;
+        transform: translate(-50%, -75%) rotate(-45deg);
+    }
+
+    /* M3 focus: state layer around thumb */
+    .ngx-toggle input:focus-visible+.ngx-toggle__track {
+        outline: 2px solid var(--ngx-input-focus-color);
+        outline-offset: 2px;
+    }
+
+    /* ─── Radio Group — M3 spec (20dp outer, 10dp inner) ──────────────────────── */
+
+    .ngx-radio-group-label {
+        display: none;
+    }
+
+    .ngx-radio-item {
+        gap: 0.75rem;
+    }
+
+    .ngx-radio-circle {
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 2px solid var(--ngx-outline);
+        background: transparent;
+        transition: border-color 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .ngx-radio-circle::after {
+        width: 0.625rem;
+        height: 0.625rem;
+        background: var(--ngx-on-primary, #fff);
+        transform: translate(-50%, -50%) scale(0);
+    }
+
+    .ngx-radio-item input[type="radio"]:checked+.ngx-radio-circle {
+        border-color: var(--ngx-input-focus-color);
+        background: var(--ngx-input-focus-color);
+    }
+
+    /* State layer (hover/focus ring) */
+    .ngx-radio-item::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0.625rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        background: var(--ngx-input-focus-color);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        transition: transform 0.2s, opacity 0.2s;
+        pointer-events: none;
+    }
+
+    .ngx-radio-item:hover::before {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.08;
+    }
+
+    .ngx-radio-item input[type="radio"]:focus-visible+.ngx-radio-circle {
+        outline: none;
+    }
+
+    .ngx-radio-item input[type="radio"]:focus-visible~.ngx-radio-label {
+        text-decoration: underline;
+    }
+
+    .ngx-radio-item input[type="radio"]:focus-visible::before {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.12;
+    }
+
+    .ngx-radio-item--disabled {
+        opacity: 0.38;
+        cursor: not-allowed;
+    }
+
+    /* ─── Slider — M3 spec (4dp track, 20dp thumb) ───────────────────────────── */
+
+    .ngx-slider {
+        background: var(--ngx-surface-container-highest);
+    }
+
+    .ngx-slider::-webkit-slider-thumb {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+        border: none;
+    }
+
+    .ngx-slider::-moz-range-thumb {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+        border: none;
+    }
+
+    .ngx-slider:focus-visible {
+        outline: none;
+    }
+
+    .ngx-slider-value {
+        color: var(--ngx-on-surface);
+        font-weight: var(--ngx-font-weight-medium);
+    }
+
+    .ngx-slider-container {
+        position: relative;
+        padding: 0.5rem 0;
+    }
+
+    /* ─── File Upload ────────────────────────────────────────────────────────── */
+
+    .ngx-file-container {
+        border-color: var(--ngx-outline-variant);
+        background: var(--ngx-surface-container-low);
+    }
+
+    .ngx-file-container--dragover {
+        border-color: var(--ngx-input-focus-color);
+        background: var(--ngx-surface-container-high);
+    }
+
+    .ngx-button {
+        background: var(--ngx-input-focus-color);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .ngx-file-placeholder {
+        color: var(--ngx-on-surface-variant);
+    }
+
+    .ngx-file-name {
+        color: var(--ngx-on-surface);
+        font-weight: var(--ngx-font-weight-medium);
+    }
+
+    .ngx-file-clear {
+        color: var(--ngx-error);
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .ngx-file-clear:hover {
+        opacity: 1;
+    }
+
+    /* ─── Chips ───────────────────────────────────────────────────────────────── */
+
+    .ngx-chip--removable {
+        padding-right: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .ngx-chip {
+        border-color: var(--ngx-outline-variant);
+    }
+
+    .ngx-chip:hover:not(.ngx-chip--selected):not(:disabled) {
+        background-color: var(--ngx-surface-container-highest-hover);
+        border-color: var(--ngx-outline);
+    }
+
+    /* ─── Segmented Button — M3 Outlined Specification ───────────────────────── */
+
+    .ngx-segmented {
+        display: inline-flex;
+        background: transparent;
+        padding: 0;
+        border-radius: var(--ngx-segmented-border-radius);
+        border: 1px solid var(--ngx-outline-variant);
+        overflow: hidden;
+        gap: 1px;
+        width: fit-content;
+
+        /* Global Redistribution Variables */
+        --ngx-tick-w: 1.5rem;
+        /* 1rem icon + 0.5rem gap */
+        --ngx-tick-share: calc(var(--ngx-tick-w) / (2 * var(--ngx-segments-count, 1)));
+    }
+
+    .ngx-segmented__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding-left: calc(1.125rem + var(--ngx-tick-share));
+        padding-right: calc(1.125rem + var(--ngx-tick-share));
+        min-height: var(--ngx-segmented-height);
+        background: transparent;
+        border: none;
+        border-right: 1px solid var(--ngx-outline-variant);
+        margin-right: -1px;
+        color: var(--ngx-on-surface-variant);
+        font-size: 0.875rem;
+        font-weight: var(--ngx-font-weight-medium);
+        border-radius: 0;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, padding 0.2s;
+        white-space: nowrap;
+    }
+
+    .ngx-segmented:has(.ngx-segmented__button--selected) .ngx-segmented__button {
+        padding-left: 1.125rem;
+        padding-right: 1.125rem;
+    }
+
+    .ngx-segmented__button:last-of-type {
+        border-right: none;
+        margin-right: 0;
+    }
+
+    .ngx-segmented__button--selected {
+        background: var(--ngx-surface-container-highest);
+        color: var(--ngx-on-surface);
+        font-weight: var(--ngx-font-weight-medium);
+        box-shadow: none;
+        padding-left: 1.125rem !important;
+        padding-right: 1.125rem !important;
+    }
+
+    .ngx-segmented__button:hover:not(.ngx-segmented__button--selected):not(:disabled) {
+        background: var(--ngx-surface-container-highest-hover);
+        color: var(--ngx-on-surface);
+    }
+
+    .ngx-segmented__check {
+        position: absolute;
+        left: 1rem;
+        width: 1rem;
+        height: 1rem;
+        animation: ngx-segmented-check-pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* ─── Multiselect ─────────────────────────────────────────────────────────── */
+
+    .ngx-multiselect__label {
+        color: var(--ngx-on-surface-variant);
+        letter-spacing: 0.006em;
+    }
+
+    .ngx-multiselect__search-btn {
+        color: var(--ngx-on-surface-variant);
+    }
+
+    .ngx-multiselect__search-btn:hover:not(:disabled) {
+        background: var(--ngx-select-option-hover-bg);
+        color: var(--ngx-select-option-hover-color);
+    }
+
+    .ngx-multiselect__options,
+    .ngx-select__list,
+    .ngx-multiselect-overlay__grid {
+        scrollbar-width: thin;
+        scrollbar-color: var(--ngx-outline-variant) transparent;
+    }
+
+    .ngx-multiselect-overlay__panel {
+        background: var(--ngx-surface);
+        border: 1px solid var(--ngx-outline-subtle);
+        border-radius: var(--ngx-select-dropdown-border-radius);
+        box-shadow: var(--ngx-select-dropdown-shadow);
+    }
+
+    .ngx-multiselect-overlay__input {
+        border-bottom-color: var(--ngx-surface-container-highest);
+    }
+
+    .ngx-multiselect-overlay__panel--above .ngx-multiselect-overlay__input {
+        border-top-color: var(--ngx-surface-container-highest);
+    }
+
+    .ngx-multiselect-overlay__input:focus {
+        border-color: var(--ngx-input-focus-color);
+    }
+
+    .ngx-multiselect-overlay__empty {
+        color: var(--ngx-outline);
+    }
+
+    /* ─── Inline errors — M3 supporting text ─────────────────────────────────── */
+
+    .ngx-control__inline-errors-tooltip {
+        letter-spacing: 0.025em;
+    }
+
+    .ngx-control__error {
+        letter-spacing: 0.025em;
+        line-height: var(--ngx-error-line-height);
+    }
+
+    /* ─── DatePicker — M3 visual overrides ───────────────────────────────────── */
+    /* Only rules that differ from base defaults are listed here.
+   Layout (grid/row/weekday structure) is handled by base using token values. */
+
+    .ngx-datepicker__grid {
+        padding: 0 12px 16px;
+        align-items: center;
+    }
+
+    .ngx-datepicker__weekdays {
+        margin-bottom: 8px;
+    }
+
+    .ngx-datepicker__weekday {
+        width: var(--ngx-datepicker-cell-size);
+        height: 32px;
+        /* Weekday labels are shorter than cells in M3 */
+        font-weight: var(--ngx-font-weight-medium);
+        color: var(--ngx-on-surface-variant);
+    }
+
+    .ngx-datepicker__row {
+        margin: 1px 0;
+    }
+
+    .ngx-datepicker__cell {
+        aspect-ratio: 1 / 1;
+        place-self: center;
+        z-index: 1;
+        font-size: 0.8125rem;
+        color: var(--ngx-on-surface);
+    }
+
+    .ngx-datepicker__cell:hover:not(.ngx-datepicker__cell--disabled):not(.ngx-datepicker__cell--selected) {
+        background: var(--ngx-surface-container-highest-hover);
+    }
+
+    .ngx-datepicker__cell--today:not(.ngx-datepicker__cell--selected) {
+        box-shadow: inset 0 0 0 1px var(--ngx-datepicker-today-color);
+        color: var(--ngx-datepicker-today-color);
+        font-weight: var(--ngx-font-weight-medium);
+    }
+
+    .ngx-datepicker__cell--outside {
+        visibility: hidden;
+        /* M3 hides outside-month cells completely (vs base opacity) */
+    }
+
+    .ngx-datepicker__cell--disabled {
+        opacity: 0.38;
+        /* M3 spec (vs base 0.25) */
+    }
+
+    .ngx-datepicker__cell--selected {
+        font-weight: var(--ngx-font-weight-medium);
+    }
+
+    /* ─── DatePicker header — M3 sizing ──────────────────────────────────────── */
+
+    .ngx-datepicker__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0.75rem 0.75rem 1.5rem;
+        background: transparent;
+        height: 3rem;
+    }
+
+    .ngx-datepicker__nav-btn {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .ngx-datepicker__nav-btn ngx-icon {
+        display: block;
+        width: 24px;
+        height: 24px;
+        font-size: 24px;
+    }
+
+    .ngx-datepicker__title {
+        min-width: 140px;
+        text-align: center;
+    }
+
+    .ngx-datepicker__view-toggle {
+        padding: 8px 12px;
+    }
+
+    .ngx-datepicker__month-cell,
+    .ngx-datepicker__year-cell {
+        min-height: 48px;
+        padding: 0 12px;
+    }
+
+    .ngx-datepicker__toggle {
+        background: var(--ngx-surface-container-highest);
+        border: none;
+        border-radius: 50%;
+        color: var(--ngx-on-surface-variant);
+    }
+
+    .ngx-datepicker__toggle:hover:not(:disabled) {
+        background: var(--ngx-surface-container-highest-hover);
+    }
+
+    /* ─── Host display helpers ────────────────────────────────────────────────── */
+
+    .ngx-datepicker,
+    .ngx-datepicker__calendar,
+    .ngx-range-calendar {
+        display: block;
+        width: 100%;
+    }
+
+    /* ─── Backdrop (M3 Scrim) ─────────────────────────────────────────────────── */
+
+    .ngx-datepicker__backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.32);
+        z-index: 999;
+    }
+
+    /* ─── DatePicker Modal — M3 Dialog spec ──────────────────────────────────── */
+
+    .ngx-datepicker__popup--modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 328px;
+        max-width: calc(100vw - 32px);
+        background: var(--ngx-datepicker-modal-bg);
+        border-radius: var(--ngx-datepicker-modal-radius);
+        box-shadow: var(--ngx-shadow-depth-3);
+        z-index: 1000;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        margin-top: 0 !important;
+        animation: ngx-modal-in 0.3s cubic-bezier(0.05, 0.7, 0.1, 1);
+    }
+
+    @keyframes ngx-modal-in {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -45%) scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+
+    .ngx-datepicker__modal-header {
+        background: var(--ngx-surface-container-low);
+        padding: 24px 24px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        border-bottom: 1px solid var(--ngx-outline-subtle);
+    }
+
+    .ngx-datepicker__modal-label {
+        font-size: 0.75rem;
+        font-weight: var(--ngx-font-weight-medium);
+        text-transform: none;
+        letter-spacing: 0.1px;
+        color: var(--ngx-on-surface-variant);
+    }
+
+    .ngx-datepicker__modal-value {
+        display: block;
+        font-size: 2.125rem;
+        line-height: 2.75rem;
+        font-weight: var(--ngx-font-weight-regular);
+        letter-spacing: 0;
+        color: var(--ngx-on-surface);
+    }
+
+    .ngx-datepicker__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem 1.5rem;
+    }
+
+    .ngx-datepicker__action-btn {
+        padding: 0.625rem 1rem;
+        background: transparent;
+        border: none;
+        border-radius: var(--ngx-corner-full);
+        color: var(--ngx-primary);
+        font-size: 0.875rem;
+        font-weight: var(--ngx-font-weight-medium);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .ngx-datepicker__action-btn:hover {
+        background: var(--ngx-surface-container-highest-hover);
+    }
+
+    .ngx-datepicker__action-btn--primary {
+        color: var(--ngx-primary);
+        font-weight: var(--ngx-font-weight-semibold);
+    }
+
+    /* ─── DatePicker input (filled style) ────────────────────────────────────── */
+
+    .ngx-datepicker__input {
+        background: var(--ngx-surface-container-highest);
+        color: var(--ngx-input-color);
+        border: none;
+        border-bottom: 1px solid var(--ngx-on-surface-variant);
+        border-radius: var(--ngx-input-border-radius);
+        padding-bottom: calc(0.625rem + 2px);
+    }
+
+    .ngx-datepicker__input:hover {
+        background: var(--ngx-surface-container-highest-hover);
+        border-bottom-color: var(--ngx-on-surface);
+    }
+
+    .ngx-datepicker__input:focus {
+        background: var(--ngx-surface-container-highest);
+        border-bottom-color: var(--ngx-input-focus-color);
+        box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
+        outline: none;
+    }
+
+    .ngx-datepicker__input[aria-invalid="true"] {
+        border-bottom-color: var(--ngx-error-color);
+    }
+
+    .ngx-datepicker__input[aria-invalid="true"]:focus {
+        box-shadow: inset 0 -2px 0 0 var(--ngx-error-color);
+    }
+
+    .ngx-datepicker__input:disabled {
+        background: var(--ngx-disabled-bg);
+        border-bottom-color: var(--ngx-disabled-color);
+        color: var(--ngx-disabled-color);
+    }
+
+    /* ─── Date Range ──────────────────────────────────────────────────────────── */
+
+    .ngx-daterange__sep {
+        border: none;
+    }
+
+    .ngx-daterange__group .ngx-daterange__input {
+        background: var(--ngx-surface-container-highest);
+        border: none;
+        border-bottom: 1px solid var(--ngx-on-surface-variant);
+        border-radius: var(--ngx-input-border-radius);
+    }
+
+    .ngx-daterange__group:focus-within {
+        box-shadow: inset 0 -2px 0 0 var(--ngx-input-focus-color);
+        border-color: transparent;
+    }
+
+    .ngx-daterange__group .ngx-daterange__input:focus {
+        background: var(--ngx-surface-container-highest);
+        border-bottom-color: var(--ngx-input-focus-color);
+        box-shadow: none;
+        outline: none;
+    }
+
+    /* ─── Color Picker — M3 Filled Style ─────────────────────────────────────── */
+
+    .ngx-renderer--colors .ngx-input-wrapper {
+        height: 2.75rem !important;
+        background-color: var(--ngx-surface-container-highest);
+        border-radius: var(--ngx-input-border-radius);
+        border-bottom: 1px solid var(--ngx-on-surface-variant);
+        transition: background 0.2s, border-color 0.2s;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        box-sizing: border-box;
+    }
+
+    .ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-input-wrapper {
+        height: var(--ngx-floating-input-height, var(--ngx-input-height)) !important;
+    }
+
+    .ngx-renderer--colors:hover .ngx-input-wrapper {
+        background-color: var(--ngx-surface-container-highest-hover);
+        border-bottom-color: var(--ngx-on-surface);
+    }
+
+    .ngx-renderer--colors.ngx-renderer--open .ngx-input-wrapper,
+    .ngx-renderer--colors:focus-within .ngx-input-wrapper {
+        border-bottom-color: var(--ngx-primary);
+        box-shadow: inset 0 -2px 0 0 var(--ngx-primary);
+    }
+
+    .ngx-input-wrapper__inliner {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        padding: 0 1rem;
+        box-sizing: border-box;
+        transition: padding-top 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-input-wrapper__inliner {
+        padding-top: var(--ngx-fl-pad-top);
+    }
+
+    .ngx-colors__primary-picker {
+        position: relative;
+        width: 2.25rem;
+        height: 1.125rem;
+        margin-right: 0.75rem !important;
+        flex-shrink: 0;
+    }
+
+    .ngx-colors__preview-swatch {
+        width: 100%;
+        height: 100%;
+        border-radius: var(--ngx-color-swatch-radius);
+        border: none !important;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .ngx-colors__native-hidden {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0 !important;
+        cursor: pointer;
+        border: none;
+        margin: 0;
+        padding: 0;
+        z-index: 2;
+    }
+
+    .ngx-colors__hex-input {
+        flex: 1;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        font-size: var(--ngx-input-font-size) !important;
+        color: var(--ngx-input-color) !important;
+        height: auto !important;
+        font-family: inherit !important;
+    }
+
+    .ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-colors__hex-input {
+        padding: 0 !important;
+        height: 100% !important;
+    }
+
+    .ngx-colors__toggle-area {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 2.5rem;
+        margin-right: -0.75rem;
+    }
+
+    .ngx-renderer.ngx-floating-label.ngx-renderer--colors .ngx-colors__toggle-area {
+        padding-bottom: 0.625rem !important;
+        align-items: flex-end !important;
+        box-sizing: border-box;
+    }
+
+    .ngx-colors__arrow--open {
+        transform: rotate(180deg);
+    }
+
+    .ngx-colors__dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: var(--ngx-surface-container-high);
+        border: none;
+        box-shadow: var(--ngx-color-dropdown-shadow);
+        border-radius: var(--ngx-color-dropdown-radius);
+        padding: 1.5rem;
+        margin-top: 8px;
+        display: none;
+    }
+
+    .ngx-colors--open .ngx-colors__dropdown {
+        display: block;
+        position: fixed;
+        top: var(--ngx-overlay-top, auto);
+        bottom: var(--ngx-overlay-bottom, auto);
+        left: var(--ngx-overlay-left, auto);
+        right: var(--ngx-overlay-right, auto);
+        width: var(--ngx-overlay-width, 300px);
+        margin: 0;
+        margin-top: 4px;
+    }
+
+    .ngx-colors__dropdown--above {
+        bottom: 100%;
+        top: auto;
+        margin-top: 0;
+        margin-bottom: 8px;
+    }
+
+    .ngx-colors__dropdown--overlay {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: calc(100% - 3rem);
+        max-width: 340px;
+        margin: 0;
+        z-index: 9999;
+    }
+
+    .ngx-colors__dropdown-header {
+        color: var(--ngx-primary);
+        font-weight: var(--ngx-font-weight-semibold);
+    }
+
+    .ngx-color-swatch {
+        width: var(--ngx-color-swatch-size);
+        height: var(--ngx-color-swatch-size);
+        border-radius: var(--ngx-color-swatch-radius);
+    }
+
+    /* ─── Animations ──────────────────────────────────────────────────────────── */
+
+    @keyframes ngx-fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(-4px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ─── Dark Mode — Zinc palette inversion ─────────────────────────────────── */
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            /* In dark mode, surface/container roles invert: dark bg, light text */
+            --ngx-surface: color-mix(in srgb, var(--ngx-primary), black 40%);
+            --ngx-surface-container-lowest: color-mix(in srgb, var(--ngx-primary), black 55%);
+            --ngx-surface-container-low: color-mix(in srgb, var(--ngx-primary), black 50%);
+            --ngx-surface-container: color-mix(in srgb, var(--ngx-primary), black 45%);
+            --ngx-surface-container-high: color-mix(in srgb, var(--ngx-primary), black 36%);
+            --ngx-surface-container-highest: color-mix(in srgb, var(--ngx-primary), black 28%);
+            --ngx-surface-container-highest-hover: color-mix(in srgb, var(--ngx-primary), black 18%);
+
+            --ngx-on-surface: color-mix(in srgb, var(--ngx-primary), white 90%);
+            --ngx-on-surface-variant: color-mix(in srgb, var(--ngx-primary), white 68%);
+            --ngx-outline: color-mix(in srgb, var(--ngx-primary), white 55%);
+            --ngx-outline-variant: color-mix(in srgb, var(--ngx-primary), white 28%);
+            --ngx-outline-subtle: color-mix(in srgb, var(--ngx-primary), white 14%);
+
+            --ngx-disabled-bg: rgba(255, 255, 255, 0.06);
+            --ngx-disabled-color: rgba(255, 255, 255, 0.38);
+
+            /* Error container in dark */
+            --ngx-error-container: color-mix(in srgb, var(--ngx-error), black 65%);
+            --ngx-on-error-container: color-mix(in srgb, var(--ngx-error), white 80%);
+
+            /* Select dropdown must be darker than surface */
+            --ngx-select-dropdown-bg: var(--ngx-surface-container);
+            --ngx-multiselect-overlay-bg: var(--ngx-surface-container);
+        }
+    }
+
+    /* ─── Reduced Motion ──────────────────────────────────────────────────────── */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .ngx-renderer *,
+        .ngx-datepicker__popup--modal,
+        .ngx-timepicker-container {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
 }
+
+/* end @layer ngx.themes */

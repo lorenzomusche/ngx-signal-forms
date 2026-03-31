@@ -1,8 +1,11 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
+  inject,
+  Injector,
   input,
   output,
   signal,
@@ -104,11 +107,12 @@ export class NgxRangeCalendarComponent {
   readonly closed = output<void>();
 
   private readonly grid = viewChild(NgxRangeCalendarGridComponent);
+  private readonly injector = inject(Injector);
 
   constructor() {
     effect(() => {
       const date = this.focusedDate();
-      setTimeout(() => this.grid()?.focusDate(date), 0);
+      afterNextRender(() => this.grid()?.focusDate(date), { injector: this.injector });
     });
   }
 

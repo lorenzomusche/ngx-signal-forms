@@ -1,389 +1,389 @@
 /*
- * ngx-signal-forms-m3-base.css
+ * ngx-signal-forms-base.css
  *
  * Material Design 3 — Design Tokens (CSS Custom Properties)
  *
- * Include in your project before any theme or component CSS.
+ * This file defines the full --ngx-signal-form-sys-* and --ngx-signal-form-comp-*
+ * token set. Include it BEFORE any theme or component CSS.
  *
- * This file defines all --md-sys-* and --md-comp-* variables for both light and dark themes.
+ * CSS @layer: ngx.tokens
+ * Declaring this layer here ensures the order is established even if this file
+ * is the first one loaded.
  *
  * Source: https://gist.githubusercontent.com/lorenzomusche/cf062827e5dda441153bab936b4caf06/raw/c93c335b14e4ebe5de19d13e7e765d5d5170f4b0/Material%20Design%203.md
  */
 
-:root {
-    /* Date Picker — Range & Popup (additional tokens for full mapping) */
-    --ngx-signal-form-comp-date-picker-popup-padding: 1.25rem;
-    --ngx-signal-form-comp-date-picker-popup-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18);
-    --ngx-signal-form-comp-date-picker-cell-size: 2.5rem;
-    --ngx-signal-form-comp-date-picker-cell-border-radius: 50%;
-    --ngx-signal-form-comp-date-picker-cell-font-size: 0.875rem;
-    --ngx-signal-form-comp-date-picker-hover-bg: var(--ngx-signal-form-sys-color-surface-container-highest);
-    --ngx-signal-form-comp-date-picker-selected-bg: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-date-picker-selected-color: var(--ngx-signal-form-sys-color-on-primary);
-    --ngx-signal-form-comp-date-picker-in-range-bg: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 75%);
-    --ngx-signal-form-comp-date-picker-endpoint-bg: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-date-picker-endpoint-color: var(--ngx-signal-form-sys-color-on-primary);
-    --ngx-signal-form-comp-date-picker-disabled-opacity: 0.25;
-    --ngx-signal-form-comp-date-picker-outside-opacity: 0.5;
-    --ngx-signal-form-comp-date-picker-header-gap: 0.5rem;
-    --ngx-signal-form-comp-date-picker-nav-btn-size: 2rem;
-    /* Color System — Light Theme */
-    --ngx-signal-form-sys-color-primary: #6750A4;
-    --ngx-signal-form-sys-color-on-primary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 95%);
-    --ngx-signal-form-sys-color-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 85%);
-    --ngx-signal-form-sys-color-on-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
-    --ngx-signal-form-sys-color-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #888 60%);
-    --ngx-signal-form-sys-color-on-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 90%);
-    --ngx-signal-form-sys-color-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
-    --ngx-signal-form-sys-color-on-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
-    --ngx-signal-form-sys-color-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #c96 60%);
-    --ngx-signal-form-sys-color-on-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 90%);
-    --ngx-signal-form-sys-color-tertiary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 95%);
-    --ngx-signal-form-sys-color-on-tertiary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
-    --ngx-signal-form-sys-color-error: #B3261E;
-    --ngx-signal-form-sys-color-on-error: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #fff 90%);
-    --ngx-signal-form-sys-color-error-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #fff 85%);
-    --ngx-signal-form-sys-color-on-error-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #000 80%);
-    --ngx-signal-form-sys-color-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 96%);
-    --ngx-signal-form-sys-color-on-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
-    --ngx-signal-form-sys-color-surface-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #eee 80%);
-    --ngx-signal-form-sys-color-on-surface-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #49454E 60%);
-    --ngx-signal-form-sys-color-surface-container-lowest: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 100%);
-    --ngx-signal-form-sys-color-surface-container-low: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 96%);
-    --ngx-signal-form-sys-color-surface-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 92%);
-    --ngx-signal-form-sys-color-surface-container-high: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 88%);
-    --ngx-signal-form-sys-color-surface-container-highest: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
-    --ngx-signal-form-sys-color-background: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 98%);
-    --ngx-signal-form-sys-color-on-background: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
-    --ngx-signal-form-sys-color-outline: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #79747E 60%);
-    --ngx-signal-form-sys-color-outline-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #CAC4D0 80%);
-    --ngx-signal-form-sys-color-inverse-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #313033 80%);
-    --ngx-signal-form-sys-color-inverse-on-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
-    --ngx-signal-form-sys-color-inverse-primary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #D0BCFF 60%);
-    --ngx-signal-form-sys-color-scrim: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 90%);
-    --ngx-signal-form-sys-color-shadow: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
+@layer ngx.tokens, ngx.base, ngx.components, ngx.themes;
 
-    /* Typography */
-    --ngx-signal-form-sys-typescale-display-large-font: Roboto;
-    --ngx-signal-form-sys-typescale-display-large-size: 57px;
-    --ngx-signal-form-sys-typescale-display-large-line-height: 64px;
-    --ngx-signal-form-sys-typescale-display-large-weight: 400;
-    --ngx-signal-form-sys-typescale-display-large-tracking: -0.25px;
-    --ngx-signal-form-sys-typescale-display-medium-font: Roboto;
-    --ngx-signal-form-sys-typescale-display-medium-size: 45px;
-    --ngx-signal-form-sys-typescale-display-medium-line-height: 52px;
-    --ngx-signal-form-sys-typescale-display-medium-weight: 400;
-    --ngx-signal-form-sys-typescale-display-small-font: Roboto;
-    --ngx-signal-form-sys-typescale-display-small-size: 36px;
-    --ngx-signal-form-sys-typescale-display-small-line-height: 44px;
-    --ngx-signal-form-sys-typescale-display-small-weight: 400;
-    --ngx-signal-form-sys-typescale-headline-large-font: Roboto;
-    --ngx-signal-form-sys-typescale-headline-large-size: 32px;
-    --ngx-signal-form-sys-typescale-headline-large-line-height: 40px;
-    --ngx-signal-form-sys-typescale-headline-large-weight: 400;
-    --ngx-signal-form-sys-typescale-headline-medium-font: Roboto;
-    --ngx-signal-form-sys-typescale-headline-medium-size: 28px;
-    --ngx-signal-form-sys-typescale-headline-medium-line-height: 36px;
-    --ngx-signal-form-sys-typescale-headline-medium-weight: 400;
-    --ngx-signal-form-sys-typescale-headline-small-font: Roboto;
-    --ngx-signal-form-sys-typescale-headline-small-size: 24px;
-    --ngx-signal-form-sys-typescale-headline-small-line-height: 32px;
-    --ngx-signal-form-sys-typescale-headline-small-weight: 400;
-    --ngx-signal-form-sys-typescale-title-large-font: Roboto;
-    --ngx-signal-form-sys-typescale-title-large-size: 22px;
-    --ngx-signal-form-sys-typescale-title-large-line-height: 28px;
-    --ngx-signal-form-sys-typescale-title-large-weight: 400;
-    --ngx-signal-form-sys-typescale-title-medium-font: Roboto;
-    --ngx-signal-form-sys-typescale-title-medium-size: 16px;
-    --ngx-signal-form-sys-typescale-title-medium-line-height: 24px;
-    --ngx-signal-form-sys-typescale-title-medium-weight: 500;
-    --ngx-signal-form-sys-typescale-title-medium-tracking: 0.15px;
-    --ngx-signal-form-sys-typescale-title-small-font: Roboto;
-    --ngx-signal-form-sys-typescale-title-small-size: 14px;
-    --ngx-signal-form-sys-typescale-title-small-line-height: 20px;
-    --ngx-signal-form-sys-typescale-title-small-weight: 500;
-    --ngx-signal-form-sys-typescale-title-small-tracking: 0.1px;
-    --ngx-signal-form-sys-typescale-body-large-font: Roboto;
-    --ngx-signal-form-sys-typescale-body-large-size: 16px;
-    --ngx-signal-form-sys-typescale-body-large-line-height: 24px;
-    --ngx-signal-form-sys-typescale-body-large-weight: 400;
-    --ngx-signal-form-sys-typescale-body-large-tracking: 0.5px;
-    --ngx-signal-form-sys-typescale-body-medium-font: Roboto;
-    --ngx-signal-form-sys-typescale-body-medium-size: 14px;
-    --ngx-signal-form-sys-typescale-body-medium-line-height: 20px;
-    --ngx-signal-form-sys-typescale-body-medium-weight: 400;
-    --ngx-signal-form-sys-typescale-body-medium-tracking: 0.25px;
-    --ngx-signal-form-sys-typescale-body-small-font: Roboto;
-    --ngx-signal-form-sys-typescale-body-small-size: 12px;
-    --ngx-signal-form-sys-typescale-body-small-line-height: 16px;
-    --ngx-signal-form-sys-typescale-body-small-weight: 400;
-    --ngx-signal-form-sys-typescale-body-small-tracking: 0.4px;
-    --ngx-signal-form-sys-typescale-label-large-font: Roboto;
-    --ngx-signal-form-sys-typescale-label-large-size: 14px;
-    --ngx-signal-form-sys-typescale-label-large-line-height: 20px;
-    --ngx-signal-form-sys-typescale-label-large-weight: 500;
-    --ngx-signal-form-sys-typescale-label-large-tracking: 0.1px;
-    --ngx-signal-form-sys-typescale-label-medium-font: Roboto;
-    --ngx-signal-form-sys-typescale-label-medium-size: 12px;
-    --ngx-signal-form-sys-typescale-label-medium-line-height: 16px;
-    --ngx-signal-form-sys-typescale-label-medium-weight: 500;
-    --ngx-signal-form-sys-typescale-label-medium-tracking: 0.5px;
-    --ngx-signal-form-sys-typescale-label-small-font: Roboto;
-    --ngx-signal-form-sys-typescale-label-small-size: 11px;
-    --ngx-signal-form-sys-typescale-label-small-line-height: 16px;
-    --ngx-signal-form-sys-typescale-label-small-weight: 500;
-    --ngx-signal-form-sys-typescale-label-small-tracking: 0.5px;
+/* ═══════════════════════════════════════════════════════════════════════════
+ * LAYER: ngx.tokens
+ * Raw M3 system & component design tokens.
+ * Nothing here generates CSS rules — only custom properties on :root.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+@layer ngx.tokens {
 
-    /* Shape */
-    --ngx-signal-form-sys-shape-corner-none: 0px;
-    --ngx-signal-form-sys-shape-corner-extra-small: 4px;
-    --ngx-signal-form-sys-shape-corner-small: 8px;
-    --ngx-signal-form-sys-shape-corner-medium: 12px;
-    --ngx-signal-form-sys-shape-corner-large: 16px;
-    --ngx-signal-form-sys-shape-corner-extra-large: 28px;
-    --ngx-signal-form-sys-shape-corner-full: 9999px;
-
-    /* Elevation */
-    --ngx-signal-form-sys-elevation-level0: 0px;
-    --ngx-signal-form-sys-elevation-level1: 1px;
-    --ngx-signal-form-sys-elevation-level2: 3px;
-    --ngx-signal-form-sys-elevation-level3: 6px;
-    --ngx-signal-form-sys-elevation-level4: 8px;
-    --ngx-signal-form-sys-elevation-level5: 12px;
-
-    /* State Layer Opacity */
-    --ngx-signal-form-sys-state-hover-opacity: 0.08;
-    --ngx-signal-form-sys-state-focus-opacity: 0.10;
-    --ngx-signal-form-sys-state-pressed-opacity: 0.10;
-    --ngx-signal-form-sys-state-dragged-opacity: 0.16;
-    --ngx-signal-form-sys-state-disabled-container-opacity: 0.12;
-    --ngx-signal-form-sys-state-disabled-content-opacity: 0.38;
-}
-
-/* --- Date Picker: Full M3 Token Set --- */
-:root {
-    /* Grid & Cell */
-    --ngx-signal-form-comp-date-picker-grid-gap: 0;
-    --ngx-signal-form-comp-date-picker-cell-size: 2.5rem;
-    --ngx-signal-form-comp-date-picker-cell-font-size: 0.875rem;
-    --ngx-signal-form-comp-date-picker-cell-border-radius: 50%;
-    --ngx-signal-form-comp-date-picker-cell-font-family: inherit;
-    --ngx-signal-form-comp-date-picker-cell-font-weight: 400;
-    --ngx-signal-form-comp-date-picker-cell-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-date-picker-cell-hover-bg: var(--ngx-signal-form-sys-color-surface-container-highest);
-    --ngx-signal-form-comp-date-picker-cell-selected-bg: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-date-picker-cell-selected-color: var(--ngx-signal-form-sys-color-on-primary);
-    --ngx-signal-form-comp-date-picker-cell-disabled-opacity: 0.25;
-    --ngx-signal-form-comp-date-picker-cell-outside-opacity: 0.5;
-    --ngx-signal-form-comp-date-picker-cell-today-outline: 2px solid var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-date-picker-cell-focus-outline: 2px solid var(--ngx-signal-form-sys-color-primary);
-    /* Header */
-    --ngx-signal-form-comp-date-picker-header-gap: 0.5rem;
-    --ngx-signal-form-comp-date-picker-header-padding: 0.5rem 1rem 0.25rem 1rem;
-    --ngx-signal-form-comp-date-picker-header-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-date-picker-header-font-size: 1rem;
-    --ngx-signal-form-comp-date-picker-header-font-weight: 500;
-    /* Navigation */
-    --ngx-signal-form-comp-date-picker-nav-btn-size: 2rem;
-    --ngx-signal-form-comp-date-picker-nav-btn-radius: 50%;
-    --ngx-signal-form-comp-date-picker-nav-btn-hover-bg: var(--ngx-signal-form-sys-color-surface-container-highest);
-    /* Popup/Modal */
-    --ngx-signal-form-comp-date-picker-popup-padding: 1.25rem;
-    --ngx-signal-form-comp-date-picker-popup-radius: var(--ngx-signal-form-comp-date-picker-modal-container-shape);
-    --ngx-signal-form-comp-date-picker-popup-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18);
-    --ngx-signal-form-comp-date-picker-popup-bg: var(--ngx-signal-form-comp-date-picker-modal-container-color);
-    /* Range */
-    --ngx-signal-form-comp-date-picker-in-range-bg: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 75%);
-    --ngx-signal-form-comp-date-picker-endpoint-bg: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-date-picker-endpoint-color: var(--ngx-signal-form-sys-color-on-primary);
-    /* Input */
-    --ngx-signal-form-comp-date-picker-input-padding: 0.75rem 1rem;
-    --ngx-signal-form-comp-date-picker-input-radius: var(--ngx-signal-form-comp-date-picker-modal-container-shape);
-    --ngx-signal-form-comp-date-picker-input-bg: var(--ngx-signal-form-sys-color-surface-container-highest);
-    --ngx-signal-form-comp-date-picker-input-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-date-picker-input-font-size: 1rem;
-    --ngx-signal-form-comp-date-picker-input-font-family: inherit;
-    /* Misc */
-    --ngx-signal-form-comp-date-picker-weekday-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-date-picker-weekday-font-size: 0.75rem;
-    --ngx-signal-form-comp-date-picker-weekday-font-weight: 500;
-    --ngx-signal-form-comp-date-picker-title-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-date-picker-title-font-size: 0.875rem;
-    --ngx-signal-form-comp-date-picker-title-font-weight: 600;
-}
-
-@media (prefers-color-scheme: dark) {
     :root {
-        --ngx-signal-form-sys-color-on-primary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
-        --ngx-signal-form-sys-color-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 60%);
-        --ngx-signal-form-sys-color-on-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
-        --ngx-signal-form-sys-color-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #888 40%);
-        --ngx-signal-form-sys-color-on-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 70%);
-        --ngx-signal-form-sys-color-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 80%);
-        --ngx-signal-form-sys-color-on-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
-        --ngx-signal-form-sys-color-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #c96 40%);
-        --ngx-signal-form-sys-color-on-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 70%);
-        --ngx-signal-form-sys-color-tertiary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 90%);
-        --ngx-signal-form-sys-color-on-tertiary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
+        /* Color System — Light Theme */
+        --ngx-signal-form-sys-color-primary: #6750A4;
+        --ngx-signal-form-sys-color-on-primary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 95%);
+        --ngx-signal-form-sys-color-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 85%);
+        --ngx-signal-form-sys-color-on-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
+        --ngx-signal-form-sys-color-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #888 60%);
+        --ngx-signal-form-sys-color-on-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 90%);
+        --ngx-signal-form-sys-color-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
+        --ngx-signal-form-sys-color-on-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
+        --ngx-signal-form-sys-color-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #c96 60%);
+        --ngx-signal-form-sys-color-on-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 90%);
+        --ngx-signal-form-sys-color-tertiary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 95%);
+        --ngx-signal-form-sys-color-on-tertiary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
         --ngx-signal-form-sys-color-error: #B3261E;
-        --ngx-signal-form-sys-color-on-error: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #fff 80%);
-        --ngx-signal-form-sys-color-error-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #18181b 70%);
-        --ngx-signal-form-sys-color-on-error-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #fff 60%);
-        --ngx-signal-form-sys-color-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 85%);
-        --ngx-signal-form-sys-color-on-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
-        --ngx-signal-form-sys-color-surface-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #49454F 60%);
-        --ngx-signal-form-sys-color-on-surface-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
-        --ngx-signal-form-sys-color-surface-container-lowest: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 100%);
-        --ngx-signal-form-sys-color-surface-container-low: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 88%);
-        --ngx-signal-form-sys-color-surface-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 80%);
-        --ngx-signal-form-sys-color-surface-container-high: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 70%);
-        --ngx-signal-form-sys-color-surface-container-highest: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 58%);
-        --ngx-signal-form-sys-color-background: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 95%);
-        --ngx-signal-form-sys-color-on-background: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
-        --ngx-signal-form-sys-color-outline: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #938F99 40%);
-        --ngx-signal-form-sys-color-outline-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #49454F 60%);
-        --ngx-signal-form-sys-color-inverse-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
-        --ngx-signal-form-sys-color-inverse-on-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 60%);
-        --ngx-signal-form-sys-color-inverse-primary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 40%);
-    }
-}
+        --ngx-signal-form-sys-color-on-error: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #fff 90%);
+        --ngx-signal-form-sys-color-error-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #fff 85%);
+        --ngx-signal-form-sys-color-on-error-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #000 80%);
+        --ngx-signal-form-sys-color-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 96%);
+        --ngx-signal-form-sys-color-on-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
+        --ngx-signal-form-sys-color-surface-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #eee 80%);
+        --ngx-signal-form-sys-color-on-surface-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #49454E 60%);
+        --ngx-signal-form-sys-color-surface-container-lowest: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 100%);
+        --ngx-signal-form-sys-color-surface-container-low: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 96%);
+        --ngx-signal-form-sys-color-surface-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 92%);
+        --ngx-signal-form-sys-color-surface-container-high: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 88%);
+        --ngx-signal-form-sys-color-surface-container-highest: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
+        --ngx-signal-form-sys-color-background: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 98%);
+        --ngx-signal-form-sys-color-on-background: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
+        --ngx-signal-form-sys-color-outline: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #79747E 60%);
+        --ngx-signal-form-sys-color-outline-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #CAC4D0 80%);
+        --ngx-signal-form-sys-color-inverse-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #313033 80%);
+        --ngx-signal-form-sys-color-inverse-on-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
+        --ngx-signal-form-sys-color-inverse-primary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #D0BCFF 60%);
+        --ngx-signal-form-sys-color-scrim: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 90%);
+        --ngx-signal-form-sys-color-shadow: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #000 80%);
 
-/*
+        /* Typography */
+        --ngx-signal-form-sys-typescale-display-large-font: Roboto;
+        --ngx-signal-form-sys-typescale-display-large-size: 57px;
+        --ngx-signal-form-sys-typescale-display-large-line-height: 64px;
+        --ngx-signal-form-sys-typescale-display-large-weight: 400;
+        --ngx-signal-form-sys-typescale-display-large-tracking: -0.25px;
+        --ngx-signal-form-sys-typescale-display-medium-font: Roboto;
+        --ngx-signal-form-sys-typescale-display-medium-size: 45px;
+        --ngx-signal-form-sys-typescale-display-medium-line-height: 52px;
+        --ngx-signal-form-sys-typescale-display-medium-weight: 400;
+        --ngx-signal-form-sys-typescale-display-small-font: Roboto;
+        --ngx-signal-form-sys-typescale-display-small-size: 36px;
+        --ngx-signal-form-sys-typescale-display-small-line-height: 44px;
+        --ngx-signal-form-sys-typescale-display-small-weight: 400;
+        --ngx-signal-form-sys-typescale-headline-large-font: Roboto;
+        --ngx-signal-form-sys-typescale-headline-large-size: 32px;
+        --ngx-signal-form-sys-typescale-headline-large-line-height: 40px;
+        --ngx-signal-form-sys-typescale-headline-large-weight: 400;
+        --ngx-signal-form-sys-typescale-headline-medium-font: Roboto;
+        --ngx-signal-form-sys-typescale-headline-medium-size: 28px;
+        --ngx-signal-form-sys-typescale-headline-medium-line-height: 36px;
+        --ngx-signal-form-sys-typescale-headline-medium-weight: 400;
+        --ngx-signal-form-sys-typescale-headline-small-font: Roboto;
+        --ngx-signal-form-sys-typescale-headline-small-size: 24px;
+        --ngx-signal-form-sys-typescale-headline-small-line-height: 32px;
+        --ngx-signal-form-sys-typescale-headline-small-weight: 400;
+        --ngx-signal-form-sys-typescale-title-large-font: Roboto;
+        --ngx-signal-form-sys-typescale-title-large-size: 22px;
+        --ngx-signal-form-sys-typescale-title-large-line-height: 28px;
+        --ngx-signal-form-sys-typescale-title-large-weight: 400;
+        --ngx-signal-form-sys-typescale-title-medium-font: Roboto;
+        --ngx-signal-form-sys-typescale-title-medium-size: 16px;
+        --ngx-signal-form-sys-typescale-title-medium-line-height: 24px;
+        --ngx-signal-form-sys-typescale-title-medium-weight: 500;
+        --ngx-signal-form-sys-typescale-title-medium-tracking: 0.15px;
+        --ngx-signal-form-sys-typescale-title-small-font: Roboto;
+        --ngx-signal-form-sys-typescale-title-small-size: 14px;
+        --ngx-signal-form-sys-typescale-title-small-line-height: 20px;
+        --ngx-signal-form-sys-typescale-title-small-weight: 500;
+        --ngx-signal-form-sys-typescale-title-small-tracking: 0.1px;
+        --ngx-signal-form-sys-typescale-body-large-font: Roboto;
+        --ngx-signal-form-sys-typescale-body-large-size: 16px;
+        --ngx-signal-form-sys-typescale-body-large-line-height: 24px;
+        --ngx-signal-form-sys-typescale-body-large-weight: 400;
+        --ngx-signal-form-sys-typescale-body-large-tracking: 0.5px;
+        --ngx-signal-form-sys-typescale-body-medium-font: Roboto;
+        --ngx-signal-form-sys-typescale-body-medium-size: 14px;
+        --ngx-signal-form-sys-typescale-body-medium-line-height: 20px;
+        --ngx-signal-form-sys-typescale-body-medium-weight: 400;
+        --ngx-signal-form-sys-typescale-body-medium-tracking: 0.25px;
+        --ngx-signal-form-sys-typescale-body-small-font: Roboto;
+        --ngx-signal-form-sys-typescale-body-small-size: 12px;
+        --ngx-signal-form-sys-typescale-body-small-line-height: 16px;
+        --ngx-signal-form-sys-typescale-body-small-weight: 400;
+        --ngx-signal-form-sys-typescale-body-small-tracking: 0.4px;
+        --ngx-signal-form-sys-typescale-label-large-font: Roboto;
+        --ngx-signal-form-sys-typescale-label-large-size: 14px;
+        --ngx-signal-form-sys-typescale-label-large-line-height: 20px;
+        --ngx-signal-form-sys-typescale-label-large-weight: 500;
+        --ngx-signal-form-sys-typescale-label-large-tracking: 0.1px;
+        --ngx-signal-form-sys-typescale-label-medium-font: Roboto;
+        --ngx-signal-form-sys-typescale-label-medium-size: 12px;
+        --ngx-signal-form-sys-typescale-label-medium-line-height: 16px;
+        --ngx-signal-form-sys-typescale-label-medium-weight: 500;
+        --ngx-signal-form-sys-typescale-label-medium-tracking: 0.5px;
+        --ngx-signal-form-sys-typescale-label-small-font: Roboto;
+        --ngx-signal-form-sys-typescale-label-small-size: 11px;
+        --ngx-signal-form-sys-typescale-label-small-line-height: 16px;
+        --ngx-signal-form-sys-typescale-label-small-weight: 500;
+        --ngx-signal-form-sys-typescale-label-small-tracking: 0.5px;
+
+        /* Shape */
+        --ngx-signal-form-sys-shape-corner-none: 0px;
+        --ngx-signal-form-sys-shape-corner-extra-small: 4px;
+        --ngx-signal-form-sys-shape-corner-small: 8px;
+        --ngx-signal-form-sys-shape-corner-medium: 12px;
+        --ngx-signal-form-sys-shape-corner-large: 16px;
+        --ngx-signal-form-sys-shape-corner-extra-large: 28px;
+        --ngx-signal-form-sys-shape-corner-full: 9999px;
+
+        /* Elevation */
+        --ngx-signal-form-sys-elevation-level0: 0px;
+        --ngx-signal-form-sys-elevation-level1: 1px;
+        --ngx-signal-form-sys-elevation-level2: 3px;
+        --ngx-signal-form-sys-elevation-level3: 6px;
+        --ngx-signal-form-sys-elevation-level4: 8px;
+        --ngx-signal-form-sys-elevation-level5: 12px;
+
+        /* State Layer Opacity */
+        --ngx-signal-form-sys-state-hover-opacity: 0.08;
+        --ngx-signal-form-sys-state-focus-opacity: 0.10;
+        --ngx-signal-form-sys-state-pressed-opacity: 0.10;
+        --ngx-signal-form-sys-state-dragged-opacity: 0.16;
+        --ngx-signal-form-sys-state-disabled-container-opacity: 0.12;
+        --ngx-signal-form-sys-state-disabled-content-opacity: 0.38;
+    }
+
+    /* --- Date Picker: Full M3 Token Set --- */
+    :root {
+        /* Grid & Cell */
+        --ngx-signal-form-comp-date-picker-grid-gap: 0;
+        --ngx-signal-form-comp-date-picker-cell-size: 2.5rem;
+        --ngx-signal-form-comp-date-picker-cell-font-size: 0.875rem;
+        --ngx-signal-form-comp-date-picker-cell-border-radius: 50%;
+        --ngx-signal-form-comp-date-picker-cell-font-family: inherit;
+        --ngx-signal-form-comp-date-picker-cell-font-weight: 400;
+        --ngx-signal-form-comp-date-picker-cell-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-date-picker-cell-hover-bg: var(--ngx-signal-form-sys-color-surface-container-highest);
+        --ngx-signal-form-comp-date-picker-cell-selected-bg: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-date-picker-cell-selected-color: var(--ngx-signal-form-sys-color-on-primary);
+        --ngx-signal-form-comp-date-picker-cell-disabled-opacity: 0.25;
+        --ngx-signal-form-comp-date-picker-cell-outside-opacity: 0.5;
+        --ngx-signal-form-comp-date-picker-cell-today-outline: 2px solid var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-date-picker-cell-focus-outline: 2px solid var(--ngx-signal-form-sys-color-primary);
+        /* Header */
+        --ngx-signal-form-comp-date-picker-header-gap: 0.5rem;
+        --ngx-signal-form-comp-date-picker-header-padding: 0.5rem 1rem 0.25rem 1rem;
+        --ngx-signal-form-comp-date-picker-header-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-date-picker-header-font-size: 1rem;
+        --ngx-signal-form-comp-date-picker-header-font-weight: 500;
+        /* Navigation */
+        --ngx-signal-form-comp-date-picker-nav-btn-size: 2rem;
+        --ngx-signal-form-comp-date-picker-nav-btn-radius: 50%;
+        --ngx-signal-form-comp-date-picker-nav-btn-hover-bg: var(--ngx-signal-form-sys-color-surface-container-highest);
+        /* Popup/Modal */
+        --ngx-signal-form-comp-date-picker-popup-padding: 1.25rem;
+        --ngx-signal-form-comp-date-picker-popup-radius: var(--ngx-signal-form-comp-date-picker-modal-container-shape);
+        --ngx-signal-form-comp-date-picker-popup-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18);
+        --ngx-signal-form-comp-date-picker-popup-bg: var(--ngx-signal-form-comp-date-picker-modal-container-color);
+        /* Range */
+        --ngx-signal-form-comp-date-picker-in-range-bg: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 75%);
+        --ngx-signal-form-comp-date-picker-endpoint-bg: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-date-picker-endpoint-color: var(--ngx-signal-form-sys-color-on-primary);
+        /* Input */
+        --ngx-signal-form-comp-date-picker-input-padding: 0.75rem 1rem;
+        --ngx-signal-form-comp-date-picker-input-radius: var(--ngx-signal-form-comp-date-picker-modal-container-shape);
+        --ngx-signal-form-comp-date-picker-input-bg: var(--ngx-signal-form-sys-color-surface-container-highest);
+        --ngx-signal-form-comp-date-picker-input-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-date-picker-input-font-size: 1rem;
+        --ngx-signal-form-comp-date-picker-input-font-family: inherit;
+        /* Misc */
+        --ngx-signal-form-comp-date-picker-weekday-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-date-picker-weekday-font-size: 0.75rem;
+        --ngx-signal-form-comp-date-picker-weekday-font-weight: 500;
+        --ngx-signal-form-comp-date-picker-title-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-date-picker-title-font-size: 0.875rem;
+        --ngx-signal-form-comp-date-picker-title-font-weight: 600;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --ngx-signal-form-sys-color-on-primary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
+            --ngx-signal-form-sys-color-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 60%);
+            --ngx-signal-form-sys-color-on-primary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
+            --ngx-signal-form-sys-color-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #888 40%);
+            --ngx-signal-form-sys-color-on-secondary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 70%);
+            --ngx-signal-form-sys-color-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 80%);
+            --ngx-signal-form-sys-color-on-secondary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
+            --ngx-signal-form-sys-color-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #c96 40%);
+            --ngx-signal-form-sys-color-on-tertiary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 70%);
+            --ngx-signal-form-sys-color-tertiary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 90%);
+            --ngx-signal-form-sys-color-on-tertiary-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
+            --ngx-signal-form-sys-color-error: #B3261E;
+            --ngx-signal-form-sys-color-on-error: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #fff 80%);
+            --ngx-signal-form-sys-color-error-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #18181b 70%);
+            --ngx-signal-form-sys-color-on-error-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-error), #fff 60%);
+            --ngx-signal-form-sys-color-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 85%);
+            --ngx-signal-form-sys-color-on-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
+            --ngx-signal-form-sys-color-surface-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #49454F 60%);
+            --ngx-signal-form-sys-color-on-surface-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
+            --ngx-signal-form-sys-color-surface-container-lowest: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 100%);
+            --ngx-signal-form-sys-color-surface-container-low: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 88%);
+            --ngx-signal-form-sys-color-surface-container: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 80%);
+            --ngx-signal-form-sys-color-surface-container-high: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 70%);
+            --ngx-signal-form-sys-color-surface-container-highest: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 58%);
+            --ngx-signal-form-sys-color-background: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 95%);
+            --ngx-signal-form-sys-color-on-background: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 80%);
+            --ngx-signal-form-sys-color-outline: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #938F99 40%);
+            --ngx-signal-form-sys-color-outline-variant: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #49454F 60%);
+            --ngx-signal-form-sys-color-inverse-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 60%);
+            --ngx-signal-form-sys-color-inverse-on-surface: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #18181b 60%);
+            --ngx-signal-form-sys-color-inverse-primary: color-mix(in srgb, var(--ngx-signal-form-sys-color-primary), #fff 40%);
+        }
+    }
+
+    /*
  * Component tokens (partial, add more as needed)
  * Example: Text Fields, Checkbox, Date Picker, etc.
  *
  * For brevity, only a subset is included here. Extend as needed from the gist.
  */
 
-:root {
-    /* Text Fields */
-    --ngx-signal-form-comp-filled-text-field-container-color: var(--ngx-signal-form-sys-color-surface-container-highest);
-    --ngx-signal-form-comp-filled-text-field-container-shape: var(--ngx-signal-form-sys-shape-corner-extra-small);
-    --ngx-signal-form-comp-filled-text-field-container-height: 56px;
-    --ngx-signal-form-comp-filled-text-field-label-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-filled-text-field-focus-label-text-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-filled-text-field-input-text-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-filled-text-field-active-indicator-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-filled-text-field-focus-active-indicator-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-filled-text-field-active-indicator-height: 1px;
-    --ngx-signal-form-comp-filled-text-field-focus-active-indicator-height: 2px;
-    --ngx-signal-form-comp-filled-text-field-leading-icon-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-filled-text-field-trailing-icon-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-filled-text-field-supporting-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-filled-text-field-error-active-indicator-color: var(--ngx-signal-form-sys-color-error);
-    --ngx-signal-form-comp-filled-text-field-error-label-text-color: var(--ngx-signal-form-sys-color-error);
-    /* Outlined Text Field */
-    --ngx-signal-form-comp-outlined-text-field-container-height: 56px;
-    --ngx-signal-form-comp-outlined-text-field-label-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-outlined-text-field-focus-label-text-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-outlined-text-field-input-text-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-outlined-text-field-outline-color: var(--ngx-signal-form-sys-color-outline);
-    --ngx-signal-form-comp-outlined-text-field-focus-outline-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-outlined-text-field-outline-width: 1px;
-    --ngx-signal-form-comp-outlined-text-field-focus-outline-width: 2px;
-    --ngx-signal-form-comp-outlined-text-field-container-shape: var(--ngx-signal-form-sys-shape-corner-extra-small);
-    --ngx-signal-form-comp-outlined-text-field-supporting-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-outlined-text-field-error-outline-color: var(--ngx-signal-form-sys-color-error);
-    --ngx-signal-form-comp-outlined-text-field-error-label-text-color: var(--ngx-signal-form-sys-color-error);
+    :root {
+        /* Text Fields */
+        --ngx-signal-form-comp-filled-text-field-container-color: var(--ngx-signal-form-sys-color-surface-container-highest);
+        --ngx-signal-form-comp-filled-text-field-container-shape: var(--ngx-signal-form-sys-shape-corner-extra-small);
+        --ngx-signal-form-comp-filled-text-field-container-height: 56px;
+        --ngx-signal-form-comp-filled-text-field-label-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-filled-text-field-focus-label-text-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-filled-text-field-input-text-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-filled-text-field-active-indicator-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-filled-text-field-focus-active-indicator-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-filled-text-field-active-indicator-height: 1px;
+        --ngx-signal-form-comp-filled-text-field-focus-active-indicator-height: 2px;
+        --ngx-signal-form-comp-filled-text-field-leading-icon-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-filled-text-field-trailing-icon-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-filled-text-field-supporting-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-filled-text-field-error-active-indicator-color: var(--ngx-signal-form-sys-color-error);
+        --ngx-signal-form-comp-filled-text-field-error-label-text-color: var(--ngx-signal-form-sys-color-error);
+        /* Outlined Text Field */
+        --ngx-signal-form-comp-outlined-text-field-container-height: 56px;
+        --ngx-signal-form-comp-outlined-text-field-label-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-outlined-text-field-focus-label-text-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-outlined-text-field-input-text-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-outlined-text-field-outline-color: var(--ngx-signal-form-sys-color-outline);
+        --ngx-signal-form-comp-outlined-text-field-focus-outline-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-outlined-text-field-outline-width: 1px;
+        --ngx-signal-form-comp-outlined-text-field-focus-outline-width: 2px;
+        --ngx-signal-form-comp-outlined-text-field-container-shape: var(--ngx-signal-form-sys-shape-corner-extra-small);
+        --ngx-signal-form-comp-outlined-text-field-supporting-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-outlined-text-field-error-outline-color: var(--ngx-signal-form-sys-color-error);
+        --ngx-signal-form-comp-outlined-text-field-error-label-text-color: var(--ngx-signal-form-sys-color-error);
 
-    /* Checkbox */
-    --ngx-signal-form-comp-checkbox-container-size: 18px;
-    --ngx-signal-form-comp-checkbox-container-shape: 2px;
-    --ngx-signal-form-comp-checkbox-state-layer-size: 40px;
-    --ngx-signal-form-comp-checkbox-state-layer-shape: var(--ngx-signal-form-sys-shape-corner-full);
-    --ngx-signal-form-comp-checkbox-icon-size: 18px;
-    --ngx-signal-form-comp-checkbox-selected-container-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-checkbox-selected-icon-color: var(--ngx-signal-form-sys-color-on-primary);
-    --ngx-signal-form-comp-checkbox-selected-state-layer-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-checkbox-unselected-outline-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-checkbox-unselected-outline-width: 2px;
-    --ngx-signal-form-comp-checkbox-unselected-state-layer-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-checkbox-error-container-color: var(--ngx-signal-form-sys-color-error);
-    --ngx-signal-form-comp-checkbox-error-icon-color: var(--ngx-signal-form-sys-color-on-error);
-    --ngx-signal-form-comp-checkbox-disabled-selected-container-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-checkbox-disabled-outline-color: var(--ngx-signal-form-sys-color-on-surface);
+        /* Checkbox */
+        --ngx-signal-form-comp-checkbox-container-size: 18px;
+        --ngx-signal-form-comp-checkbox-container-shape: 2px;
+        --ngx-signal-form-comp-checkbox-state-layer-size: 40px;
+        --ngx-signal-form-comp-checkbox-state-layer-shape: var(--ngx-signal-form-sys-shape-corner-full);
+        --ngx-signal-form-comp-checkbox-icon-size: 18px;
+        --ngx-signal-form-comp-checkbox-selected-container-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-checkbox-selected-icon-color: var(--ngx-signal-form-sys-color-on-primary);
+        --ngx-signal-form-comp-checkbox-selected-state-layer-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-checkbox-unselected-outline-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-checkbox-unselected-outline-width: 2px;
+        --ngx-signal-form-comp-checkbox-unselected-state-layer-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-checkbox-error-container-color: var(--ngx-signal-form-sys-color-error);
+        --ngx-signal-form-comp-checkbox-error-icon-color: var(--ngx-signal-form-sys-color-on-error);
+        --ngx-signal-form-comp-checkbox-disabled-selected-container-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-checkbox-disabled-outline-color: var(--ngx-signal-form-sys-color-on-surface);
 
-    /* Switch */
-    --ngx-signal-form-comp-switch-track-width: 52px;
-    --ngx-signal-form-comp-switch-track-height: 32px;
-    --ngx-signal-form-comp-switch-track-shape: 9999px;
-    --ngx-signal-form-comp-switch-track-color: transparent;
-    --ngx-signal-form-comp-switch-track-outline-color: var(--ngx-signal-form-sys-color-outline);
-    --ngx-signal-form-comp-switch-track-outline-width: 2px;
-    --ngx-signal-form-comp-switch-selected-track-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-switch-handle-size: 16px;
-    --ngx-signal-form-comp-switch-selected-handle-size: 24px;
-    --ngx-signal-form-comp-switch-handle-color: var(--ngx-signal-form-sys-color-outline);
-    --ngx-signal-form-comp-switch-selected-handle-color: var(--ngx-signal-form-sys-color-on-primary);
-    --ngx-signal-form-comp-switch-handle-shape: var(--ngx-signal-form-sys-shape-corner-full);
+        /* Switch */
+        --ngx-signal-form-comp-switch-track-width: 52px;
+        --ngx-signal-form-comp-switch-track-height: 32px;
+        --ngx-signal-form-comp-switch-track-shape: 9999px;
+        --ngx-signal-form-comp-switch-track-color: transparent;
+        --ngx-signal-form-comp-switch-track-outline-color: var(--ngx-signal-form-sys-color-outline);
+        --ngx-signal-form-comp-switch-track-outline-width: 2px;
+        --ngx-signal-form-comp-switch-selected-track-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-switch-handle-size: 16px;
+        --ngx-signal-form-comp-switch-selected-handle-size: 24px;
+        --ngx-signal-form-comp-switch-handle-color: var(--ngx-signal-form-sys-color-outline);
+        --ngx-signal-form-comp-switch-selected-handle-color: var(--ngx-signal-form-sys-color-on-primary);
+        --ngx-signal-form-comp-switch-handle-shape: var(--ngx-signal-form-sys-shape-corner-full);
 
-    /* Radio Button */
-    --ngx-signal-form-comp-radio-icon-size: 20px;
-    --ngx-signal-form-comp-radio-state-layer-size: 40px;
-    --ngx-signal-form-comp-radio-selected-icon-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-radio-unselected-icon-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        /* Radio Button */
+        --ngx-signal-form-comp-radio-icon-size: 20px;
+        --ngx-signal-form-comp-radio-state-layer-size: 40px;
+        --ngx-signal-form-comp-radio-selected-icon-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-radio-unselected-icon-color: var(--ngx-signal-form-sys-color-on-surface-variant);
 
-    /* Slider */
-    --ngx-signal-form-comp-slider-active-track-height: 4px;
-    --ngx-signal-form-comp-slider-inactive-track-height: 4px;
-    --ngx-signal-form-comp-slider-handle-height: 20px;
-    --ngx-signal-form-comp-slider-handle-width: 20px;
-    --ngx-signal-form-comp-slider-handle-shape: var(--ngx-signal-form-sys-shape-corner-full);
-    --ngx-signal-form-comp-slider-active-track-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-slider-inactive-track-color: var(--ngx-signal-form-sys-color-secondary-container);
-    --ngx-signal-form-comp-slider-handle-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-slider-track-shape: var(--ngx-signal-form-sys-shape-corner-full);
+        /* Slider */
+        --ngx-signal-form-comp-slider-active-track-height: 4px;
+        --ngx-signal-form-comp-slider-inactive-track-height: 4px;
+        --ngx-signal-form-comp-slider-handle-height: 20px;
+        --ngx-signal-form-comp-slider-handle-width: 20px;
+        --ngx-signal-form-comp-slider-handle-shape: var(--ngx-signal-form-sys-shape-corner-full);
+        --ngx-signal-form-comp-slider-active-track-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-slider-inactive-track-color: var(--ngx-signal-form-sys-color-secondary-container);
+        --ngx-signal-form-comp-slider-handle-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-slider-track-shape: var(--ngx-signal-form-sys-shape-corner-full);
 
-    /* Segmented Button */
-    --ngx-signal-form-comp-segmented-button-height: 40px;
-    --ngx-signal-form-comp-segmented-button-shape: var(--ngx-signal-form-sys-shape-corner-full);
-    --ngx-signal-form-comp-segmented-button-outline-color: var(--ngx-signal-form-sys-color-outline);
-    --ngx-signal-form-comp-segmented-button-selected-container-color: var(--ngx-signal-form-sys-color-secondary-container);
-    --ngx-signal-form-comp-segmented-button-selected-label-text-color: var(--ngx-signal-form-sys-color-on-secondary-container);
-    --ngx-signal-form-comp-segmented-button-unselected-label-text-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-segmented-button-label-text-font-size: var(--ngx-signal-form-sys-typescale-label-large-size);
-    --ngx-signal-form-comp-segmented-button-label-text-weight: var(--ngx-signal-form-sys-typescale-label-large-weight);
+        /* Segmented Button */
+        --ngx-signal-form-comp-segmented-button-height: 40px;
+        --ngx-signal-form-comp-segmented-button-shape: var(--ngx-signal-form-sys-shape-corner-full);
+        --ngx-signal-form-comp-segmented-button-outline-color: var(--ngx-signal-form-sys-color-outline);
+        --ngx-signal-form-comp-segmented-button-selected-container-color: var(--ngx-signal-form-sys-color-secondary-container);
+        --ngx-signal-form-comp-segmented-button-selected-label-text-color: var(--ngx-signal-form-sys-color-on-secondary-container);
+        --ngx-signal-form-comp-segmented-button-unselected-label-text-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-segmented-button-label-text-font-size: var(--ngx-signal-form-sys-typescale-label-large-size);
+        --ngx-signal-form-comp-segmented-button-label-text-weight: var(--ngx-signal-form-sys-typescale-label-large-weight);
 
-    /* Filter Chip (Multiselect) */
-    --ngx-signal-form-comp-filter-chip-container-height: 32px;
-    --ngx-signal-form-comp-filter-chip-container-shape: var(--ngx-signal-form-sys-shape-corner-small);
-    --ngx-signal-form-comp-filter-chip-outline-color: var(--ngx-signal-form-sys-color-outline);
-    --ngx-signal-form-comp-filter-chip-selected-container-color: var(--ngx-signal-form-sys-color-secondary-container);
-    --ngx-signal-form-comp-filter-chip-selected-label-text-color: var(--ngx-signal-form-sys-color-on-secondary-container);
-    --ngx-signal-form-comp-filter-chip-label-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-filter-chip-hover-state-layer-color: var(--ngx-signal-form-sys-color-on-surface);
+        /* Filter Chip (Multiselect) */
+        --ngx-signal-form-comp-filter-chip-container-height: 32px;
+        --ngx-signal-form-comp-filter-chip-container-shape: var(--ngx-signal-form-sys-shape-corner-small);
+        --ngx-signal-form-comp-filter-chip-outline-color: var(--ngx-signal-form-sys-color-outline);
+        --ngx-signal-form-comp-filter-chip-selected-container-color: var(--ngx-signal-form-sys-color-secondary-container);
+        --ngx-signal-form-comp-filter-chip-selected-label-text-color: var(--ngx-signal-form-sys-color-on-secondary-container);
+        --ngx-signal-form-comp-filter-chip-label-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-filter-chip-hover-state-layer-color: var(--ngx-signal-form-sys-color-on-surface);
 
-    /* Time Picker */
-    --ngx-signal-form-comp-time-picker-container-color: var(--ngx-signal-form-sys-color-surface-container-high);
-    --ngx-signal-form-comp-time-picker-container-shape: var(--ngx-signal-form-sys-shape-corner-extra-large);
-    --ngx-signal-form-comp-time-picker-input-container-color: var(--ngx-signal-form-sys-color-surface-container-highest);
-    --ngx-signal-form-comp-time-picker-input-container-shape: var(--ngx-signal-form-sys-shape-corner-small);
-    --ngx-signal-form-comp-time-picker-input-segment-width: 96px;
-    --ngx-signal-form-comp-time-picker-input-segment-height: 80px;
-    --ngx-signal-form-comp-time-picker-clock-dial-container-color: var(--ngx-signal-form-sys-color-surface-container-highest);
-    --ngx-signal-form-comp-time-picker-clock-dial-size: 256px;
-    --ngx-signal-form-comp-time-picker-headline-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-time-picker-selected-segment-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-time-picker-selected-segment-container-color: var(--ngx-signal-form-sys-color-primary-container);
-    --ngx-signal-form-comp-time-picker-period-outline-color: var(--ngx-signal-form-sys-color-outline);
+        /* Time Picker */
+        --ngx-signal-form-comp-time-picker-container-color: var(--ngx-signal-form-sys-color-surface-container-high);
+        --ngx-signal-form-comp-time-picker-container-shape: var(--ngx-signal-form-sys-shape-corner-extra-large);
+        --ngx-signal-form-comp-time-picker-input-container-color: var(--ngx-signal-form-sys-color-surface-container-highest);
+        --ngx-signal-form-comp-time-picker-input-container-shape: var(--ngx-signal-form-sys-shape-corner-small);
+        --ngx-signal-form-comp-time-picker-input-segment-width: 96px;
+        --ngx-signal-form-comp-time-picker-input-segment-height: 80px;
+        --ngx-signal-form-comp-time-picker-clock-dial-container-color: var(--ngx-signal-form-sys-color-surface-container-highest);
+        --ngx-signal-form-comp-time-picker-clock-dial-size: 256px;
+        --ngx-signal-form-comp-time-picker-headline-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-time-picker-selected-segment-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-time-picker-selected-segment-container-color: var(--ngx-signal-form-sys-color-primary-container);
+        --ngx-signal-form-comp-time-picker-period-outline-color: var(--ngx-signal-form-sys-color-outline);
 
-    /* Color Picker (custom — not in M3 spec, inspired by Text Field + Menu) */
-    --ngx-signal-form-comp-color-picker-swatch-size: 2.5rem;
-    --ngx-signal-form-comp-color-picker-swatch-height: 1.25rem;
-    --ngx-signal-form-comp-color-picker-swatch-radius: var(--ngx-signal-form-sys-shape-corner-full);
-    --ngx-signal-form-comp-color-picker-dropdown-radius: var(--ngx-signal-form-sys-shape-corner-medium);
-    --ngx-signal-form-comp-color-picker-dropdown-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.3);
+        /* Color Picker (custom — not in M3 spec, inspired by Text Field + Menu) */
+        --ngx-signal-form-comp-color-picker-swatch-size: 2.5rem;
+        --ngx-signal-form-comp-color-picker-swatch-height: 1.25rem;
+        --ngx-signal-form-comp-color-picker-swatch-radius: var(--ngx-signal-form-sys-shape-corner-full);
+        --ngx-signal-form-comp-color-picker-dropdown-radius: var(--ngx-signal-form-sys-shape-corner-medium);
+        --ngx-signal-form-comp-color-picker-dropdown-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.3);
 
-    /* Date Picker (Docked & Modal) */
-    --ngx-signal-form-comp-date-picker-docked-container-color: var(--ngx-signal-form-sys-color-surface-container-high);
-    --ngx-signal-form-comp-date-picker-docked-header-color: var(--ngx-signal-form-sys-color-on-surface-variant);
-    --ngx-signal-form-comp-date-picker-docked-selected-date-container-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-date-picker-docked-selected-date-label-color: var(--ngx-signal-form-sys-color-on-primary);
-    --ngx-signal-form-comp-date-picker-docked-today-date-color: var(--ngx-signal-form-sys-color-primary);
-    --ngx-signal-form-comp-date-picker-docked-date-label-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-date-picker-docked-weekday-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-date-picker-modal-container-color: var(--ngx-signal-form-sys-color-surface-container-high);
-    --ngx-signal-form-comp-date-picker-modal-container-shape: var(--ngx-signal-form-sys-shape-corner-extra-large);
-    --ngx-signal-form-comp-date-picker-modal-headline-color: var(--ngx-signal-form-sys-color-on-surface);
-    --ngx-signal-form-comp-date-picker-modal-supporting-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        /* Date Picker (Docked & Modal) */
+        --ngx-signal-form-comp-date-picker-docked-container-color: var(--ngx-signal-form-sys-color-surface-container-high);
+        --ngx-signal-form-comp-date-picker-docked-header-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+        --ngx-signal-form-comp-date-picker-docked-selected-date-container-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-date-picker-docked-selected-date-label-color: var(--ngx-signal-form-sys-color-on-primary);
+        --ngx-signal-form-comp-date-picker-docked-today-date-color: var(--ngx-signal-form-sys-color-primary);
+        --ngx-signal-form-comp-date-picker-docked-date-label-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-date-picker-docked-weekday-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-date-picker-modal-container-color: var(--ngx-signal-form-sys-color-surface-container-high);
+        --ngx-signal-form-comp-date-picker-modal-container-shape: var(--ngx-signal-form-sys-shape-corner-extra-large);
+        --ngx-signal-form-comp-date-picker-modal-headline-color: var(--ngx-signal-form-sys-color-on-surface);
+        --ngx-signal-form-comp-date-picker-modal-supporting-text-color: var(--ngx-signal-form-sys-color-on-surface-variant);
+    }
+
 }
+
+/* end @layer ngx.tokens */

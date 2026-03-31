@@ -1,11 +1,14 @@
 import { NgTemplateOutlet } from "@angular/common";
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChild,
   ElementRef,
   forwardRef,
+  inject,
+  Injector,
   input,
   signal,
   TemplateRef,
@@ -16,6 +19,7 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxOptionDirective } from "../../control/option.directive";
+import { NgxGlassDirective } from "../../core/directives/glass.directive";
 import { NgxOptionsOverlayControl } from "../../core/options-overlay-control.directive";
 import { filterOptionsByQuery } from "../../core/options-utils";
 import { NGX_OPTIONS_CONTROL } from "../../core/tokens";
@@ -36,6 +40,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
     NgxControlLabelComponent,
     NgxErrorListComponent,
     NgxIconComponent,
+    NgxGlassDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -87,7 +92,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
             [attr.aria-disabled]="effectiveAriaDisabled()"
             [attr.aria-label]="label() || null"
             (click)="toggleOverlay($event)"
-            (blur)="onBlur()"
+            (blur)="onBlur($event)"
           >
             @if (selectedOption(); as sel) {
               <span class="ngx-select__value">
@@ -117,6 +122,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
             ></div>
           }
           <div
+            ngxGlass
             class="ngx-select__dropdown"
             [class.ngx-select__dropdown--above]="dropUp()"
             [class.ngx-select__dropdown--overlay]="overlayMode()"
@@ -219,6 +225,7 @@ export class NgxSelectComponent<TValue = string>
   implements NgxOptionsControl<TValue> {
   readonly placeholder = input<string>("");
   protected override readonly minSpace = 250;
+  private readonly injector = inject(Injector);
 
   /** Custom option template provided via `<ng-template ngxOption>`. */
 
@@ -272,7 +279,7 @@ export class NgxSelectComponent<TValue = string>
 
     // Focus search input after DOM renders
     if (this.searchable()) {
-      setTimeout(() => this.searchInputRef()?.nativeElement.focus(), 0);
+      afterNextRender(() => this.searchInputRef()?.nativeElement.focus(), { injector: this.injector });
     }
   }
 
@@ -282,14 +289,14 @@ export class NgxSelectComponent<TValue = string>
     this.closeOverlay();
   }
 
-  protected onBlur(): void {
-    // Delay to allow click on option to register before closing
-    setTimeout(() => {
-      if (!this.wrapperRef()?.nativeElement.contains(document.activeElement)) {
-        this.closeOverlay();
-        this.markAsTouched();
-      }
-    }, 150);
+  protected onBlur(event: FocusEvent): void {
+    // Use relatedTarget to check where focus is going. When null
+    // (click on non-focusable element), onDocumentClick handles closing.
+    const next = event.relatedTarget as Node | null;
+    if (next && !this.wrapperRef()?.nativeElement.contains(next)) {
+      this.closeOverlay();
+      this.markAsTouched();
+    }
   }
 
   protected onKeydown(event: KeyboardEvent): void {

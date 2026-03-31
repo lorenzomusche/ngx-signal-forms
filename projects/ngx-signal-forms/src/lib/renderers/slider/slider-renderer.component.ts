@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, input } from "@angular/core";
+import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, viewChild, input } from "@angular/core";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
@@ -60,18 +60,21 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
     }
   `,
 })
-export class NgxSliderComponent extends NgxBaseControl<number> implements AfterViewInit {
+export class NgxSliderComponent extends NgxBaseControl<number> {
   readonly min       = input<number>(0);
   readonly max       = input<number>(100);
   readonly step      = input<number>(1);
   readonly showValue = input<boolean>(true);
 
-  @ViewChild('rangeInput') private rangeInput!: ElementRef<HTMLInputElement>;
+  private readonly rangeInput = viewChild<ElementRef<HTMLInputElement>>('rangeInput');
 
   protected readonly fieldId = `ngx-control-slider-${NgxBaseControl.nextId()}`;
 
-  ngAfterViewInit(): void {
-    this.updateFillPct(this.value() ?? this.min(), this.min(), this.max());
+  constructor() {
+    super();
+    afterNextRender(() => {
+      this.updateFillPct(this.value() ?? this.min(), this.min(), this.max());
+    });
   }
 
   protected onInput(event: Event): void {
@@ -90,8 +93,9 @@ export class NgxSliderComponent extends NgxBaseControl<number> implements AfterV
   }
 
   private updateFillPct(value: number, min: number, max: number): void {
-    if (!this.rangeInput) return;
+    const el = this.rangeInput()?.nativeElement;
+    if (!el) return;
     const pct = max !== min ? ((value - min) / (max - min)) * 100 : 0;
-    this.rangeInput.nativeElement.style.setProperty('--ngx-slider-fill-pct', `${pct}%`);
+    el.style.setProperty('--ngx-slider-fill-pct', `${pct}%`);
   }
 }

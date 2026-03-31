@@ -132,6 +132,7 @@ import {
                   <ngx-control-select
                     name="theme"
                     label="Design System Theme"
+                    [initialValue]="'ios'"
                     [options]="themeOptions"
                     ngxInlineErrors
                   >
@@ -429,7 +430,7 @@ export class AppComponent {
   // ── Initial values ────────────────────────────────────────────────────────────
 
   readonly initialDesignSystemValues = {
-    theme: "default",
+    theme: "ios",
     primaryColor: "#18181b",
     density: -3,
     floating: false,

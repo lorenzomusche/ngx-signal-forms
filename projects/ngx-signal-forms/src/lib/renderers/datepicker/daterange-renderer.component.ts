@@ -1,8 +1,10 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
+  Injector,
   input,
   signal,
   viewChild,
@@ -181,6 +183,7 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
     viewChild<NgxRangeCalendarComponent>("calendar");
 
   private readonly locale = inject(NGX_DATE_LOCALE);
+  private readonly injector = inject(Injector);
 
   // ── Derived state ─────────────────────────────────────────────────────────────
 
@@ -241,12 +244,12 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
   protected override onBeforeOpen(): void {
     this.tempStart.set(this.parsedStart());
     this.tempEnd.set(this.parsedEnd());
-    setTimeout(() => {
+    afterNextRender(() => {
       const cal = this.calendarRef();
       if (!cal) return;
       cal.syncView(this.tempStart(), this.tempEnd());
       cal.focusFocusedDate();
-    }, 0);
+    }, { injector: this.injector });
   }
 
   // ── Range picked from calendar ───────────────────────────────────────────────

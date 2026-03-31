@@ -76,7 +76,7 @@ import { NgxSelectOption } from "../../core/types";
     }
   `,
 })
-export class NgxSegmentedButtonComponent<TValue = any> extends NgxBaseControl<TValue | null> {
+export class NgxSegmentedButtonComponent<TValue = unknown> extends NgxBaseControl<TValue | null> {
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
 
   public readonly fullWidth: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });

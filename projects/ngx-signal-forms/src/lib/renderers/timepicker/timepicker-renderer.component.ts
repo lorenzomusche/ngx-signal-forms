@@ -1,7 +1,10 @@
 import { NgTemplateOutlet } from "@angular/common";
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  inject,
+  Injector,
   input,
   signal,
 } from "@angular/core";
@@ -10,6 +13,7 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
+import { NgxGlassDirective } from "../../core/directives/glass.directive";
 import { getCurrentTime } from "../../core/time-utils";
 import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
 
@@ -25,6 +29,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
     NgxErrorListComponent,
     NgxTimepickerClockComponent,
     NgxIconComponent,
+    NgxGlassDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './timepicker-renderer.component.scss',
@@ -96,8 +101,9 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
           <div class="ngx-timepicker__backdrop" (click)="closeOverlay()"></div>
         }
         <div
+          ngxGlass
           class="ngx-timepicker__popup"
-          [class.ngx-timepicker__popup--above]="position() === 'above'"
+          [class.ngx-timepicker__popup--above]="position() === 'above' && position() !== 'overlay'"
           [class.ngx-timepicker__popup--overlay]="position() === 'overlay'"
           [class.ngx-timepicker__popup--right]="alignment() === 'right'"
         >
@@ -129,6 +135,7 @@ export class NgxTimepickerComponent extends NgxOverlayControl<string | null> {
 
   protected readonly fieldId = `ngx-control-timepicker-${NgxBaseControl.nextId()}`;
   protected readonly draftValue = signal<string | null>(null);
+  private readonly injector = inject(Injector);
 
   protected override onBeforeOpen(): void {
     // If empty, default to current system time so 'OK' button picks it immediately.
@@ -182,7 +189,7 @@ export class NgxTimepickerComponent extends NgxOverlayControl<string | null> {
       input.value === "00:00 AM" ||
       input.value === "00:00 PM"
     ) {
-      setTimeout(() => input.select(), 0);
+      afterNextRender(() => input.select(), { injector: this.injector });
     }
   }
 

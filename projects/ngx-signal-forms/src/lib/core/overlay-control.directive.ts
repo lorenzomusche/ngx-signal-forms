@@ -8,8 +8,8 @@ import {
 import { NgxBaseControl } from "../control/control.directive";
 import { NgxA11yAnnouncer } from "./a11y-announcer";
 import {
-  ComputedPosition,
   computeCoordsForAnchor,
+  ComputedPosition,
   computeOverlayPosition,
   OverlayAlignment,
   OverlayAnchor,

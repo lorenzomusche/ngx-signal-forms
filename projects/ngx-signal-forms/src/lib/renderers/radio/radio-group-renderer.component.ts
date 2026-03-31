@@ -62,7 +62,7 @@ import { NgxSelectOption } from "../../core/types";
     }
   `,
 })
-export class NgxRadioGroupComponent<TValue = any> extends NgxBaseControl<TValue | null> {
+export class NgxRadioGroupComponent<TValue = unknown> extends NgxBaseControl<TValue | null> {
   readonly options = input<readonly NgxSelectOption<TValue>[]>([]);
   readonly layout  = input<"vertical" | "horizontal">("vertical");
 

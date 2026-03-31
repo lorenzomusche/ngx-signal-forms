@@ -1,86 +1,28 @@
-/* ─── Custom Number Spin Buttons ─────────────────────────────────────────── */
-.ngx-spin-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--ngx-spin-btn-size);
-    height: 1.25em;
-    border-radius: var(--ngx-spin-btn-border-radius);
-    color: var(--ngx-input-icon-color);
-    background: transparent;
-    border: none;
-    transition: background 0.15s, color 0.15s;
-    font-size: 1em;
-    line-height: 1;
-    box-shadow: none;
-    outline: none;
-}
-
-.ngx-spin-btn-up {
-    margin-bottom: 0.1em;
-}
-
-.ngx-spin-btn-down {
-    margin-top: 0.1em;
-}
-
-.ngx-spin-btn:hover,
-.ngx-spin-btn:focus {
-    background: var(--ngx-spin-btn-hover-bg);
-    color: var(--ngx-input-focus-color);
-}
-
-.ngx-spin-btn:active {
-    background: var(--ngx-input-focus-color);
-    color: var(--ngx-on-error);
-}
-
-.ngx-spin-btn svg {
-    display: block;
-    width: 1em;
-    height: 1em;
-    pointer-events: none;
-}
-
-/* Stile coerente per input[type=number]: nasconde le freccette native */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type="number"] {
-    appearance: textfield;
-    -moz-appearance: textfield;
-}
-
-input[type="date"] {
-    font-size: var(--ngx-input-font-size);
-}
-
-/* Rimuove l'outline di default (highlight blu) sui campi data in focus anche nella libreria */
-input[type="date"]:focus,
-.ngx-datepicker__input:focus,
-.ngx-daterange__input:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
 /*
- * ngx-signal-forms — Default Theme
+ * ngx-signal-forms.css — Default Theme
  *
  * Import this file in your application's global styles:
  *   @import 'ngx-signal-forms/styles/ngx-signal-forms.css';
  *
  * Override any CSS custom property on :root or a scoped selector
  * to create a custom theme.
+ *
+ * CSS @layer order:
+ *   ngx.tokens     — all CSS custom properties (:root bridge + dark-mode overrides)
+ *   ngx.base       — renderer layout, generic wrappers
+ *   ngx.components — every component (input, select, checkbox, toggle, datepicker…)
+ *   ngx.themes     — reserved for theme overrides (material, ionic, ios)
  */
 
-/* ─── Custom Properties (theming API) ─────────────────────────────────────── */
+@layer ngx.tokens, ngx.base, ngx.components, ngx.themes;
 
-/* All base tokens (color, shape, typography, elevation) are sourced from ngx-signal-forms-m3-base.css.
-   The block below bridges --ngx-signal-form-* system/component tokens → --ngx-* component variables.
-   Theme files (material, ionic, ios) may override --ngx-primary etc. at the :root level after this. */
+/* ═══════════════════════════════════════════════════════════════════════════
+ * LAYER: ngx.tokens
+ * CSS custom properties — bridge from --ngx-signal-form-sys-* / comp tokens
+ * to the short --ngx-* variables used by every component below.
+ * Dark-mode overrides are kept here so they cascade automatically.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+@layer ngx.tokens {
 
 :root {
     /* ── Color ──────────────────────────────────────────────────────────────── */
@@ -320,6 +262,107 @@ input[type="date"]:focus,
     --ngx-multiselect-overlay-bg: var(--ngx-surface);
 }
 
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ngx-overlay-backdrop-bg: rgba(0, 0, 0, 0.6);
+        --ngx-shadow-depth-1: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 4px 1px rgba(0, 0, 0, 0.3);
+        --ngx-shadow-depth-2: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 8px 2px rgba(0, 0, 0, 0.3);
+    }
+}
+
+} /* end @layer ngx.tokens */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * LAYER: ngx.base
+ * Renderer layout scaffold, generic input wrapper, label, floating label,
+ * and supporting text — the structural foundation every component builds on.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+@layer ngx.base {
+
+/* ─── Custom Number Spin Buttons ─────────────────────────────────────────── */
+.ngx-spin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--ngx-spin-btn-size);
+    height: 1.25em;
+    border-radius: var(--ngx-spin-btn-border-radius);
+    color: var(--ngx-input-icon-color);
+    background: transparent;
+    border: none;
+    transition: background 0.15s, color 0.15s;
+    font-size: 1em;
+    line-height: 1;
+    box-shadow: none;
+    outline: none;
+}
+
+.ngx-spin-btn-up {
+    margin-bottom: 0.1em;
+}
+
+.ngx-spin-btn-down {
+    margin-top: 0.1em;
+}
+
+.ngx-spin-btn:hover,
+.ngx-spin-btn:focus {
+    background: var(--ngx-spin-btn-hover-bg);
+    color: var(--ngx-input-focus-color);
+}
+
+.ngx-spin-btn:active {
+    background: var(--ngx-input-focus-color);
+    color: var(--ngx-on-error);
+}
+
+.ngx-spin-btn svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+    pointer-events: none;
+}
+
+/* Stile coerente per input[type=number]: nasconde le freccette native */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+input[type="date"] {
+    font-size: var(--ngx-input-font-size);
+}
+
+/* Rimuove l'outline di default (highlight blu) sui campi data in focus anche nella libreria */
+input[type="date"]:focus,
+.ngx-datepicker__input:focus,
+.ngx-daterange__input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/*
+ * ngx-signal-forms — Default Theme
+ *
+ * Import this file in your application's global styles:
+ *   @import 'ngx-signal-forms/styles/ngx-signal-forms.css';
+ *
+ * Override any CSS custom property on :root or a scoped selector
+ * to create a custom theme.
+ */
+
+/* ─── Custom Properties (theming API) ─────────────────────────────────────── */
+
+/* All base tokens (color, shape, typography, elevation) are sourced from ngx-signal-forms-m3-base.css.
+   The block below bridges --ngx-signal-form-* system/component tokens → --ngx-* component variables.
+   Theme files (material, ionic, ios) may override --ngx-primary etc. at the :root level after this. */
+
 /* ─── Color Picker ─────────────────────────────────────────────────────── */
 
 .ngx-colors {
@@ -553,14 +596,16 @@ input[type="date"]:focus,
 
 /* Dark mode: --ngx-signal-form-sys-* tokens are updated in ngx-signal-forms-m3-base.css.
    The :root bridge above cascades automatically. Only add overrides not covered by base. */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --ngx-overlay-backdrop-bg: rgba(0, 0, 0, 0.6);
-        --ngx-shadow-depth-1: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 4px 1px rgba(0, 0, 0, 0.3);
-        --ngx-shadow-depth-2: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 8px 2px rgba(0, 0, 0, 0.3);
-    }
-}
 
+} /* end @layer ngx.base */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * LAYER: ngx.components
+ * Individual component styles: standalone inputs, select, checkbox, toggle,
+ * radio, slider, segmented button, chips, multiselect, file upload, color
+ * picker, datepicker, timepicker, month/year picker, date range picker.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+@layer ngx.components {
 
 /* ─── Renderer Layout ─────────────────────────────────────────────────────── */
 
@@ -2744,3 +2789,5 @@ button.ngx-chip:hover:not(.ngx-chip--selected):not(:disabled) {
     cursor: not-allowed;
     background: transparent !important;
 }
+
+} /* end @layer ngx.components */

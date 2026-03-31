@@ -1,11 +1,14 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  effect,
+  inject,
+  Injector,
   input,
   output,
   signal,
   viewChild,
-  effect,
 } from "@angular/core";
 import {
   addDays,
@@ -102,13 +105,14 @@ export class NgxCalendarComponent {
   protected readonly view = signal<CalendarView>("calendar");
 
   private readonly grid = viewChild(NgxCalendarGridComponent);
+  private readonly injector = inject(Injector);
 
   constructor() {
     effect(() => {
       const date = this.focusedDate();
       // We use a small timeout to ensure the grid has rendered the new date
       // before we try to focus it.
-      setTimeout(() => this.grid()?.focusDate(date), 0);
+      afterNextRender(() => this.grid()?.focusDate(date), { injector: this.injector });
     });
   }
 

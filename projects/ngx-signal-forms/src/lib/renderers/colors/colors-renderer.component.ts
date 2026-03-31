@@ -143,13 +143,14 @@ export class NgxColorsComponent extends NgxOverlayControl<string> {
     // Sync logic if needed
   }
 
-  protected onBlur(): void {
-    setTimeout(() => {
-      if (!this.wrapperRef()?.nativeElement.contains(document.activeElement)) {
-        this.closeOverlay();
-        this.markAsTouched();
-      }
-    }, 150);
+  protected onBlur(event: FocusEvent): void {
+    // Use relatedTarget to check where focus is going. When null
+    // (click on non-focusable element), onDocumentClick handles closing.
+    const next = event.relatedTarget as Node | null;
+    if (next && !this.wrapperRef()?.nativeElement.contains(next)) {
+      this.closeOverlay();
+      this.markAsTouched();
+    }
   }
 
 

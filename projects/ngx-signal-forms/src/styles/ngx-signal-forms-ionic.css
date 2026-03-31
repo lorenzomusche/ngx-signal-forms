@@ -1,3 +1,5 @@
+@import './ngx-signal-forms.css';
+
 /*
  * ngx-signal-forms — Ionic Theme
  *
@@ -10,7 +12,14 @@
  *   - https://ionicframework.com/docs/api/input
  */
 
-@import './ngx-signal-forms.css';
+/* ═══════════════════════════════════════════════════════════════════════════
+ * LAYER: ngx.themes
+ * Theme overrides for the Ionic theme.
+ * Applies Ionic Framework colors and system-font stacks.
+ * All token overrides here are scoped to ngx.themes so they cascade AFTER
+ * ngx.tokens without relying on specificity hacks.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+@layer ngx.themes {
 
 :root {
     /* Base Palette — Ionic Defaults */
@@ -214,3 +223,5 @@
 .ngx-checkbox input[type="checkbox"]:focus-visible+span::before {
     box-shadow: var(--ngx-input-focus-shadow);
 }
+
+} /* end @layer ngx.themes */

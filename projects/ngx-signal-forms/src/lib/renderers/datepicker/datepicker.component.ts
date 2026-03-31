@@ -1,9 +1,11 @@
 import { NgTemplateOutlet } from "@angular/common";
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
+  Injector,
   input,
   signal,
   viewChild,
@@ -20,6 +22,7 @@ import {
   today,
 } from "../../core/date-utils";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
+import { NgxGlassDirective } from "../../core/directives/glass.directive";
 import { NgxCalendarComponent } from "./calendar.component";
 
 /**
@@ -35,6 +38,7 @@ import { NgxCalendarComponent } from "./calendar.component";
     NgxControlLabelComponent,
     NgxErrorListComponent,
     NgxIconComponent,
+    NgxGlassDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -101,6 +105,7 @@ import { NgxCalendarComponent } from "./calendar.component";
           <div class="ngx-datepicker__backdrop" (click)="closeOverlay()"></div>
         }
         <div
+          ngxGlass
           class="ngx-datepicker__popup"
           [class.ngx-datepicker__popup--modal]="variant() === 'modal' || position() === 'overlay'"
           [class.ngx-datepicker__popup--above]="position() === 'above' && variant() !== 'modal'"
@@ -156,6 +161,7 @@ export class NgxDatePickerComponent extends NgxOverlayControl<string | null> {
 
   private readonly calendarRef = viewChild<NgxCalendarComponent>("calendar");
   private readonly locale = inject(NGX_DATE_LOCALE);
+  private readonly injector = inject(Injector);
 
   // ── Derived state ───────────────────────────────────────────────────────────
 
@@ -195,12 +201,12 @@ export class NgxDatePickerComponent extends NgxOverlayControl<string | null> {
 
   protected override onBeforeOpen(): void {
     this.tempSelectedDate.set(this.parsedSelectedDate());
-    setTimeout(() => {
+    afterNextRender(() => {
       const cal = this.calendarRef();
       if (!cal) return;
       cal.syncView(this.tempSelectedDate());
       cal.focusFocusedDate();
-    }, 0);
+    }, { injector: this.injector });
   }
 
   protected applySelection(): void {

@@ -1,11 +1,14 @@
 import { NgTemplateOutlet } from "@angular/common";
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChild,
   ElementRef,
   forwardRef,
+  inject,
+  Injector,
   input,
   TemplateRef,
   viewChild,
@@ -229,6 +232,7 @@ export class NgxMultiselectComponent<TValue = string>
   extends NgxOptionsOverlayControl<ReadonlyArray<TValue>, TValue>
   implements NgxOptionsControl<TValue> {
   protected override readonly minSpace = 80;
+  private readonly injector = inject(Injector);
 
   readonly mode = input<"single" | "multi">("single");
 
@@ -268,7 +272,7 @@ export class NgxMultiselectComponent<TValue = string>
 
   protected override onBeforeOpen(): void {
     this.searchQuery.set("");
-    setTimeout(() => this.overlayInputRef()?.nativeElement.focus(), 0);
+    afterNextRender(() => this.overlayInputRef()?.nativeElement.focus(), { injector: this.injector });
   }
 
   /**

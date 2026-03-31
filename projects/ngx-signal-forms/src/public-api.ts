@@ -92,6 +92,7 @@ export { NgxControlComponent } from "./lib/control/control.component";
 export { NgxBaseControl } from "./lib/control/control.directive";
 export { NgxOverlayControl } from "./lib/core/overlay-control.directive";
 export { NgxOptionsOverlayControl } from "./lib/core/options-overlay-control.directive";
+export { NgxGlassDirective } from "./lib/core/directives/glass.directive";
 export { NgxControlLabelComponent } from "./lib/control/ngx-control-label.component";
 export { NgxErrorListComponent } from "./lib/control/error-list.component";
 export { NgxPrefixDirective } from "./lib/control/prefix.directive";
