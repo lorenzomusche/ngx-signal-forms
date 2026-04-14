@@ -1,5 +1,5 @@
 import { Directive, effect, ElementRef, inject, input } from "@angular/core";
-import { NGX_FLOATING_LABELS } from "../core/tokens";
+import { NGX_FLOATING_LABELS, NGX_FLOATING_LABELS_DEFAULT, NGX_FLOATING_LABELS_DENSITY_DEFAULT } from "../core/tokens";
 
 /**
  * Opt-in directive to enable Material-style floating labels for all descendant
@@ -23,14 +23,15 @@ import { NGX_FLOATING_LABELS } from "../core/tokens";
   ],
 })
 export class NgxFloatingLabelsDirective {
-  /** Enables or disables floating labels for descendants. Defaults to true when the directive is used. */
-  readonly ngxFloatingLabels = input<boolean>(true);
+  /** Enables or disables floating labels for descendants. Defaults to the value of `NGX_FLOATING_LABELS_DEFAULT`. */
+  readonly ngxFloatingLabels = input<boolean>(inject(NGX_FLOATING_LABELS_DEFAULT));
 
   /** 
    * Density scaling for the floating labels, replicating M3 density behavior. 
-   * 0 is standard M3 (56px), negative values make it more compact. Defaults to -2 for balanced compactness (48px).
+   * 0 is standard M3 (56px), negative values make it more compact.
+   * Defaults to the value of `NGX_FLOATING_LABELS_DENSITY_DEFAULT`.
    */
-  readonly ngxFloatingLabelsDensity = input<number>(-2);
+  readonly ngxFloatingLabelsDensity = input<number>(inject(NGX_FLOATING_LABELS_DENSITY_DEFAULT));
 
   constructor() {
     const el = inject(ElementRef);

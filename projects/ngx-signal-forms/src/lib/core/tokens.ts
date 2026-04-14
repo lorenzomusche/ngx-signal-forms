@@ -1,7 +1,6 @@
 import { InjectionToken } from "@angular/core";
-import { NgxFormAdapter } from "./types";
-import { NgxOptionsControl } from "./types";
 import type { NgxDeclarativeRegistry } from "./declarative-form-adapter";
+import { NgxFormAdapter, NgxOptionsControl } from "./types";
 
 /**
  * Scoped to NgxFormComponent via providers[].
@@ -33,6 +32,26 @@ export const NGX_OPTIONS_CONTROL = new InjectionToken<NgxOptionsControl<unknown>
 export const NGX_FLOATING_LABELS = new InjectionToken<
   import("../form/ngx-floating-labels.directive").NgxFloatingLabelsDirective
 >("NGX_FLOATING_LABELS");
+
+/**
+ * Global default for whether floating labels are enabled.
+ * Override at application root to change the default for all forms.
+ * Defaults to `false` (floating labels opt-in via `ngxFloatingLabels` directive).
+ */
+export const NGX_FLOATING_LABELS_DEFAULT = new InjectionToken<boolean>(
+  "NGX_FLOATING_LABELS_DEFAULT",
+  { providedIn: "root", factory: () => false },
+);
+
+/**
+ * Global default density for floating labels.
+ * Replicates M3 density semantics: 0 = standard 56px, negative values compact.
+ * Defaults to `-2` (48px, balanced compactness).
+ */
+export const NGX_FLOATING_LABELS_DENSITY_DEFAULT = new InjectionToken<number>(
+  "NGX_FLOATING_LABELS_DENSITY_DEFAULT",
+  { providedIn: "root", factory: () => -2 },
+);
 
 /**
  * Provided by NgxFormComponent in declarative mode (no explicit [adapter] input).

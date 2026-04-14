@@ -1,0 +1,162 @@
+import { NgClass, NgStyle } from "@angular/common";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  input,
+  output,
+  viewChild,
+  effect,
+} from "@angular/core";
+import { ComputedPosition, getOverlayStyles, OverlayAlignment, OverlayPosition } from "./overlay-position";
+
+/**
+ * Unified overlay panel container.
+ * Centralizes backdrop, positioning variables, and MD3 surface styles.
+ */
+@Component({
+  selector: "ngx-overlay-panel",
+  standalone: true,
+  imports: [NgClass, NgStyle],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    "display": "contents",
+    "[class.ngx-overlay--open]": "open()",
+  },
+  template: `
+    @if (hasBackdrop() && open()) {
+      <div
+        class="ngx-overlay-backdrop"
+        style="position: fixed; inset: 0; background-color: rgba(0,0,0,0.32); z-index: 1; pointer-events: auto;"
+        (click)="onBackdropClick($event)"
+      ></div>
+    }
+    <div
+      #panel
+      popover="manual"
+      class="ngx-overlay-panel"
+      [class.ngx-overlay-panel--above]="position() === 'above'"
+      [class.ngx-overlay-panel--overlay]="position() === 'overlay'"
+      [class.ngx-overlay-panel--right]="alignment() === 'right'"
+      [class.ngx-overlay-panel--modal]="hasBackdrop() && (position() === 'overlay')"
+      [class.ngx-overlay-panel--visible]="open()"
+      [ngClass]="panelClass()"
+      [ngStyle]="panelStyle()"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+    >
+      <ng-content />
+    </div>
+  `,
+  styles: `
+    .ngx-overlay-panel.ngx-overlay-panel--visible {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+  `,
+})
+export class NgxOverlayPanelComponent {
+  readonly open = input.required<boolean>();
+  readonly position = input<OverlayPosition>("below");
+  readonly alignment = input<OverlayAlignment>("left");
+  readonly coords = input.required<ComputedPosition["coords"]>();
+  readonly maxHeight = input<number>(0);
+  readonly hasBackdrop = input<boolean>(false);
+  readonly widthMode = input<"match-anchor" | "auto-content">("match-anchor");
+  readonly panelClass = input<string>("");
+
+  readonly close = output<void>();
+
+  readonly panelRef = viewChild<ElementRef<HTMLElement>>("panel");
+
+  constructor() {
+    // Top Layer Management (Popover API)
+    effect(() => {
+      const panel = this.panelRef()?.nativeElement;
+      if (!panel) return;
+
+      // Ensure the browser supports Popover API
+      if (typeof panel.showPopover !== "function") {
+          console.warn("Popover API not supported in this browser. Falling back to simple absolute positioning.");
+          return;
+      }
+
+      const isOpen = this.open();
+      if (isOpen) {
+        try {
+          panel.showPopover();
+        } catch (e) {
+          // Ignores if already showing or other non-critical errors
+        }
+      } else {
+        try {
+          panel.hidePopover();
+        } catch (e) {
+          // Ignores if already hidden
+        }
+      }
+    });
+  }
+
+  readonly panelStyle = computed(() => {
+    const c = this.coords();
+    const pos = this.position();
+    const isOverlay = pos === "overlay";
+
+    // Compute direct positioning properties so the overlay works regardless of theme.
+    // The theme CSS can still override via !important for custom styling.
+    let top: string | null = null;
+    let bottom: string | null = null;
+    let left: string | null = null;
+    let right: string | null = null;
+    let transform: string | null = null;
+    let width: string | null = null;
+    let maxHeight: string | null = null;
+
+    if (isOverlay) {
+      // Centered modal: perfectly centered in viewport.
+      top = "50%";
+      left = "50%";
+      bottom = "auto";
+      right = "auto";
+      transform = "translate(-50%, -50%)";
+      width = c.width ? `${c.width}px` : null;
+      maxHeight = "80vh";
+    } else {
+      // Anchored: use the computed coords directly.
+      // Always set all four sides explicitly so inline styles override the theme
+      // CSS fallback (e.g. `top: var(--ngx-overlay-top, -9999px)`).
+      top = c.top !== undefined ? `${c.top}px` : "auto";
+      bottom = c.bottom !== undefined ? `${c.bottom}px` : "auto";
+      left = c.left !== undefined ? `${c.left}px` : "auto";
+      right = c.right !== undefined ? `${c.right}px` : "auto";
+      // Width follows widthMode: match-anchor uses trigger width, auto-content expands.
+      width = this.widthMode() === "match-anchor" && c.width ? `${c.width}px` : null;
+      maxHeight = this.maxHeight() ? `${this.maxHeight()}px` : null;
+    }
+
+    return {
+      position: "fixed",
+      "pointer-events": this.open() ? "auto" : "none",
+      top,
+      bottom,
+      left,
+      right,
+      transform,
+      width,
+      "max-height": maxHeight,
+      visibility: this.open() ? "visible" : "hidden",
+      opacity: this.open() ? "1" : "0",
+      // Keep CSS variables for theme compatibility (themes can reference them for additional styling)
+      "--ngx-overlay-width": width ?? "auto",
+      ...getOverlayStyles(c),
+    };
+  });
+
+  protected onBackdropClick(event: MouseEvent): void {
+    event.stopPropagation();
+    this.close.emit();
+  }
+}
