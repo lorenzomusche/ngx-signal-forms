@@ -1,5 +1,4 @@
 import { Signal, WritableSignal } from "@angular/core";
-import { SchemaPathTree } from "@angular/forms/signals";
 
 // ─── Validator ───────────────────────────────────────────────────────────────
 
@@ -33,8 +32,13 @@ export interface NgxFieldState<TValue> {
 /** Callable that returns the FieldState for a field. */
 export type NgxFieldRef<TValue> = () => NgxFieldState<TValue>;
 
-/** Mirrors the shape of the form model. */
-export type NgxFieldTree<T> = SchemaPathTree<T>;
+/**
+ * Maps a form model type `T` to a tree of field refs, mirroring the model shape.
+ * Each key of `T` becomes an `NgxFieldRef` for its corresponding value type.
+ */
+export type NgxFieldTree<T extends Record<string, unknown>> = {
+  readonly [K in keyof T]: NgxFieldRef<T[K]>;
+};
 
 // ─── Errors ───────────────────────────────────────────────────────────────────
 export interface NgxFieldError {
@@ -61,20 +65,6 @@ export interface NgxFormSubmitEvent<T extends object> {
   readonly value: T;
   readonly valid: boolean;
   readonly errors: ReadonlyArray<NgxFormError>;
-}
-
-/**
- * Symbol for accessing the raw Angular FieldTree from NgxFormSubmitEvent.
- * Power-user escape hatch — use sparingly.
- */
-export const RAW_FIELD_TREE_SYMBOL: unique symbol =
-  Symbol("NGX_RAW_FIELD_TREE");
-
-/** Submit event with internal raw field tree access. */
-export interface NgxFormSubmitEventInternal<
-  T extends object,
-> extends NgxFormSubmitEvent<T> {
-  readonly [RAW_FIELD_TREE_SYMBOL]: unknown;
 }
 
 // ─── Control Options ─────────────────────────────────────────────────────────
@@ -129,12 +119,20 @@ export interface NgxFormAdapter<T extends object> {
     ) => Promise<NgxFormError[] | void> | NgxFormError[] | void,
   ): Promise<void>;
   markAllTouched(): void;
-  buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T>;
+  buildSubmitEvent(value: T): NgxFormSubmitEvent<T>;
   /** Merge partial values into the form without touching other fields. */
   patchValue(partial: Partial<T>): void;
   /** Replace the entire form value. */
   setValue(value: T): void;
-  /** Reset all fields to their initial values and clear touched/dirty state. */
+  /**
+   * Resets all fields to their declared initial values and clears touched/dirty state.
+   *
+   * Reset semantics:
+   * - Fields with an explicit `[initialValue]` binding reset to that value.
+   * - Fields seeded only via `[formValue]` (no `[initialValue]`) reset to `null`.
+   *   `[formValue]` is a prefill seed, not a persistent reset target.
+   * - All `touched` and `dirty` states are cleared to `false`.
+   */
   reset(): void;
 }
 
@@ -151,6 +149,7 @@ export interface NgxFieldConfig<TValue = unknown> {
   readonly name: string;
   readonly validators?: ReadonlyArray<ValidatorFn<TValue>>;
   readonly initialValue?: TValue;
+  readonly disabled?: boolean;
 }
 
 // ─── Date Range ───────────────────────────────────────────────────────────────
