@@ -11,6 +11,7 @@
     "pack:analyze": "(cd projects/ngx-signal-forms/dist && npm pack && PKG=ngx-signals-forms-*.tgz && echo $PKG && echo '=== Uncompressed JS/CSS/TS ===' && tar tvf $PKG | grep -E 'package/(fesm2022/.*\\.mjs|styles/.*\\.css|types/.*\\.d\\.ts)$' | awk '{print $NF, $5/1024 \"KB\"; total+=$5} END {print \"TOTAL:\", total/1024 \"KB\"}' && echo '=== Tarball size ===' && du -sh $PKG && rm $PKG)",
     "build:demo": "ng build demo",
     "watch:lib": "ng build ngx-signal-forms --watch",
+    "test": "ng test ngx-signal-forms",
     "lint": "ng lint"
   },
   "dependencies": {
@@ -30,11 +31,12 @@
     "@angular-devkit/build-angular": "^21.0.0",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
+    "@ngx-signals/forms-compiled": "link:./projects/ngx-signal-forms/dist",
+    "@types/jest": "^29.5.14",
     "cssnano": "^7.1.3",
     "ng-packagr": "^21.0.0",
     "postcss": "^8.5.8",
     "postcss-cli": "^11.0.1",
-    "@ngx-signals/forms-compiled": "link:./projects/ngx-signal-forms/dist",
     "typescript": "~5.9.0"
   }
 }
