@@ -1,6 +1,6 @@
 # @ngx-signals/forms
 
-> **Declarative, signal-driven form library for Angular.** Built on the experimental **Signal Forms API**, it provides a type-safe, reactive, and highly accessible way to build modern forms with Material Design 3 (M3) aesthetics.
+> **Declarative, signal-driven form library for Angular.** Built on the experimental **Signal Forms API**, it provides a type-safe, reactive, and highly accessible way to build modern forms with **Apple HIG + Material Design 3** aesthetics.
 
 [![Angular](https://img.shields.io/badge/Angular-21%2B-red)](https://angular.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)](https://www.typescriptlang.org)
@@ -51,34 +51,32 @@ npm install @ngx-signals/forms
 ```
 
 ### 2. Import Styles
-Add the library styles to your `angular.json` file. We recommend using the **base** and **default** styles for the full design experience:
+
+Add the library styles to your `angular.json` file. The single entry point `ngx-signal-forms.css` includes all tokens, base layout, and component styles:
 
 ```json
 "styles": [
   "src/styles.scss",
-  "node_modules/@ngx-signals/forms/styles/base.css",
-  "node_modules/@ngx-signals/forms/styles/default.css"
 ],
 ```
-
-Recommended combinations:
-- **Core (Required)**: `@ngx-signals/forms/styles/base.css`
-- **Minimalist**: `@ngx-signals/forms/styles/default.css`
-- **Material 3 Look**: `@ngx-signals/forms/styles/material.css`
-- **iOS Aesthetic**: `@ngx-signals/forms/styles/ios.css`
-- **Ionic Support**: `@ngx-signals/forms/styles/ionic.css`
 
 ---
 
 ## 🛠 Usage Modes
 
 ### 1. Declarative Mode (Recommended)
+
 Zero boilerplate. Define your form structure, values, and validation rules directly in the template.
 
 ```html
 <ngx-form [formValue]="{ speed: 50 }" (submitted)="save($event)">
-  <ngx-control-text name="username" label="Username" ngxRequired ngxMinLength="3" />
-  
+  <ngx-control-text
+    name="username"
+    label="Username"
+    ngxRequired
+    ngxMinLength="3"
+  />
+
   <ngx-control-slider name="speed" label="Max Speed" [min]="0" [max]="100" />
 
   <button type="submit">Save</button>
@@ -86,20 +84,24 @@ Zero boilerplate. Define your form structure, values, and validation rules direc
 ```
 
 ### 2. Explicit Adapter Mode
+
 Full control. Create an adapter in your component for complex logic, cross-field validation, or manual state manipulation.
 
 ```ts
-interface MyForm { name: string; age: number; }
+interface MyForm {
+  name: string;
+  age: number;
+}
 
 export class Component {
-  readonly model = signal<MyForm>({ name: '', age: 18 });
-  
+  readonly model = signal<MyForm>({ name: "", age: 18 });
+
   readonly adapter = createSignalFormAdapter({
     model: this.model,
     schema: (path) => {
       ngxSchemaRequired(path.name);
       ngxSchemaMin(path.age, 18);
-    }
+    },
   });
 }
 ```
@@ -115,23 +117,23 @@ export class Component {
 
 ## 🎨 Component Catalog
 
-| Selector | Component | Value Type |
-| :--- | :--- | :--- |
-| `ngx-control-text` | `NgxTextComponent` | `string` |
-| `ngx-control-number` | `NgxNumberComponent` | `number \| null` |
-| `ngx-control-datepicker` | `NgxDatePickerComponent` | `string (ISO)` |
-| `ngx-control-daterange` | `NgxDateRangePickerComponent` | `NgxDateRange` |
-| `ngx-control-timepicker` | `NgxTimepickerComponent` | `string (HH:mm AM/PM)` |
-| `ngx-control-select` | `NgxSelectComponent` | `TValue \| null` |
-| `ngx-control-multiselect` | `NgxMultiselectComponent` | `TValue[]` |
-| `ngx-control-colors` | `NgxColorsComponent` | `string (Hex)` |
-| `ngx-control-checkbox` | `NgxCheckboxComponent` | `boolean` |
-| `ngx-control-toggle` | `NgxToggleComponent` | `boolean` |
-| `ngx-control-radio` | `NgxRadioGroupComponent` | `TValue \| null` |
-| `ngx-control-segmented` | `NgxSegmentedButtonComponent` | `TValue \| null` |
-| `ngx-control-slider` | `NgxSliderComponent` | `number` |
-| `ngx-control-textarea` | `NgxTextareaComponent` | `string` |
-| `ngx-control-file` | `NgxFileComponent` | `File \| null` |
+| Selector                  | Component                     | Value Type             |
+| :------------------------ | :---------------------------- | :--------------------- |
+| `ngx-control-text`        | `NgxTextComponent`            | `string`               |
+| `ngx-control-number`      | `NgxNumberComponent`          | `number \| null`       |
+| `ngx-control-datepicker`  | `NgxDatePickerComponent`      | `string (ISO)`         |
+| `ngx-control-daterange`   | `NgxDateRangePickerComponent` | `NgxDateRange`         |
+| `ngx-control-timepicker`  | `NgxTimepickerComponent`      | `string (HH:mm AM/PM)` |
+| `ngx-control-select`      | `NgxSelectComponent`          | `TValue \| null`       |
+| `ngx-control-multiselect` | `NgxMultiselectComponent`     | `TValue[]`             |
+| `ngx-control-colors`      | `NgxColorsComponent`          | `string (Hex)`         |
+| `ngx-control-checkbox`    | `NgxCheckboxComponent`        | `boolean`              |
+| `ngx-control-toggle`      | `NgxToggleComponent`          | `boolean`              |
+| `ngx-control-radio`       | `NgxRadioGroupComponent`      | `TValue \| null`       |
+| `ngx-control-segmented`   | `NgxSegmentedButtonComponent` | `TValue \| null`       |
+| `ngx-control-slider`      | `NgxSliderComponent`          | `number`               |
+| `ngx-control-textarea`    | `NgxTextareaComponent`        | `string`               |
+| `ngx-control-file`        | `NgxFileComponent`            | `File \| null`         |
 
 ---
 
@@ -140,7 +142,9 @@ export class Component {
 Every control supports rich UI decorations to match modern Design Systems:
 
 ### Prefixes & Suffixes
+
 Add icons or text before or after the input.
+
 ```html
 <ngx-control-text name="price" label="Price">
   <span ngxPrefix>$</span>
@@ -149,7 +153,9 @@ Add icons or text before or after the input.
 ```
 
 ### Floating Labels & Supporting Text
+
 Enable Material-style floating labels and provide helper text.
+
 ```html
 <ngx-form [ngxFloatingLabels]="true" [ngxFloatingLabelsDensity]="-2">
   <ngx-control-text name="email" label="Email">
@@ -159,7 +165,9 @@ Enable Material-style floating labels and provide helper text.
 ```
 
 ### Inline Errors
+
 Show errors immediately via the `ngxInlineErrors` directive.
+
 ```html
 <ngx-control-text name="password" label="Password" ngxInlineErrors />
 ```
@@ -179,6 +187,7 @@ You have three ways to validate your forms:
 ## ♿️ Accessibility (a11y)
 
 The library is built on top of **Material Design 3** accessibility patterns:
+
 - **Keyboard Navigation**: Full support for DatePickers, Selects, and TimePickers (Arrow keys, Space, Enter, Escape).
 - **Screen Reader Announcements**: `NgxA11yAnnouncer` service integrated into all overlays.
 - **Dynamic ARIA**: Automatic management of `aria-invalid`, `aria-required`, `aria-expanded`, and `aria-activedescendant`.
@@ -192,8 +201,8 @@ The DatePicker automatically detects the browser locale. You can override it via
 
 ```ts
 providers: [
-  { provide: NGX_DATE_LOCALE, useValue: buildDateLocale("it-IT", 1) } // 1 = Monday
-]
+  { provide: NGX_DATE_LOCALE, useValue: buildDateLocale("it-IT", 1) }, // 1 = Monday
+];
 ```
 
 ---
@@ -201,25 +210,66 @@ providers: [
 ## 🛠 Advanced Features
 
 ### Conditional Options
+
 Effortlessly link two selectors (e.g., Country -> Province).
+
 ```html
 <ngx-control-select name="country" [options]="countries" />
-<ngx-control-select 
-  name="province" 
-  [ngxDependsOn]="'country'" 
-  [ngxOptionsMap]="provincesByCountry" 
+<ngx-control-select
+  name="province"
+  [ngxDependsOn]="'country'"
+  [ngxOptionsMap]="provincesByCountry"
 />
 ```
 
 ### Form Serialization
+
 Safely serialize form values, including `File` objects.
+
 ```ts
 const data = ngxFormSerialize(adapter.getValue());
 ```
 
 ---
 
-## 🏗 Compatibility
+## � Token Customization
+
+The library uses a 3-tier CSS custom property system. Override tokens at any scope — globally on `:root` or scoped to a specific container.
+
+**Tier 1 — System tokens** (`--ngx-signal-form-sys-*`): semantic design values (color, shape, typography).
+
+```css
+/* globals or :root */
+:root {
+  --ngx-signal-form-sys-color-primary: #0071e3; /* primary action color */
+  --ngx-signal-form-sys-color-on-primary: #ffffff;
+  --ngx-signal-form-sys-shape-corner-medium: 10px; /* input border radius */
+}
+```
+
+**Tier 2 — Component tokens** (`--ngx-signal-form-comp-*`): fine-grained per-component overrides.
+
+```css
+:root {
+  --ngx-signal-form-comp-text-input-height: 52px;
+  --ngx-signal-form-comp-select-option-padding: 12px 16px;
+}
+```
+
+**Tier 3 — Bridge aliases** (`--ngx-primary`, `--ngx-on-surface`, etc.): short variables used internally by all component CSS. Setting a bridge alias affects every component that references it and is the quickest path for a global brand colour change:
+
+```css
+:root {
+  --ngx-primary: #0071e3;
+  --ngx-on-surface: #1d1d1f;
+}
+```
+
+> Tip: bridge aliases are back-compatible with 2.0.x — existing overrides continue to work unchanged.
+
+---
+
+## �🏗 Compatibility
 
 - **Requirements**: Angular 21+ (with `@angular/forms/signals`).
 
