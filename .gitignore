@@ -38,3 +38,5 @@ projects/ngx-signal-forms/dist/
 # IDE and local config
 .vscode/
 .antigravity/
+.ralph/
+.github
