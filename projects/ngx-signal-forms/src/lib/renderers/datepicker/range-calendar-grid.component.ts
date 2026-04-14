@@ -14,6 +14,7 @@ import {
   CalendarCell,
   CalendarDate,
   isDateBetween,
+  formatIsoDate,
   isDateInRange,
   isSameDay,
   orderDates,
@@ -103,6 +104,7 @@ export class NgxRangeCalendarGridComponent {
   readonly focusedDate = input<CalendarDate | null>(null);
   readonly minDate = input<CalendarDate | null>(null);
   readonly maxDate = input<CalendarDate | null>(null);
+  readonly dateFilter = input<((date: string) => boolean) | null>(null);
 
   /** Emits the date the user picked (clicked or pressed Enter/Space). */
   readonly datePicked = output<CalendarDate>();
@@ -179,7 +181,9 @@ export class NgxRangeCalendarGridComponent {
   }
 
   protected isCellDisabled(cell: CalendarCell): boolean {
-    return !isDateInRange(cell.date, this.minDate(), this.maxDate());
+    if (!isDateInRange(cell.date, this.minDate(), this.maxDate())) return true;
+    const filter = this.dateFilter();
+    return filter !== null ? !filter(formatIsoDate(cell.date)) : false;
   }
 
   /** True for either range endpoint. */

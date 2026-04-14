@@ -10,6 +10,7 @@ import {
   inject,
   Injector,
   input,
+  output,
   signal,
   TemplateRef,
   viewChild,
@@ -20,8 +21,10 @@ import { NgxControlLabelComponent } from "../../control/ngx-control-label.compon
 import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxOptionDirective } from "../../control/option.directive";
 import { NgxGlassDirective } from "../../core/directives/glass.directive";
+import { NGX_I18N_MESSAGES } from "../../core/i18n";
 import { NgxOptionsOverlayControl } from "../../core/options-overlay-control.directive";
 import { filterOptionsByQuery } from "../../core/options-utils";
+import { NgxOverlayPanelComponent } from "../../core/overlay-panel.component";
 import { NGX_OPTIONS_CONTROL } from "../../core/tokens";
 import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
 
@@ -41,6 +44,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
     NgxErrorListComponent,
     NgxIconComponent,
     NgxGlassDirective,
+    NgxOverlayPanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -114,13 +118,16 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
         </div>
 
 
-        @if (open()) {
-          @if (overlayMode()) {
-            <div
-              class="ngx-select__overlay-backdrop"
-              (click)="closeOverlay()"
-            ></div>
-          }
+        <ngx-overlay-panel
+          [open]="open()"
+          [position]="position()"
+          [alignment]="alignment()"
+          [coords]="coords()"
+          [maxHeight]="maxHeight()"
+          [hasBackdrop]="overlayMode()"
+          [widthMode]="widthMode()"
+          (close)="closeOverlay()"
+        >
           <div
             ngxGlass
             class="ngx-select__dropdown"
@@ -133,7 +140,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
                 #searchInput
                 type="text"
                 class="ngx-select__search"
-                placeholder="Search…"
+                [placeholder]="i18n.searchPlaceholder"
                 autocomplete="off"
                 [value]="searchQuery()"
                 (input)="onSearchInput($event)"
@@ -165,12 +172,12 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
                 </li>
               } @empty {
                 <li class="ngx-select__no-results" role="presentation">
-                  No results
+                  {{ i18n.noResults }}
                 </li>
               }
             </ul>
           </div>
-        }
+        </ngx-overlay-panel>
       </div>
     } @else {
       <!-- Native select fallback -->
@@ -223,7 +230,9 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
 export class NgxSelectComponent<TValue = string>
   extends NgxOptionsOverlayControl<TValue | null, TValue>
   implements NgxOptionsControl<TValue> {
+  protected readonly i18n = inject(NGX_I18N_MESSAGES);
   readonly placeholder = input<string>("");
+  readonly selectionChange = output<NgxSelectOption<TValue>>();
   protected override readonly minSpace = 250;
   private readonly injector = inject(Injector);
 
@@ -286,6 +295,7 @@ export class NgxSelectComponent<TValue = string>
   protected selectOption(opt: NgxSelectOption<TValue>): void {
     this.setValue(opt.value);
     this.markAsDirty();
+    this.selectionChange.emit(opt);
     this.closeOverlay();
   }
 
@@ -349,7 +359,12 @@ export class NgxSelectComponent<TValue = string>
     const target = event.target as HTMLSelectElement;
     const index = Number(target.value);
     const matched = this.effectiveOptions()[index];
-    this.setValue(matched?.value ?? null);
+    if (matched) {
+      this.setValue(matched.value);
+      this.selectionChange.emit(matched);
+    } else {
+      this.setValue(null);
+    }
     this.markAsDirty();
   }
 }

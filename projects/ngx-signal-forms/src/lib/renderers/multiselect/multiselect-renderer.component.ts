@@ -20,7 +20,9 @@ import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxOptionDirective } from "../../control/option.directive";
 import { NgxOptionsOverlayControl } from "../../core/options-overlay-control.directive";
 import { filterOptionsByQuery } from "../../core/options-utils";
+import { NgxOverlayPanelComponent } from "../../core/overlay-panel.component";
 import { NGX_OPTIONS_CONTROL } from "../../core/tokens";
+import { NGX_I18N_MESSAGES } from "../../core/i18n";
 import { NgxOptionsControl } from "../../core/types";
 
 /**
@@ -35,6 +37,7 @@ import { NgxOptionsControl } from "../../core/types";
     NgxErrorListComponent,
     NgTemplateOutlet,
     NgxIconComponent,
+    NgxOverlayPanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -53,8 +56,8 @@ import { NgxOptionsControl } from "../../core/types";
     "(document:click)": "onDocumentClick($event)",
   },
   template: `
-  <div class="ngx-multiselect__label">
-    <ngx-control-label
+    <div class="ngx-multiselect" #wrapper [class.ngx-multiselect--open]="open()">
+      <ngx-control-label
       [label]="label()"
       [forId]="fieldId"
       [required]="isRequired()"
@@ -64,7 +67,7 @@ import { NgxOptionsControl } from "../../core/types";
     />
 
     @if (label() || searchable()) {
-      <div class="ngx-multiselect__header" #wrapper>
+      <div class="ngx-multiselect__header">
         @if (searchable()) {
           <button
             type="button"
@@ -149,75 +152,73 @@ import { NgxOptionsControl } from "../../core/types";
       }
     </div>
 
-    @if (open()) {
-      <div class="ngx-multiselect-overlay" (click)="closeOverlay()"></div>
-      <div
-        class="ngx-multiselect-overlay__panel"
-        [class.ngx-multiselect-overlay__panel--above]="position() === 'above'"
-        [class.ngx-multiselect-overlay__panel--overlay]="position() === 'overlay'"
-        (click)="$event.stopPropagation()"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Search options"
-      >
-        <input
-          #overlayInput
-          type="text"
-          class="ngx-multiselect-overlay__input"
-          placeholder="Search…"
-          autocomplete="off"
-          [value]="searchQuery()"
-          (input)="onSearchInput($event)"
-          (keydown.escape)="closeOverlay()"
-        />
-        <div class="ngx-multiselect__options ngx-multiselect-overlay__grid">
-          @for (opt of searchResults(); track opt.value; let i = $index) {
-            @if (mode() === "multi") {
-              <div
-                class="ngx-chip ngx-chip--counter"
-                [class.ngx-chip--selected]="countOf(opt.value) > 0"
-              >
-                <button
-                  type="button"
-                  class="ngx-chip__btn"
-                  (click)="decrement(opt.value)"
-                  [disabled]="countOf(opt.value) === 0"
-                  aria-label="Decrease"
-                >
-                  <ngx-icon name="MINUS" />
-                </button>
-                <span class="ngx-chip__label">{{
-                  opt.label
-                }}</span>
-                <span class="ngx-chip__count"
-                  >&times;{{ countOf(opt.value) }}</span
-                >
-                <button
-                  type="button"
-                  class="ngx-chip__btn"
-                  (click)="increment(opt.value)"
-                  aria-label="Increase"
-                >
-                  <ngx-icon name="PLUS" />
-                </button>
-              </div>
-            } @else {
+    <ngx-overlay-panel
+      [open]="open()"
+      [position]="position()"
+      [alignment]="alignment()"
+      [coords]="coords()"
+      [maxHeight]="maxHeight()"
+      [hasBackdrop]="position() === 'overlay'"
+      [widthMode]="'match-anchor'"
+      [panelClass]="'ngx-multiselect-overlay__panel'"
+      (close)="closeOverlay()"
+    >
+      <input
+        #overlayInput
+        type="text"
+        class="ngx-multiselect-overlay__input"
+        [placeholder]="i18n.searchPlaceholder"
+        autocomplete="off"
+        [value]="searchQuery()"
+        (input)="onSearchInput($event)"
+        (keydown.escape)="closeOverlay()"
+      />
+      <div class="ngx-multiselect__options ngx-multiselect-overlay__grid">
+        @for (opt of searchResults(); track opt.value; let i = $index) {
+          @if (mode() === "multi") {
+            <div
+              class="ngx-chip ngx-chip--counter"
+              [class.ngx-chip--selected]="countOf(opt.value) > 0"
+            >
               <button
                 type="button"
-                class="ngx-chip ngx-chip--centered"
-                [class.ngx-chip--selected]="isSelected(opt.value)"
-                (click)="onOverlaySelect(opt.value)"
+                class="ngx-chip__btn"
+                (click)="decrement(opt.value)"
+                [disabled]="countOf(opt.value) === 0"
+                aria-label="Decrease"
               >
-                <ngx-icon name="CHECKMARK" class="ngx-chip__check" />
-                <span class="ngx-chip__label">{{ opt.label }}</span>
+                <ngx-icon name="MINUS" />
               </button>
-            }
-          } @empty {
-            <span class="ngx-multiselect-overlay__empty">No results</span>
+              <span class="ngx-chip__label">{{
+                opt.label
+              }}</span>
+              <span class="ngx-chip__count"
+                >&times;{{ countOf(opt.value) }}</span
+              >
+              <button
+                type="button"
+                class="ngx-chip__btn"
+                (click)="increment(opt.value)"
+                aria-label="Increase"
+              >
+                <ngx-icon name="PLUS" />
+              </button>
+            </div>
+          } @else {
+            <button
+              type="button"
+              class="ngx-chip"
+              [class.ngx-chip--selected]="isSelected(opt.value)"
+              (click)="onOverlaySelect(opt.value)"
+            >
+              <span class="ngx-chip__label">{{ opt.label }}</span>
+            </button>
           }
-        </div>
+        } @empty {
+          <span class="ngx-multiselect-overlay__empty">{{ i18n.noResults }}</span>
+        }
       </div>
-    }
+    </ngx-overlay-panel>
 
     @if (!inlineErrors && touched() && hasErrors()) {
       <ngx-error-list [fieldId]="fieldId" [errors]="errors()" />
@@ -231,7 +232,8 @@ import { NgxOptionsControl } from "../../core/types";
 export class NgxMultiselectComponent<TValue = string>
   extends NgxOptionsOverlayControl<ReadonlyArray<TValue>, TValue>
   implements NgxOptionsControl<TValue> {
-  protected override readonly minSpace = 80;
+  protected readonly i18n = inject(NGX_I18N_MESSAGES);
+  protected override readonly minSpace = 250;
   private readonly injector = inject(Injector);
 
   readonly mode = input<"single" | "multi">("single");

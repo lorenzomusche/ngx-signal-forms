@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -9,11 +10,11 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { NgTemplateOutlet } from "@angular/common";
-import { NGX_DATE_LOCALE } from "../../core/date-locale";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
+import { NgxIconComponent } from "../../control/ngx-icon.component";
+import { NGX_DATE_LOCALE } from "../../core/date-locale";
 import {
   CalendarDate,
   compareDates,
@@ -21,8 +22,8 @@ import {
   parseIsoDate,
 } from "../../core/date-utils";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
+import { NgxOverlayPanelComponent } from "../../core/overlay-panel.component";
 import { NgxDateRange } from "../../core/types";
-import { NgxIconComponent } from "../../control/ngx-icon.component";
 import { NgxRangeCalendarComponent } from "./range-calendar.component";
 
 /**
@@ -38,6 +39,7 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
     NgxControlLabelComponent,
     NgxErrorListComponent,
     NgxIconComponent,
+    NgxOverlayPanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -61,47 +63,51 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
 
     <div class="ngx-datepicker" #wrapper>
       <div class="ngx-input-wrapper ngx-daterange__group" [class.ngx-input-wrapper--disabled]="isDisabled()">
-        <input
-          #startInput
-          type="text"
-          [id]="fieldId + '-start'"
-          class="ngx-datepicker__input ngx-daterange__input"
-          [value]="displayStart()"
-          [disabled]="isDisabled()"
-          [placeholder]="startPlaceholder()"
-          (input)="onStartInput($event)"
-          (blur)="onStartBlur($event)"
-          (focus)="lastFocused.set('start')"
-          (keydown.arrowdown)="openOverlay($event); $event.preventDefault()"
-          [attr.aria-invalid]="hasErrors()"
-          [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
-          [attr.aria-required]="ariaRequired()"
-          [attr.aria-disabled]="effectiveAriaDisabled()"
-          [attr.aria-label]="(label() || 'Date range') + ' start'"
-          [attr.aria-expanded]="open()"
-          [attr.aria-haspopup]="'dialog'"
-          autocomplete="off"
-        />
+        <span class="ngx-daterange__input-sizer" [attr.data-value]="displayStart() || startPlaceholder()">
+          <input
+            #startInput
+            type="text"
+            [id]="fieldId + '-start'"
+            class="ngx-datepicker__input ngx-daterange__input"
+            [value]="displayStart()"
+            [disabled]="isDisabled()"
+            [placeholder]="startPlaceholder()"
+            (input)="onStartInput($event)"
+            (blur)="onStartBlur($event)"
+            (focus)="lastFocused.set('start')"
+            (keydown.arrowdown)="openOverlay($event); $event.preventDefault()"
+            [attr.aria-invalid]="hasErrors()"
+            [attr.aria-describedby]="hasErrors() ? fieldId + '-errors' : null"
+            [attr.aria-required]="ariaRequired()"
+            [attr.aria-disabled]="effectiveAriaDisabled()"
+            [attr.aria-label]="(label() || 'Date range') + ' start'"
+            [attr.aria-expanded]="open()"
+            [attr.aria-haspopup]="'dialog'"
+            autocomplete="off"
+          />
+        </span>
         <span class="ngx-daterange__sep" aria-hidden="true">–</span>
-        <input
-          #endInput
-          type="text"
-          [id]="fieldId + '-end'"
-          class="ngx-datepicker__input ngx-daterange__input"
-          [value]="displayEnd()"
-          [disabled]="isDisabled()"
-          [placeholder]="endPlaceholder()"
-          (input)="onEndInput($event)"
-          (blur)="onEndBlur($event)"
-          (focus)="lastFocused.set('end')"
-          (keydown.arrowdown)="openOverlay($event); $event.preventDefault()"
-          [attr.aria-invalid]="hasErrors()"
-          [attr.aria-disabled]="effectiveAriaDisabled()"
-          [attr.aria-label]="(label() || 'Date range') + ' end'"
-          [attr.aria-expanded]="open()"
-          [attr.aria-haspopup]="'dialog'"
-          autocomplete="off"
-        />
+        <span class="ngx-daterange__input-sizer" [attr.data-value]="displayEnd() || endPlaceholder()">
+          <input
+            #endInput
+            type="text"
+            [id]="fieldId + '-end'"
+            class="ngx-datepicker__input ngx-daterange__input"
+            [value]="displayEnd()"
+            [disabled]="isDisabled()"
+            [placeholder]="endPlaceholder()"
+            (input)="onEndInput($event)"
+            (blur)="onEndBlur($event)"
+            (focus)="lastFocused.set('end')"
+            (keydown.arrowdown)="openOverlay($event); $event.preventDefault()"
+            [attr.aria-invalid]="hasErrors()"
+            [attr.aria-disabled]="effectiveAriaDisabled()"
+            [attr.aria-label]="(label() || 'Date range') + ' end'"
+            [attr.aria-expanded]="open()"
+            [attr.aria-haspopup]="'dialog'"
+            autocomplete="off"
+          />
+        </span>
         <div class="ngx-input-suffix">
           <button
             type="button"
@@ -116,42 +122,43 @@ import { NgxRangeCalendarComponent } from "./range-calendar.component";
         </div>
       </div>
 
-      @if (open()) {
-        @if (variant() === "modal" || position() === "overlay") {
-          <div class="ngx-datepicker__backdrop" (click)="closeOverlay()"></div>
+      <ngx-overlay-panel
+        [open]="open()"
+        [position]="position()"
+        [alignment]="alignment()"
+        [coords]="coords()"
+        [maxHeight]="maxHeight()"
+        [hasBackdrop]="variant() === 'modal' || position() === 'overlay'"
+        [widthMode]="'auto-content'"
+        [panelClass]="'ngx-datepicker__popup ngx-datepicker__popup--range'"
+        (close)="closeOverlay()"
+      >
+        @if (variant() === 'modal') {
+           <div class="ngx-datepicker__modal-header">
+              <span class="ngx-datepicker__modal-label">{{ label() || 'Select range' }}</span>
+              <span class="ngx-datepicker__modal-value">{{ modalDisplayValue() }}</span>
+           </div>
         }
-        <div
-          class="ngx-datepicker__popup"
-          [class.ngx-datepicker__popup--modal]="variant() === 'modal' || position() === 'overlay'"
-          [class.ngx-datepicker__popup--above]="position() === 'above' && variant() !== 'modal'"
-          [class.ngx-datepicker__popup--right]="alignment() === 'right' && variant() !== 'modal'"
-        >
-          @if (variant() === 'modal') {
-             <div class="ngx-datepicker__modal-header">
-                <span class="ngx-datepicker__modal-label">{{ label() || 'Select range' }}</span>
-                <span class="ngx-datepicker__modal-value">{{ modalDisplayValue() }}</span>
-             </div>
-          }
 
-          <ngx-range-calendar
-            #calendar
-            [rangeStart]="variant() === 'modal' ? tempStart() : parsedStart()"
-            [rangeEnd]="variant() === 'modal' ? tempEnd() : parsedEnd()"
-            [minDate]="parsedMinDate()"
-            [maxDate]="parsedMaxDate()"
-            [ariaLabel]="label() ? 'Choose ' + label() : 'Choose date range'"
-            (rangePicked)="onRangePicked($event)"
-            (closed)="closeOverlay()"
-          />
+        <ngx-range-calendar
+          #calendar
+          [rangeStart]="variant() === 'modal' ? tempStart() : parsedStart()"
+          [rangeEnd]="variant() === 'modal' ? tempEnd() : parsedEnd()"
+          [minDate]="parsedMinDate()"
+          [maxDate]="parsedMaxDate()"
+          [ariaLabel]="label() ? 'Choose ' + label() : 'Choose date range'"
+          [dateFilter]="dateFilter()"
+          (rangePicked)="onRangePicked($event)"
+          (closed)="closeOverlay()"
+        />
 
-          @if (variant() === 'modal') {
-             <div class="ngx-datepicker__actions">
-                <button type="button" class="ngx-datepicker__action-btn" (click)="closeOverlay()">Cancel</button>
-                <button type="button" class="ngx-datepicker__action-btn ngx-datepicker__action-btn--primary" (click)="applySelection()">OK</button>
-             </div>
-          }
-        </div>
-      }
+        @if (variant() === 'modal') {
+           <div class="ngx-datepicker__actions">
+              <button type="button" class="ngx-datepicker__action-btn" (click)="closeOverlay()">Cancel</button>
+              <button type="button" class="ngx-datepicker__action-btn ngx-datepicker__action-btn--primary" (click)="applySelection()">OK</button>
+           </div>
+        }
+      </ngx-overlay-panel>
     </div>
 
     @if (supportingText(); as st) {
@@ -170,9 +177,9 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
   readonly minDate = input<string | null>(null);
   readonly maxDate = input<string | null>(null);
   readonly variant = input<"docked" | "modal">("docked");
+  readonly dateFilter = input<((date: string) => boolean) | null>(null);
 
-  protected override readonly minSpace = 350;
-  protected override readonly minWidth = 330;
+  protected override readonly minSpace = 450;
 
   protected readonly fieldId = `ngx-daterange-${NgxBaseControl.nextId()}`;
 
@@ -295,6 +302,8 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
     }
     const parsed = parseIsoDate(raw);
     if (parsed) {
+      const filter = this.dateFilter();
+      if (filter !== null && !filter(formatIsoDate(parsed))) return;
       this.commitRange(formatIsoDate(parsed), current.end);
     }
   }
@@ -316,6 +325,8 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
     }
     const parsed = parseIsoDate(raw);
     if (parsed) {
+      const filter = this.dateFilter();
+      if (filter !== null && !filter(formatIsoDate(parsed))) return;
       this.commitRange(current.start, formatIsoDate(parsed));
     }
   }
@@ -337,6 +348,10 @@ export class NgxDateRangePickerComponent extends NgxOverlayControl<NgxDateRange 
 
     let finalStart = start;
     let finalEnd = end;
+
+    const filter = this.dateFilter();
+    if (filter !== null && finalStart !== null && !filter(finalStart)) finalStart = null;
+    if (filter !== null && finalEnd !== null && !filter(finalEnd)) finalEnd = null;
 
     if (s && e && compareDates(e, s) < 0) {
       finalEnd = finalStart;

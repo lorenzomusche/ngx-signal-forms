@@ -17,6 +17,8 @@ import {
   CalendarDate,
   compareDates,
   daysInMonth,
+  formatIsoDate,
+  isDateInRange,
   today,
 } from "../../core/date-utils";
 import { NgxCalendarHeaderComponent } from "./calendar-header.component";
@@ -68,6 +70,7 @@ type CalendarView = "calendar" | "month" | "year";
         [focusedDate]="focusedDate()"
         [minDate]="minDate()"
         [maxDate]="maxDate()"
+        [dateFilter]="dateFilter()"
         (datePicked)="onDatePicked($event)"
         (dateHovered)="onDateHovered($event)"
       />
@@ -98,6 +101,7 @@ export class NgxRangeCalendarComponent {
   readonly rangeEnd = input<CalendarDate | null>(null);
   readonly minDate = input<CalendarDate | null>(null);
   readonly maxDate = input<CalendarDate | null>(null);
+  readonly dateFilter = input<((date: string) => boolean) | null>(null);
   readonly ariaLabel = input<string>("Choose date range");
 
   readonly rangePicked = output<{
@@ -258,6 +262,11 @@ export class NgxRangeCalendarComponent {
       case "Enter":
       case " ":
         event.preventDefault();
+        if (!isDateInRange(focused, this.minDate(), this.maxDate())) return;
+        {
+          const filter = this.dateFilter();
+          if (filter !== null && !filter(formatIsoDate(focused))) return;
+        }
         this.onDatePicked(focused);
         return;
       case "Escape":

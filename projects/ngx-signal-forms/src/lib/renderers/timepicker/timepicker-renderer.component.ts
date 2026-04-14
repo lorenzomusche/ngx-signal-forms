@@ -12,8 +12,9 @@ import { NgxBaseControl } from "../../control/control.directive";
 import { NgxErrorListComponent } from "../../control/error-list.component";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxIconComponent } from "../../control/ngx-icon.component";
+import { NGX_I18N_MESSAGES } from "../../core/i18n";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
-import { NgxGlassDirective } from "../../core/directives/glass.directive";
+import { NgxOverlayPanelComponent } from "../../core/overlay-panel.component";
 import { getCurrentTime } from "../../core/time-utils";
 import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
 
@@ -29,7 +30,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
     NgxErrorListComponent,
     NgxTimepickerClockComponent,
     NgxIconComponent,
-    NgxGlassDirective,
+    NgxOverlayPanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './timepicker-renderer.component.scss',
@@ -86,7 +87,7 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
               type="button"
               class="ngx-timepicker__toggle"
               [disabled]="isDisabled()"
-              aria-label="Open time picker"
+              [attr.aria-label]="i18n.timepickerOpenLabel"
               tabindex="-1"
               (click)="toggleOverlay($event)"
             >
@@ -96,26 +97,25 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
         </div>
       </div>
 
-      @if (open()) {
-        @if (position() === "overlay") {
-          <div class="ngx-timepicker__backdrop" (click)="closeOverlay()"></div>
-        }
-        <div
-          ngxGlass
-          class="ngx-timepicker__popup"
-          [class.ngx-timepicker__popup--above]="position() === 'above' && position() !== 'overlay'"
-          [class.ngx-timepicker__popup--overlay]="position() === 'overlay'"
-          [class.ngx-timepicker__popup--right]="alignment() === 'right'"
-        >
-          <ngx-timepicker-clock
-            [value]="draftValue()"
-            [disabled]="isDisabled()"
-            (timePicked)="onTimePicked($event)"
-            (cancelClicked)="closeOverlay()"
-            (confirmClicked)="confirmPicker()"
-          />
-        </div>
-      }
+      <ngx-overlay-panel
+        [open]="open()"
+        [position]="position()"
+        [alignment]="alignment()"
+        [coords]="coords()"
+        [maxHeight]="maxHeight()"
+        [hasBackdrop]="position() === 'overlay'"
+        [widthMode]="'auto-content'"
+        [panelClass]="'ngx-timepicker__popup'"
+        (close)="closeOverlay()"
+      >
+        <ngx-timepicker-clock
+          [value]="draftValue()"
+          [disabled]="isDisabled()"
+          (timePicked)="onTimePicked($event)"
+          (cancelClicked)="closeOverlay()"
+          (confirmClicked)="confirmPicker()"
+        />
+      </ngx-overlay-panel>
     </div>
 
     @if (supportingText(); as st) {
@@ -129,9 +129,9 @@ import { NgxTimepickerClockComponent } from "./timepicker-clock.component";
   `,
 })
 export class NgxTimepickerComponent extends NgxOverlayControl<string | null> {
+  protected readonly i18n = inject(NGX_I18N_MESSAGES);
   readonly placeholder = input<string>("hh:mm AM/PM");
-  protected override readonly minSpace = 440;
-  protected override readonly minWidth = 320;
+  protected override readonly minSpace = 450;
 
   protected readonly fieldId = `ngx-control-timepicker-${NgxBaseControl.nextId()}`;
   protected readonly draftValue = signal<string | null>(null);

@@ -61,7 +61,7 @@ import { NgxSelectOption } from "../../core/types";
             [style.visibility]="value() === opt.value ? 'visible' : 'hidden'"
             [attr.aria-hidden]="value() !== opt.value"
           />
-          <span class="ngx-segmented__text">{{ opt.label }}</span>
+          <span class="ngx-segmented__text" [attr.data-text]="opt.label">{{ opt.label }}</span>
         </button>
       }
     </div>

@@ -40,7 +40,7 @@ import {
   NgxTextareaComponent,
   NgxTextComponent,
   NgxTimepickerComponent,
-  NgxToggleComponent,
+  NgxToggleComponent
 } from "@ngx-signals/forms";
 
 @Component({
@@ -132,7 +132,7 @@ import {
                   <ngx-control-select
                     name="theme"
                     label="Design System Theme"
-                    [initialValue]="'ios'"
+                    [initialValue]="'default'"
                     [options]="themeOptions"
                     ngxInlineErrors
                   >
@@ -424,14 +424,19 @@ export class AppComponent {
         "--ngx-signal-form-sys-color-primary",
         config.primaryColor,
       );
+
+      this.document.documentElement.style.setProperty(
+        "--ngx-primary",
+        config.primaryColor,
+      );
     });
   }
 
   // ── Initial values ────────────────────────────────────────────────────────────
 
   readonly initialDesignSystemValues = {
-    theme: "ios",
-    primaryColor: "#18181b",
+    theme: "default",
+    primaryColor: "#6750a4",
     density: -3,
     floating: false,
   };

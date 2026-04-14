@@ -11,6 +11,7 @@ import {
   viewChild,
 } from "@angular/core";
 import { NGX_DATE_LOCALE } from "../../core/date-locale";
+import { NGX_I18N_MESSAGES } from "../../core/i18n";
 import { NgxBaseControl } from "../../control/control.directive";
 import { NgxControlLabelComponent } from "../../control/ngx-control-label.component";
 import { NgxErrorListComponent } from "../../control/error-list.component";
@@ -22,7 +23,7 @@ import {
   today,
 } from "../../core/date-utils";
 import { NgxOverlayControl } from "../../core/overlay-control.directive";
-import { NgxGlassDirective } from "../../core/directives/glass.directive";
+import { NgxOverlayPanelComponent } from "../../core/overlay-panel.component";
 import { NgxCalendarComponent } from "./calendar.component";
 
 /**
@@ -38,7 +39,7 @@ import { NgxCalendarComponent } from "./calendar.component";
     NgxControlLabelComponent,
     NgxErrorListComponent,
     NgxIconComponent,
-    NgxGlassDirective,
+    NgxOverlayPanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -92,7 +93,7 @@ import { NgxCalendarComponent } from "./calendar.component";
                 class="ngx-datepicker__toggle"
                 [disabled]="isDisabled()"
                 (click)="toggleOverlay($event)"
-                aria-label="Toggle calendar"
+                [attr.aria-label]="i18n.datepickerToggleLabel"
               >
                  <ngx-icon name="CALENDAR" class="ngx-datepicker__icon" />
               </button>
@@ -100,42 +101,41 @@ import { NgxCalendarComponent } from "./calendar.component";
         </div>
       </div>
 
-      @if (open()) {
-        @if (variant() === 'modal' || position() === "overlay") {
-          <div class="ngx-datepicker__backdrop" (click)="closeOverlay()"></div>
+      <ngx-overlay-panel
+        [open]="open()"
+        [position]="position()"
+        [alignment]="alignment()"
+        [coords]="coords()"
+        [maxHeight]="maxHeight()"
+        [hasBackdrop]="variant() === 'modal' || position() === 'overlay'"
+        [widthMode]="'auto-content'"
+        [panelClass]="'ngx-datepicker__popup'"
+        (close)="closeOverlay()"
+      >
+        @if (variant() === 'modal') {
+           <div class="ngx-datepicker__modal-header">
+              <span class="ngx-datepicker__modal-label">{{ label() || i18n.datepickerSelectFallback }}</span>
+              <span class="ngx-datepicker__modal-value">{{ modalDisplayValue() }}</span>
+           </div>
         }
-        <div
-          ngxGlass
-          class="ngx-datepicker__popup"
-          [class.ngx-datepicker__popup--modal]="variant() === 'modal' || position() === 'overlay'"
-          [class.ngx-datepicker__popup--above]="position() === 'above' && variant() !== 'modal'"
-          [class.ngx-datepicker__popup--right]="alignment() === 'right' && variant() !== 'modal'"
-        >
-          @if (variant() === 'modal') {
-             <div class="ngx-datepicker__modal-header">
-                <span class="ngx-datepicker__modal-label">{{ label() || 'Select date' }}</span>
-                <span class="ngx-datepicker__modal-value">{{ modalDisplayValue() }}</span>
-             </div>
-          }
 
-          <ngx-calendar
-            #calendar
-            [selectedDate]="variant() === 'modal' ? tempSelectedDate() : parsedSelectedDate()"
-            [minDate]="parsedMinDate()"
-            [maxDate]="parsedMaxDate()"
-            [ariaLabel]="label() ? 'Choose ' + label() : 'Choose date'"
-            (datePicked)="onDatePicked($event)"
-            (closed)="closeOverlay()"
-          />
+        <ngx-calendar
+          #calendar
+          [selectedDate]="variant() === 'modal' ? tempSelectedDate() : parsedSelectedDate()"
+          [minDate]="parsedMinDate()"
+          [maxDate]="parsedMaxDate()"
+          [ariaLabel]="label() ? 'Choose ' + label() : 'Choose date'"
+          (datePicked)="onDatePicked($event)"
+          (closed)="closeOverlay()"
+        />
 
-          @if (variant() === 'modal') {
-             <div class="ngx-datepicker__actions">
-                <button type="button" class="ngx-datepicker__action-btn" (click)="closeOverlay()">Cancel</button>
-                <button type="button" class="ngx-datepicker__action-btn ngx-datepicker__action-btn--primary" (click)="applySelection()">OK</button>
-             </div>
-          }
-        </div>
-      }
+        @if (variant() === 'modal') {
+           <div class="ngx-datepicker__actions">
+              <button type="button" class="ngx-datepicker__action-btn" (click)="closeOverlay()">{{ i18n.datepickerCancel }}</button>
+              <button type="button" class="ngx-datepicker__action-btn ngx-datepicker__action-btn--primary" (click)="applySelection()">{{ i18n.datepickerConfirm }}</button>
+           </div>
+        }
+      </ngx-overlay-panel>
     </div>
 
     @if (supportingText(); as st) {
@@ -154,11 +154,11 @@ export class NgxDatePickerComponent extends NgxOverlayControl<string | null> {
   readonly maxDate = input<string | null>(null);
   readonly variant = input<"docked" | "modal">("docked");
 
-  protected override readonly minSpace = 380;
-  protected override readonly minWidth = 320;
+  protected override readonly minSpace = 450;
 
   protected readonly fieldId = `ngx-control-datepicker-${NgxBaseControl.nextId()}`;
 
+  protected readonly i18n = inject(NGX_I18N_MESSAGES);
   private readonly calendarRef = viewChild<NgxCalendarComponent>("calendar");
   private readonly locale = inject(NGX_DATE_LOCALE);
   private readonly injector = inject(Injector);
@@ -183,7 +183,7 @@ export class NgxDatePickerComponent extends NgxOverlayControl<string | null> {
         day: "numeric",
       }).format(date);
     } catch {
-      return "Select date";
+      return this.i18n.datepickerSelectFallback;
     }
   });
 
