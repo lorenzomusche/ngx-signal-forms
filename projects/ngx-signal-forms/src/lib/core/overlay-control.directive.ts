@@ -2,6 +2,7 @@ import {
   Directive,
   ElementRef,
   inject,
+  input,
   signal,
   viewChild,
 } from "@angular/core";
@@ -29,13 +30,6 @@ import {
 @Directive({
   host: {
     "[class.ngx-renderer--open]": "open()",
-    "[style.--ngx-overlay-top.px]": "coords().top",
-    "[style.--ngx-overlay-bottom.px]": "coords().bottom",
-    "[style.--ngx-overlay-left.px]": "coords().left",
-    "[style.--ngx-overlay-right.px]": "coords().right",
-    "[style.--ngx-overlay-width.px]": "coords().width",
-    "[style.--ngx-overlay-max-height.px]": "maxHeight()",
-    "[style.will-change]": "open() ? 'top, left, bottom, right' : null",
   },
 })
 export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
@@ -47,6 +41,12 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
 
   /** Computed alignment of the overlay (left, right). */
   protected readonly alignment = signal<OverlayAlignment>("left");
+
+  /** Whether the overlay should match the anchor width or expand based on content. */
+  readonly widthMode = input<"match-anchor" | "auto-content">("match-anchor");
+
+  /** Minimum horizontal space required for the overlay. Default 250px. */
+  readonly minWidth = input<number>(250);
 
   /** Viewport coordinates for fixed positioning. */
   protected readonly coords = signal<ComputedPosition["coords"]>({ width: 0 });
@@ -90,7 +90,7 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
   }
 
   private get anchor(): OverlayAnchor {
-    return this.overlayAnchor() ?? this.hostRef.nativeElement;
+    return this.overlayAnchor() ?? this.wrapperRef()?.nativeElement ?? this.hostRef.nativeElement;
   }
 
   /**
@@ -106,20 +106,14 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
   /** Minimum space required below or above to anchor the overlay. Default 128px. */
   protected readonly minSpace: number = 128;
 
-  /** Minimum horizontal space required for the overlay. Default 250px. */
-  protected readonly minWidth: number = 250;
-
   /** Preferred vertical position. Defaults to 'below'. */
   protected readonly preferredPosition: "above" | "below" = "below";
 
 
-  /** Opens the overlay and recalculates its position. */
   protected openOverlay(event?: Event): void {
     if (this.isDisabled() || this.open()) return;
     this.onBeforeOpen();
-    this.open.set(true);
 
-    // Extract domRef from event.target for scroll-ancestor traversal (all event types).
     const domRef = event?.target instanceof HTMLElement ? event.target : undefined;
     // Extract horizontal coordinate for corner selection:
     // mouse → clientX; touch → first touch point; keyboard → undefined (falls back to center).
@@ -132,29 +126,18 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
 
     const result = computeOverlayPosition(this.anchor, {
       minSpace: this.minSpace,
-      minWidth: this.minWidth,
+      minWidth: this.minWidth(),
       preferredPosition: this.preferredPosition,
       ...(clickX !== undefined && { clickX }),
       ...(domRef && { domRef }),
     });
 
-
     this.position.set(result.position);
     this.alignment.set(result.alignment);
     this.coords.set(result.coords);
+    this.open.set(true);
 
-    // Freeze max-height at open time so the panel keeps its size during scroll.
-    const vh = document.documentElement.clientHeight;
-    const { coords, position } = result;
-    let mh: number;
-    if (position === "below" && coords.top !== undefined) {
-      mh = vh - coords.top - 12;
-    } else if (position === "above" && coords.bottom !== undefined) {
-      mh = vh - coords.bottom - 12;
-    } else {
-      mh = Math.round(vh * 0.7); // centered modal: 70vh
-    }
-    this.maxHeight.set(Math.max(0, mh));
+    this.maxHeight.set(this.computeMaxHeight(result.position, result.coords));
 
     this.announcer.announce("Popup opened");
 
@@ -167,36 +150,75 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
   }
 
   private scrollFrameId: number | null = null;
+  private resizeFrameId: number | null = null;
 
   protected readonly handleScroll = () => {
     if (!this.open()) return;
     if (this.scrollFrameId !== null) cancelAnimationFrame(this.scrollFrameId);
     this.scrollFrameId = requestAnimationFrame(() => {
       this.scrollFrameId = null;
-      // Update position only — maxHeight is frozen at open time and never changes.
-      this.coords.set(
-        computeCoordsForAnchor(this.anchor, this.position(), this.alignment()),
-      );
+      const pos = this.position();
+      const align = this.alignment();
+      // Update coords to follow the anchor, and recalculate maxHeight so the panel
+      // doesn't overflow the viewport if the trigger scrolls near the edges.
+      const newCoords = computeCoordsForAnchor(this.anchor, pos, align);
+      this.coords.set(newCoords);
+      this.maxHeight.set(this.computeMaxHeight(pos, newCoords));
     });
   };
 
   protected readonly handleResize = () => {
-    if (this.open()) this.closeOverlay();
+    if (!this.open()) return;
+    // Debounce resize with RAF to avoid excessive calculations
+    if (this.resizeFrameId !== null) cancelAnimationFrame(this.resizeFrameId);
+    this.resizeFrameId = requestAnimationFrame(() => {
+      this.resizeFrameId = null;
+      // Recalculate position + maxHeight to adapt to new viewport dimensions.
+      // This fixes orientation change (portrait ↔ landscape) closing the overlay.
+      this.updatePosition();
+    });
   };
+
+  /** Computes max-height for the overlay given a resolved position and coords. */
+  private computeMaxHeight(position: OverlayPosition, coords: ComputedPosition["coords"]): number {
+    const vh = document.documentElement.clientHeight;
+    let mh: number;
+    if (position === "below" && coords.top !== undefined) {
+      const vSpace = vh - coords.top - 12;
+      mh = Math.max(vSpace, this.minSpace);
+    } else if (position === "above" && coords.bottom !== undefined) {
+      const vSpace = vh - coords.bottom - 12;
+      mh = Math.max(vSpace, this.minSpace);
+    } else {
+      mh = Math.round(vh * 0.7); // centered modal: 70vh
+    }
+    return Math.max(0, mh);
+  }
 
   /** Recalculates the position of the currently open overlay. */
   protected updatePosition(): void {
     if (!this.open()) return;
 
+    const prevPosition = this.position();
     const result = computeOverlayPosition(this.anchor, {
       minSpace: this.minSpace,
-      minWidth: this.minWidth,
+      minWidth: this.minWidth(),
       preferredPosition: this.preferredPosition,
     });
 
     this.position.set(result.position);
     this.alignment.set(result.alignment);
     this.coords.set(result.coords);
+    this.maxHeight.set(this.computeMaxHeight(result.position, result.coords));
+
+    // If position changed between overlay and anchored, manage scroll listener
+    const wasOverlay = prevPosition === "overlay";
+    const isOverlay = result.position === "overlay";
+    if (!wasOverlay && isOverlay) {
+      window.removeEventListener("scroll", this.handleScroll, true);
+    } else if (wasOverlay && !isOverlay) {
+      window.addEventListener("scroll", this.handleScroll, { capture: true, passive: true });
+    }
   }
 
   /** Closes the overlay. */
@@ -207,6 +229,10 @@ export abstract class NgxOverlayControl<TValue> extends NgxBaseControl<TValue> {
     if (this.scrollFrameId !== null) {
       cancelAnimationFrame(this.scrollFrameId);
       this.scrollFrameId = null;
+    }
+    if (this.resizeFrameId !== null) {
+      cancelAnimationFrame(this.resizeFrameId);
+      this.resizeFrameId = null;
     }
     window.removeEventListener("resize", this.handleResize);
     this.announcer.announce("Popup closed");

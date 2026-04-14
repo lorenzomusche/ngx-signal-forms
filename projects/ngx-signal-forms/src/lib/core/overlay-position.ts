@@ -48,7 +48,20 @@ export interface ComputedPosition {
     readonly bottom?: number | undefined;
     readonly left?: number | undefined;
     readonly right?: number | undefined;
-    readonly width: number;
+    readonly width?: number | undefined;
+  };
+}
+
+/**
+ * Helper to convert ComputedPosition coordinates into CSS variables.
+ * Explicitly unset unused properties to prevent inheritance and avoid the -9999px fallback.
+ */
+export function getOverlayStyles(c: ComputedPosition["coords"]) {
+  return {
+    "--ngx-overlay-top": c.top !== undefined ? `${c.top}px` : "unset",
+    "--ngx-overlay-bottom": c.bottom !== undefined ? `${c.bottom}px` : "unset",
+    "--ngx-overlay-left": c.left !== undefined ? `${c.left}px` : "unset",
+    "--ngx-overlay-right": c.right !== undefined ? `${c.right}px` : "unset",
   };
 }
 
@@ -87,66 +100,7 @@ function getRect(anchor: OverlayAnchor): DOMRect {
   return anchor instanceof HTMLElement ? anchor.getBoundingClientRect() : anchor;
 }
 
-/**
- * Find the nearest scrollable ancestor of an element.
- * Returns the document root if no other scrollable ancestor is found.
- */
-function findScrollableAncestor(el: HTMLElement): HTMLElement {
-  let parent = el.parentElement;
-  while (parent && parent !== document.documentElement) {
-    const { overflow, overflowY } = window.getComputedStyle(parent);
-    if (/auto|scroll/.test(overflow + overflowY)) return parent;
-    parent = parent.parentElement;
-  }
-  return document.documentElement;
-}
 
-/**
- * Compute the total available space above and below the anchor,
- * including any remaining scroll space in the nearest scrollable ancestor.
- *
- * When the anchor is a DOMRect, `domRef` is used for ancestor traversal.
- * If neither is an HTMLElement, falls back to viewport-only space.
- */
-function scrollAwareSpace(
-  anchor: OverlayAnchor,
-  domRef?: HTMLElement,
-): { above: number; below: number } {
-  const rect = getRect(anchor);
-  const vh = document.documentElement.clientHeight;
-
-  // Resolve the element to use for ancestor traversal:
-  // prefer the anchor itself if it's an HTMLElement, otherwise fall back to domRef.
-  const el = anchor instanceof HTMLElement ? anchor : domRef;
-
-  if (!el) {
-    // No DOM reference available: viewport-only space.
-    return {
-      below: Math.max(0, vh - rect.bottom),
-      above: Math.max(0, rect.top),
-    };
-  }
-
-  const ancestor = findScrollableAncestor(el);
-
-  if (ancestor === document.documentElement) {
-    const scrollRemBelow = ancestor.scrollHeight - window.scrollY - vh;
-    const scrollRemAbove = window.scrollY;
-    return {
-      below: Math.max(0, vh - rect.bottom) + Math.max(0, scrollRemBelow),
-      above: Math.max(0, rect.top) + Math.max(0, scrollRemAbove),
-    };
-  }
-
-  // Nested scrollable container
-  const ancestorRect = ancestor.getBoundingClientRect();
-  const scrollRemBelow = ancestor.scrollHeight - ancestor.scrollTop - ancestor.clientHeight;
-  const scrollRemAbove = ancestor.scrollTop;
-  return {
-    below: Math.max(0, ancestorRect.bottom - rect.bottom) + Math.max(0, scrollRemBelow),
-    above: Math.max(0, rect.top - ancestorRect.top) + Math.max(0, scrollRemAbove),
-  };
-}
 
 /**
  * Recompute only the viewport coordinates for an already-chosen corner,
@@ -202,17 +156,31 @@ export function computeOverlayPosition(
   const positions: Array<"below" | "above"> =
     prefPos === "below" ? ["below", "above"] : ["above", "below"];
 
-  const fitsLeft = rect.left + minWidth <= vw - 12;
-  const fitsRight = rect.right >= minWidth + 12;
+  const fitsLeft = rect.left + minWidth <= vw;
+  const fitsRight = rect.right >= minWidth;
 
-  function tryCorners(spaceBelow: number, spaceAbove: number): ComputedPosition | null {
+  /** Try to find a side (below/above) and alignment (left/right) that fits. */
+  function tryFit(spaceBelow: number, spaceAbove: number, forceViewport: boolean): ComputedPosition | null {
+    const vBelow = Math.max(0, vh - rect.bottom);
+    const vAbove = Math.max(0, rect.top);
+
     for (const pos of positions) {
-      const fitsVertical = pos === "below" ? spaceBelow >= minSpace : spaceAbove >= minSpace;
-      if (!fitsVertical) continue;
+      const total = pos === "below" ? spaceBelow : spaceAbove;
+      const view = pos === "below" ? vBelow : vAbove;
+      
+      // If forceViewport is on, we MUST fit in the visible area.
+      if (forceViewport && view < minSpace) continue;
+      // If scroll-aware (Pass 2), we still need the FULL component to be fit-able
+      // (either currently or through scrolling), BUT we prioritize viewport comfort.
+      if (!forceViewport && total < minSpace) continue;
+      
+      // Additional guard: if you go to Pass 2 (scrolling), we should at least see 
+      // most of the control.
+      if (!forceViewport && view < Math.min(minSpace, 150)) continue;
 
       for (const align of [closestAlign, otherAlign]) {
-        const fitsHorizontal = align === "left" ? fitsLeft : fitsRight;
-        if (fitsHorizontal) {
+        const hFit = vw >= minWidth ? (align === "left" ? fitsLeft : fitsRight) : true;
+        if (hFit) {
           return {
             position: pos,
             alignment: align,
@@ -224,21 +192,35 @@ export function computeOverlayPosition(
     return null;
   }
 
-  // ── Pass 1: viewport-visible space only ──────────────────────────────────
-  const viewportBelow = Math.max(0, vh - rect.bottom);
-  const viewportAbove = Math.max(0, rect.top);
-  const pass1 = tryCorners(viewportBelow, viewportAbove);
+  // 1. Pass 1: Try perfect viewport fit on either side (100% visible).
+  const pass1 = tryFit(Math.max(0, vh - rect.bottom), Math.max(0, rect.top), true);
   if (pass1) return pass1;
 
-  // ── Pass 2: scroll-aware space ───────────────────────────────────────────
-  const scrollSpace = scrollAwareSpace(anchor, config?.domRef);
-  const pass2 = tryCorners(scrollSpace.below, scrollSpace.above);
-  if (pass2) return pass2;
+  // 2. Pass 2: Try "best fit" vertical. Pick the side with MORE space.
+  // We only do this if that space is > 80px (enough for at least 1-2 items).
+  const vBelow = Math.max(0, vh - rect.bottom);
+  const vAbove = Math.max(0, rect.top);
 
-  // ── Fallback: centered modal ─────────────────────────────────────────────
+  if (vBelow >= 80 || vAbove >= 80) {
+    const pos: "below" | "above" = vBelow >= vAbove ? "below" : "above";
+    // Try both horizontal alignments to find the best fit, prioritizing the closest one.
+    for (const align of [closestAlign, otherAlign]) {
+      const hFit = align === "left" ? fitsLeft : fitsRight;
+      if (hFit) {
+        return {
+          position: pos,
+          alignment: align,
+          coords: computeCoordsForAnchor(anchor, pos, align),
+        };
+      }
+    }
+  }
+
+  // 3. Fallback — centered modal.
+
   return {
     position: "overlay",
     alignment: "left",
-    coords: { width: rect.width },
+    coords: {},
   };
 }
