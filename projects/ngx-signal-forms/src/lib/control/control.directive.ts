@@ -1,13 +1,13 @@
 import {
   computed,
   contentChild,
+  DestroyRef,
   Directive,
   effect,
   ElementRef,
   inject,
   input,
   InputSignal,
-  OnDestroy,
   OnInit,
   Signal
 } from "@angular/core";
@@ -32,11 +32,16 @@ let _nextFieldId = 0;
     "[class.ngx-renderer--touched]": "touched()",
   },
 })
-export abstract class NgxBaseControl<TValue = unknown> implements OnInit, OnDestroy {
+export abstract class NgxBaseControl<TValue = unknown> implements OnInit {
   protected readonly hostElement = inject(ElementRef<HTMLElement>);
+  private readonly _destroyRef = inject(DestroyRef);
   private prefixObserver?: ResizeObserver;
 
   constructor() {
+    this._destroyRef.onDestroy(() => {
+      this.prefixObserver?.disconnect();
+      this._declarativeRegistry?.removeField(this.name());
+    });
     effect(() => {
       const hasPrefix = !!this.prefix();
       const isFloating = this.isFloatingLabel();
@@ -201,7 +206,5 @@ export abstract class NgxBaseControl<TValue = unknown> implements OnInit, OnDest
     }
   }
 
-  ngOnDestroy(): void {
-    this.prefixObserver?.disconnect();
-  }
+
 }

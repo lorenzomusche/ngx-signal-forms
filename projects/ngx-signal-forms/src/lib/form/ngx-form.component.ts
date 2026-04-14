@@ -18,7 +18,6 @@ import {
   NgxFormError,
   NgxFormState,
   NgxFormSubmitEvent,
-  NgxFormSubmitEventInternal,
   NgxSubmitMode,
   ValidatorFn,
 } from "../core/types";
@@ -91,9 +90,13 @@ export class NgxFormComponent<
 
   constructor() {
     this._declarativeAdapter = new NgxDeclarativeAdapter(
-      computed(() => this.formValue() as Record<string, unknown> | undefined),
+      computed(() => this.formValue()),
       computed(() => this.submitMode()),
     );
+  }
+
+  removeField(name: string): void {
+    this._declarativeAdapter.removeField(name);
   }
 
   /** Active adapter: explicit [adapter] input or the internal declarative one. */
@@ -110,6 +113,14 @@ export class NgxFormComponent<
 
   setInitialValue(name: string, value: unknown): void {
     this._declarativeAdapter.setInitialValue(name, value);
+  }
+
+  setDisabled(name: string, disabled: Signal<boolean>): void {
+    this._declarativeAdapter.setDisabled(name, disabled);
+  }
+
+  setReadonly(name: string, readonly: Signal<boolean>): void {
+    this._declarativeAdapter.setReadonly(name, readonly);
   }
 
   // ── NgxFormAdapter delegation ───────────────────────────────────────────────
@@ -146,7 +157,7 @@ export class NgxFormComponent<
     this._active.markAllTouched();
   }
 
-  buildSubmitEvent(value: T): NgxFormSubmitEventInternal<T> {
+  buildSubmitEvent(value: T): NgxFormSubmitEvent<T> {
     return this._active.buildSubmitEvent(value);
   }
 

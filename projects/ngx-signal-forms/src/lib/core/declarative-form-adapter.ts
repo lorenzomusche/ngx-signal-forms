@@ -6,31 +6,38 @@ import {
   NgxFormAdapter,
   NgxFormError,
   NgxFormState,
-  NgxFormSubmitEventInternal,
+  NgxFormSubmitEvent,
   NgxSubmitMode,
   ValidatorFn,
 } from "./types";
-import { RAW_FIELD_TREE_SYMBOL } from "./types";
+
+// ...existing code...
+
 
 // ─── Registry interface ───────────────────────────────────────────────────────
 
-/**
- * Provided by NgxFormComponent in declarative mode.
- * Validator directives inject this to register their rules.
- */
 export interface NgxDeclarativeRegistry {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  addValidators(name: string, validators: ValidatorFn<any>[], isRequired?: boolean): void;
+  /**
+   * Registers type-specific validators for a named field.
+   * The generic parameter `T` lets directive call sites pass typed validators
+   * without casting. The adapter stores them as `ValidatorFn<unknown>` internally
+   * (safe because the field value will always be of the correct type at runtime).
+   */
+  addValidators<T>(name: string, validators: ReadonlyArray<ValidatorFn<T>>, isRequired?: boolean): void;
   setInitialValue(name: string, value: unknown): void;
+  setDisabled(name: string, disabled: Signal<boolean>): void;
+  setReadonly(name: string, readonly: Signal<boolean>): void;
+  removeField(name: string): void;
 }
 
 // ─── Internal field record ────────────────────────────────────────────────────
 
 interface DeclarativeFieldRecord {
-  state: NgxFieldState<unknown>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  validators: WritableSignal<ValidatorFn<any>[]>;
-  required: WritableSignal<boolean>;
+  readonly state: NgxFieldState<unknown>;
+  readonly validators: WritableSignal<ReadonlyArray<ValidatorFn<unknown>>>;
+  readonly required: WritableSignal<boolean>;
+  readonly disabled: WritableSignal<Signal<boolean>>;
+  readonly readonly: WritableSignal<Signal<boolean>>;
 }
 
 // ─── Declarative Adapter ──────────────────────────────────────────────────────
@@ -43,11 +50,10 @@ interface DeclarativeFieldRecord {
  * reactive `validators` signal, so `errors` recomputes automatically.
  */
 export class NgxDeclarativeAdapter
-  implements NgxFormAdapter<Record<string, unknown>>, NgxDeclarativeRegistry
-{
+  implements NgxFormAdapter<Record<string, unknown>>, NgxDeclarativeRegistry {
   private readonly _fields = new Map<string, DeclarativeFieldRecord>();
   /** Reactive list of field names — drives state.valid computation. */
-  private readonly _fieldNames = signal<string[]>([]);
+  private readonly _fieldNames = signal<readonly string[]>([]);
   private readonly _initialValues = new Map<string, unknown>();
 
   private readonly _submitting = signal(false);
@@ -66,7 +72,7 @@ export class NgxDeclarativeAdapter
     const valid = computed(() =>
       this._fieldNames().length === 0
         ? true
-        : this._fieldNames().every(n => this._fields.get(n)!.state.valid()),
+        : this._fieldNames().every(n => this._fields.get(n)?.state.valid() ?? true),
     );
     this.state = {
       valid,
@@ -84,9 +90,21 @@ export class NgxDeclarativeAdapter
     };
     this.value = computed(() =>
       Object.fromEntries(
-        this._fieldNames().map(n => [n, this._fields.get(n)!.state.value()]),
+        this._fieldNames().map(n => [n, this._fields.get(n)?.state.value() ?? null]),
       ),
     );
+  }
+
+  /**
+   * Removes a field from the registry and updates the reactive field name list.
+   * Called automatically when controls are destroyed via DestroyRef.
+   */
+  removeField(name: string): void {
+    if (this._fields.has(name)) {
+      this._fields.delete(name);
+      untracked(() => this._fieldNames.update(names => names.filter(n => n !== name)));
+      this._initialValues.delete(name);
+    }
   }
 
   // ── NgxDeclarativeRegistry ──────────────────────────────────────────────────
@@ -100,11 +118,22 @@ export class NgxDeclarativeAdapter
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  addValidators(name: string, validators: ValidatorFn<any>[], isRequired = false): void {
+  addValidators<T>(name: string, validators: ReadonlyArray<ValidatorFn<T>>, isRequired = false): void {
     const rec = this._getOrCreate(name);
-    rec.validators.update(v => [...v, ...validators]);
+    // Cast from ValidatorFn<T> to ValidatorFn<unknown> at the storage boundary.
+    // Safe: the field value is always of type T at runtime (the directive and field
+    // are wired together by the `name` attribute). TypeScript cannot verify this
+    // without contravariant widening support, so we cast once here.
+    rec.validators.update(v => [...v, ...(validators as ReadonlyArray<ValidatorFn<unknown>>)]);
     if (isRequired) rec.required.set(true);
+  }
+
+  setDisabled(name: string, disabled: Signal<boolean>): void {
+    this._getOrCreate(name).disabled.set(disabled);
+  }
+
+  setReadonly(name: string, readonly: Signal<boolean>): void {
+    this._getOrCreate(name).readonly.set(readonly);
   }
 
   // ── NgxFormAdapter ──────────────────────────────────────────────────────────
@@ -162,12 +191,11 @@ export class NgxDeclarativeAdapter
 
   buildSubmitEvent(
     value: Record<string, unknown>,
-  ): NgxFormSubmitEventInternal<Record<string, unknown>> {
+  ): NgxFormSubmitEvent<Record<string, unknown>> {
     return {
       value,
       valid: this.state.valid(),
       errors: [...this._lastSubmitErrors()],
-      [RAW_FIELD_TREE_SYMBOL]: null,
     };
   }
 
@@ -185,6 +213,12 @@ export class NgxDeclarativeAdapter
     try {
       const errors = await action(this.getValue());
       this._lastSubmitErrors.set(errors ?? []);
+    } catch (e: unknown) {
+      this._lastSubmitErrors.set([{
+        path: null,
+        kind: 'unknown',
+        message: e instanceof Error ? e.message : String(e),
+      }]);
     } finally {
       this._submitting.set(false);
     }
@@ -193,44 +227,59 @@ export class NgxDeclarativeAdapter
   // ── Private helpers ─────────────────────────────────────────────────────────
 
   private _getOrCreate(name: string): DeclarativeFieldRecord {
-    if (!this._fields.has(name)) {
-      // Use untracked to avoid: (1) creating reactive dependencies on _formValue
-      // when called from inside a computed, (2) writing to _fieldNames inside a computed.
-      const initialValue =
-        this._initialValues.get(name) ??
-        untracked(() => this._formValue())?.[name] ??
-        null;
-
-      const value = signal<unknown>(initialValue);
-      const touched = signal(false);
-      const dirty = signal(false);
-      const required = signal(false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const validators = signal<ValidatorFn<any>[]>([]);
-
-      const errors = computed(() =>
-        validators().flatMap(v =>
-          v(value()).map(
-            message => ({ kind: "validation", message }) as NgxFieldError,
-          ),
-        ),
-      );
-
-      const state: NgxFieldState<unknown> = {
-        value,
-        touched,
-        dirty,
-        required,
-        valid: computed(() => errors().length === 0),
-        errors,
-        disabled: signal(false),
-        readonly: signal(false),
-        pending: signal(false),
-      };
-
-      this._fields.set(name, { state, validators, required });
+    let rec = this._fields.get(name);
+    if (!rec) {
+      rec = this._createFieldRecord(name);
+      this._fields.set(name, rec);
       untracked(() => this._fieldNames.update(names => [...names, name]));
     }
-    return this._fields.get(name)!;
+    return rec;
+  }
+
+  private _createFieldRecord(name: string): DeclarativeFieldRecord {
+    // Use untracked to avoid creating reactive dependencies on _formValue
+    // when called from inside a computed.
+    const initialValue =
+      this._initialValues.get(name) ??
+      untracked(() => this._formValue())?.[name] ??
+      null;
+
+    const value = signal<unknown>(initialValue);
+    const touched = signal(false);
+    const dirty = signal(false);
+    const required = signal(false);
+    // Dynamic signals provided by directives, defaulting to false.
+    const disabledSignal = signal<Signal<boolean>>(signal(false));
+    const readonlySignal = signal<Signal<boolean>>(signal(false));
+
+    const validators = signal<ReadonlyArray<ValidatorFn<unknown>>>([]);
+
+    const errors = computed(() =>
+      validators().flatMap(v =>
+        v(value()).map(
+          message => ({ kind: "validation", message }) as NgxFieldError,
+        ),
+      ),
+    );
+
+    const state: NgxFieldState<unknown> = {
+      value,
+      touched,
+      dirty,
+      required: required.asReadonly(),
+      valid: computed(() => errors().length === 0),
+      errors,
+      disabled: computed(() => disabledSignal()()),
+      readonly: computed(() => readonlySignal()()),
+      pending: signal(false),
+    };
+
+    return {
+      state,
+      validators,
+      required,
+      disabled: disabledSignal,
+      readonly: readonlySignal,
+    };
   }
 }
