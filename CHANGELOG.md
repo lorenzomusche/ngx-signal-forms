@@ -2,6 +2,26 @@
 
 All notable changes to the `ngx-signal-forms` library will be documented in this file.
 
+## [2.1.1] - 2026-04-29
+
+### Added
+
+- **`NgxFormArrayComponent`**: Support for dynamic lists in declarative forms.
+- **`NgxTextComponent`**: Added `type` and `autocomplete` inputs to support various input types and browser autofill.
+
+### Fixed
+
+- **Select & Multiselect**: 
+    - Improved value matching using loose equality and string conversion for better compatibility with numeric/string IDs.
+    - Fixed native `select` styling and placeholder visibility in floating label mode.
+    - Improved custom trigger template support.
+- **Floating Labels**: Refined logic for label positioning and visibility in various states.
+
+### Refactored
+
+- **Core Overlay**: Enhanced `OptionsOverlayControl` and `OverlayPanel` for smoother interaction and better accessibility.
+- **Control Logic**: Internal improvements to `ControlDirective` for more robust state management.
+
 ## [2.1.0] - 2026-04-14
 
 ### Breaking Changes
