@@ -39,10 +39,11 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
       }
       <input
         [id]="fieldId"
-        type="text"
+        [type]="type()"
         [placeholder]="placeholder()"
         [value]="value()"
         [disabled]="isDisabled()"
+        [attr.autocomplete]="autocomplete()"
         (input)="onInput($event)"
         (blur)="markAsTouched()"
         [attr.aria-invalid]="hasErrors()"
@@ -69,6 +70,8 @@ import { NgxErrorListComponent } from "../../control/error-list.component";
 })
 export class NgxTextComponent extends NgxBaseControl<string> {
   readonly placeholder = input<string>("");
+  readonly type = input<string>("text");
+  readonly autocomplete = input<string | null>(null);
 
   protected readonly fieldId = `ngx-control-text-${NgxBaseControl.nextId()}`;
 
