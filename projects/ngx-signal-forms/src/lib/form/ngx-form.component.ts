@@ -49,6 +49,15 @@ import {
       <ng-content />
     </form>
   `,
+  styles: [`
+    form {
+      display: var(--ngx-form-display, block);
+      flex-direction: var(--ngx-form-flex-direction, column);
+      flex: var(--ngx-form-flex, initial);
+      min-height: var(--ngx-form-min-height, auto);
+      overflow: var(--ngx-form-overflow, visible);
+    }
+  `],
   providers: [
     {
       provide: NGX_FORM_ADAPTER,

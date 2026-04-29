@@ -3,11 +3,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   input,
   output,
   viewChild,
-  effect,
 } from "@angular/core";
 import { ComputedPosition, getOverlayStyles, OverlayAlignment, OverlayPosition } from "./overlay-position";
 
@@ -79,8 +79,8 @@ export class NgxOverlayPanelComponent {
 
       // Ensure the browser supports Popover API
       if (typeof panel.showPopover !== "function") {
-          console.warn("Popover API not supported in this browser. Falling back to simple absolute positioning.");
-          return;
+        console.warn("Popover API not supported in this browser. Falling back to simple absolute positioning.");
+        return;
       }
 
       const isOpen = this.open();
@@ -152,6 +152,7 @@ export class NgxOverlayPanelComponent {
       // Keep CSS variables for theme compatibility (themes can reference them for additional styling)
       "--ngx-overlay-width": width ?? "auto",
       ...getOverlayStyles(c),
+      border: "none", // Override any theme border for the panel container itself (e.g. popover's default border) so it doesn't interfere with custom panel styles.
     };
   });
 

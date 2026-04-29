@@ -1,4 +1,4 @@
-import { Directive, effect, ElementRef, inject, input } from "@angular/core";
+import { Directive, effect, ElementRef, forwardRef, inject, input } from "@angular/core";
 import { NGX_FLOATING_LABELS, NGX_FLOATING_LABELS_DEFAULT, NGX_FLOATING_LABELS_DENSITY_DEFAULT } from "../core/tokens";
 
 /**
@@ -18,7 +18,7 @@ import { NGX_FLOATING_LABELS, NGX_FLOATING_LABELS_DEFAULT, NGX_FLOATING_LABELS_D
   providers: [
     {
       provide: NGX_FLOATING_LABELS,
-      useExisting: NgxFloatingLabelsDirective,
+      useExisting: forwardRef(() => NgxFloatingLabelsDirective),
     },
   ],
 })

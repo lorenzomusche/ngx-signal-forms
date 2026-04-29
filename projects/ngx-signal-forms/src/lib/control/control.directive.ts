@@ -134,7 +134,7 @@ export abstract class NgxBaseControl<TValue = unknown> implements OnInit {
 
   // ── Convenience signals for templates ───────────────────────────────────────
 
-  protected readonly value: Signal<TValue> = computed(() =>
+  public readonly value: Signal<TValue> = computed(() =>
     this.fieldState().value(),
   );
   protected readonly errors: Signal<ReadonlyArray<NgxFieldError>> = computed(
@@ -182,7 +182,7 @@ export abstract class NgxBaseControl<TValue = unknown> implements OnInit {
 
   // ── Mutation helpers ────────────────────────────────────────────────────────
 
-  protected setValue(newValue: TValue): void {
+  public setValue(newValue: TValue): void {
     this.fieldState().value.set(newValue);
   }
 

@@ -1,4 +1,4 @@
-import { computed, Directive, input, signal } from "@angular/core";
+import { computed, Directive, input, output, signal } from "@angular/core";
 import { NgxOverlayControl } from "./overlay-control.directive";
 import { NgxOptionsControl, NgxSelectOption } from "./types";
 
@@ -29,7 +29,10 @@ export abstract class NgxOptionsOverlayControl<TValue, TOptionValue = any>
     signal<readonly NgxSelectOption<TOptionValue>[] | null>(null);
 
   /** Current search query string. */
-  protected readonly searchQuery = signal("");
+  public readonly searchQuery = signal("");
+
+  /** Emits every time the search input changes — consumable by host directives. */
+  readonly searchChanged = output<string>();
 
   /**
    * Effective options used for rendering: uses `overrideOptions` if provided,
@@ -42,8 +45,16 @@ export abstract class NgxOptionsOverlayControl<TValue, TOptionValue = any>
   /** Reset the control value to its empty state. */
   public abstract resetSelection(): void;
 
+  public override closeOverlay(): void {
+    super.closeOverlay();
+    // Reset della ricerca alla chiusura dell'overlay
+    this.searchQuery.set("");
+    this.searchChanged.emit("");
+  }
+
   protected onSearchInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.searchQuery.set(value);
+    this.searchChanged.emit(value);
   }
 }
