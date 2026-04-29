@@ -897,9 +897,14 @@
         align-items: flex-start;
     }
 
-    /* Fix for native Select: hide text when the label is resting in the center to avoid overlap with placeholder */
-    .ngx-renderer.ngx-floating-label:not(:has(:focus-within)):not(:has(.ngx-label--filled)) select {
+    /* Fix for native Select & Custom Trigger: hide text when the label is resting in the center to avoid overlap with placeholder */
+    .ngx-renderer.ngx-floating-label:not(:has(:focus-within)):not(:has(.ngx-label--filled)) select,
+    .ngx-renderer.ngx-floating-label:not(:has(:focus-within)):not(:has(.ngx-label--filled)) .ngx-select__trigger {
         color: transparent !important;
+    }
+
+    .ngx-renderer.ngx-floating-label:not(:has(:focus-within)):not(:has(.ngx-label--filled)) .ngx-select__value {
+        opacity: 0 !important;
     }
 
     /* Component-based decorators alignment (Centered Vertically by default) */
@@ -1106,7 +1111,9 @@
     }
 
     .ngx-renderer select,
-    .ngx-input-wrapper select {
+    .ngx-input-wrapper select,
+    .ngx-select__trigger {
+        background-color: transparent;
         appearance: none !important;
         -webkit-appearance: none !important;
         -moz-appearance: none !important;

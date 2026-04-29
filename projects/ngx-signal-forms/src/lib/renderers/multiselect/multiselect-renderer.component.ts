@@ -10,6 +10,7 @@ import {
   inject,
   Injector,
   input,
+  output,
   TemplateRef,
   viewChild,
 } from "@angular/core";
@@ -23,7 +24,7 @@ import { filterOptionsByQuery } from "../../core/options-utils";
 import { NgxOverlayPanelComponent } from "../../core/overlay-panel.component";
 import { NGX_OPTIONS_CONTROL } from "../../core/tokens";
 import { NGX_I18N_MESSAGES } from "../../core/i18n";
-import { NgxOptionsControl } from "../../core/types";
+import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
 
 /**
  * Multiselect renderer component.
@@ -92,7 +93,7 @@ import { NgxOptionsControl } from "../../core/types";
       [attr.aria-required]="ariaRequired()"
       [attr.aria-disabled]="effectiveAriaDisabled()"
     >
-      @for (opt of effectiveOptions(); track opt.value) {
+      @for (opt of filteredOptions(); track opt.value) {
         @if (optionTpl(); as tpl) {
            <button
             type="button"
@@ -237,6 +238,14 @@ export class NgxMultiselectComponent<TValue = string>
   private readonly injector = inject(Injector);
 
   readonly mode = input<"single" | "multi">("single");
+  readonly selectionChange = output<NgxSelectOption<TValue>>();
+
+  /**
+   * Optional filter predicate applied to options before display.
+   * Receives the option *value* and returns `true` to show the option.
+   * When absent, all options are shown.
+   */
+  readonly filterFn = input<((value: TValue) => boolean) | undefined>(undefined);
 
   /** Custom option template provided via `<ng-template ngxOption>`. */
   protected readonly optionTpl = contentChild(NgxOptionDirective, {
@@ -245,9 +254,15 @@ export class NgxMultiselectComponent<TValue = string>
 
   protected readonly fieldId = `ngx-control-multiselect-${NgxBaseControl.nextId()}`;
 
-  /** Options available in the search overlay (filtered by query + mode). */
+  /** Options after applying the optional `filterFn` predicate. */
+  protected readonly filteredOptions = computed(() => {
+    const fn = this.filterFn();
+    return fn ? this.effectiveOptions().filter((o) => fn(o.value)) : this.effectiveOptions();
+  });
+
+  /** Options available in the search overlay (filtered by predicate + query + mode). */
   protected readonly searchResults = computed(() => {
-    let opts = this.effectiveOptions();
+    let opts = this.filteredOptions();
     if (this.mode() === "single") {
       const selected = this.selectedSet();
       opts = opts.filter((o) => !selected.has(o.value));
@@ -301,6 +316,9 @@ export class NgxMultiselectComponent<TValue = string>
       : [...current, optValue];
     this.setValue(next);
     this.markAsDirty();
+
+    const matched = this.effectiveOptions().find((o) => o.value === optValue);
+    if (matched) this.selectionChange.emit(matched);
   }
 
   // ── Multi-mode (counter) helpers ────────────────────────────────────────────
@@ -312,6 +330,9 @@ export class NgxMultiselectComponent<TValue = string>
   protected increment(optValue: TValue): void {
     this.setValue([...(this.value() ?? []), optValue]);
     this.markAsDirty();
+
+    const matched = this.effectiveOptions().find((o) => o.value === optValue);
+    if (matched) this.selectionChange.emit(matched);
   }
 
   protected decrement(optValue: TValue): void {
@@ -321,6 +342,9 @@ export class NgxMultiselectComponent<TValue = string>
       arr.splice(idx, 1);
       this.setValue(arr);
       this.markAsDirty();
+
+      const matched = this.effectiveOptions().find((o) => o.value === optValue);
+      if (matched) this.selectionChange.emit(matched);
     }
   }
 
@@ -337,6 +361,8 @@ export class NgxMultiselectComponent<TValue = string>
       if (!current.includes(optValue)) {
         this.setValue([...current, optValue]);
         this.markAsDirty();
+        const matched = this.effectiveOptions().find((o) => o.value === optValue);
+        if (matched) this.selectionChange.emit(matched);
       }
       if (this.searchResults().length === 0) {
         this.closeOverlay();

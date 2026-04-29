@@ -71,7 +71,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
       [errorText]="inlineErrorText()"
     />
 
-    @if (optionTpl(); as tpl) {
+    @if (optionTpl() || searchable()) {
       <!-- Custom dropdown -->
       <div class="ngx-select" #wrapper>
         <div class="ngx-input-wrapper" [class.ngx-input-wrapper--disabled]="isDisabled()">
@@ -100,16 +100,20 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
           >
             @if (selectedOption(); as sel) {
               <span class="ngx-select__value">
-                <ng-container
-                  [ngTemplateOutlet]="tpl"
-                  [ngTemplateOutletContext]="{ $implicit: sel, selected: true }"
-                />
+                @if (optionTpl(); as tpl) {
+                  <ng-container
+                    [ngTemplateOutlet]="tpl"
+                    [ngTemplateOutletContext]="{ $implicit: sel, selected: true }"
+                  />
+                } @else {
+                  {{ sel.label }}
+                }
               </span>
             } @else {
-              <span class="ngx-select__placeholder">{{ placeholder() }}</span>
+              <span class="ngx-select__placeholder">{{ placeholder() || '&nbsp;' }}</span>
             }
-            <ngx-icon name="CHEVRON_DOWN" class="ngx-select__arrow" />
           </button>
+          <ngx-icon name="CHEVRON_DOWN" class="ngx-select__arrow" />
           @if (suffix(); as s) {
             <div class="ngx-input-suffix">
               <ng-container [ngTemplateOutlet]="s.template" />
@@ -157,18 +161,22 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
                   role="option"
                   class="ngx-select__option"
                   [class.ngx-select__option--active]="activeIndex() === i"
-                  [class.ngx-select__option--selected]="opt.value === value()"
-                  [attr.aria-selected]="opt.value === value()"
+                  [class.ngx-select__option--selected]="opt.value == value()"
+                  [attr.aria-selected]="opt.value == value()"
                   (mouseenter)="activeIndex.set(i)"
                   (click)="selectOption(opt)"
                 >
-                  <ng-container
-                    [ngTemplateOutlet]="tpl"
-                    [ngTemplateOutletContext]="{
-                      $implicit: opt,
-                      selected: opt.value === value()
-                    }"
-                  />
+                  @if (optionTpl(); as tpl) {
+                    <ng-container
+                      [ngTemplateOutlet]="tpl"
+                      [ngTemplateOutletContext]="{
+                        $implicit: opt,
+                        selected: opt.value == value()
+                      }"
+                    />
+                  } @else {
+                    <span class="ngx-select__option-label">{{ opt.label }}</span>
+                  }
                 </li>
               } @empty {
                 <li class="ngx-select__no-results" role="presentation">
@@ -189,6 +197,7 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
           }
           <select
             [id]="fieldId"
+            [value]="value() ?? ''"
             [disabled]="isDisabled()"
             (change)="onNativeChange($event)"
             (blur)="markAsTouched()"
@@ -197,14 +206,15 @@ import { NgxOptionsControl, NgxSelectOption } from "../../core/types";
             [attr.aria-required]="ariaRequired() || isRequired()"
             [attr.aria-disabled]="effectiveAriaDisabled()"
             [attr.aria-label]="label() || null"
+            [style.opacity]="(value() === null || value() === undefined) ? '0.6' : '1'"
           >
-            @if (placeholder()) {
-              <option value="" disabled [selected]="value() === null">
-                {{ placeholder() }}
+            @if (placeholder() || value() === null || value() === undefined) {
+              <option value="" disabled [selected]="value() === null || value() === undefined">
+                {{ placeholder() || ' ' }}
               </option>
             }
-            @for (opt of effectiveOptions(); track opt.value; let i = $index) {
-              <option [value]="i" [selected]="opt.value === value()">
+            @for (opt of effectiveOptions(); track opt.value) {
+              <option [value]="opt.value" [selected]="opt.value == value()">
                 {{ opt.label }}
               </option>
             }
@@ -232,7 +242,9 @@ export class NgxSelectComponent<TValue = string>
   implements NgxOptionsControl<TValue> {
   protected readonly i18n = inject(NGX_I18N_MESSAGES);
   readonly placeholder = input<string>("");
+  readonly disabled = input<boolean>(false);
   readonly selectionChange = output<NgxSelectOption<TValue>>();
+  public override readonly isDisabled = computed(() => this.disabled() || this.fieldState().disabled());
   protected override readonly minSpace = 250;
   private readonly injector = inject(Injector);
 
@@ -259,10 +271,10 @@ export class NgxSelectComponent<TValue = string>
   protected readonly selectedOption = computed<NgxSelectOption<TValue> | null>(
     () => {
       const v = this.value();
-      if (v === null) return null;
+      if (v === null || v === undefined) return null;
       return (
         this.effectiveOptions().find(
-          (o: NgxSelectOption<TValue>) => o.value === v,
+          (o: NgxSelectOption<TValue>) => String(o.value) == String(v),
         ) ?? null
       );
     },
@@ -281,8 +293,9 @@ export class NgxSelectComponent<TValue = string>
   protected override onBeforeOpen(): void {
     this.searchQuery.set("");
     const filtered = this.filteredOptions();
+    const v = this.value();
     const idx = filtered.findIndex(
-      (o: NgxSelectOption<TValue>) => o.value === this.value(),
+      (o: NgxSelectOption<TValue>) => o.value == v,
     );
     this.activeIndex.set(idx >= 0 ? idx : 0);
 
@@ -357,8 +370,8 @@ export class NgxSelectComponent<TValue = string>
 
   protected onNativeChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    const index = Number(target.value);
-    const matched = this.effectiveOptions()[index];
+    const stringValue = target.value;
+    const matched = this.effectiveOptions().find((o) => String(o.value) === stringValue);
     if (matched) {
       this.setValue(matched.value);
       this.selectionChange.emit(matched);
