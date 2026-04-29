@@ -93,6 +93,7 @@ export type { NgxDeclarativeRegistry } from "./lib/core/declarative-form-adapter
 
 // ─── Form component ───────────────────────────────────────────────────────────
 export { NgxFormComponent } from "./lib/form/ngx-form.component";
+export { NgxFormArrayComponent } from "./lib/form-array/ngx-form-array.component";
 
 // ─── Control base class & optional wrapper ───────────────────────────────────
 export { NgxChipsDirective } from "./lib/control/chips.directive";
